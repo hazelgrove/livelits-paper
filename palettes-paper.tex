@@ -2,11 +2,9 @@
 %% For double-blind review submission
 %\documentclass[acmsmall,review]{acmart}
 %%% Note: arxiv does not want line numbers (they are detected somehow, and are not allowed)
-\documentclass[acmsmall,review,nonacm]{acmart}
+\documentclass[acmsmall,nonacm,review,anonymous]{acmart}
 %\settopmatter{printfolios=false,printccs=false,printacmref=false}
 \settopmatter{printccs=false,printacmref=false}
-\setcopyright{none}
-\renewcommand\footnotetextcopyrightpermission[1]{} % removes footnote with conference information in first column
 
 %% For single-blind review submission
 %\documentclass[acmlarge,review]{acmart}\settopmatter{printfolios=true}
@@ -178,7 +176,7 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \begin{document}
 
 %% Title information
-\title{Palettes: A Paper}         %% [Short Title] is optional;
+\title{Live Hole Filling by Direct Manipulation}         %% [Short Title] is optional;
                                         %% when present, will be used in
                                         %% header instead of Full Title.
 % \titlenote{with title note}             %% \titlenote is optional;
@@ -348,6 +346,45 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \section{Introduction}
 
 Palettes...
+
+\section{Examples}
+\subsection{Boolean}
+Checkbox
+
+\subsection{Matrix}
+Simple example
+
+\subsection{Grade Cutoffs}
+Uses liveness more obviously
+
+\subsection{Table}
+Uses type reflection
+
+\subsection{Pixel Art}
+Cool example
+
+\subsection{Regex}
+Similar to Graphite paper, can cite the empirical study we did there
+
+\subsection{Forms}
+Show off composition + mention full-screening stuff
+
+\section{Defining Palettes}
+\subsection{Background: Elm architecture}
+
+\subsection{GUIs with Typed Holes}
+
+\subsection{Palette-Specific Actions?}
+
+\subsection{Reasoning Principles}
+
+\section{Formal System}
+...
+
+\section{Related Work}
+Graphite, Relit, projectional editors, notebooks / Mathematica, 
+
+\section{Discussion}
 
 %\clearpage
 \bibliography{references,all.short,hazel_NSF}
