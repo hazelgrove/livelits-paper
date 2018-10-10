@@ -1,21 +1,50 @@
 \PassOptionsToPackage{svgnames,dvipsnames,svgnames}{xcolor}
-%% For double-blind review submission
-%\documentclass[acmsmall,review]{acmart}
-%%% Note: arxiv does not want line numbers (they are detected somehow, and are not allowed)
-\documentclass[acmsmall,nonacm,review,anonymous]{acmart}
-%\settopmatter{printfolios=false,printccs=false,printacmref=false}
-\settopmatter{printccs=false,printacmref=false}
 
-%% For single-blind review submission
-%\documentclass[acmlarge,review]{acmart}\settopmatter{printfolios=true}
-%% For final camera-ready submission
-%\documentclass[acmlarge]{acmart}\settopmatter{}
+%% For double-blind review submission, w/o CCS and ACM Reference (max submission space)
+%% \documentclass[sigplan,review,anonymous]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
+%% For double-blind review submission, w/ CCS and ACM Reference
+\documentclass[sigplan,review,anonymous]{acmart}\settopmatter{printfolios=true}
+%% For single-blind review submission, w/o CCS and ACM Reference (max submission space)
+%\documentclass[sigplan,review]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
+%% For single-blind review submission, w/ CCS and ACM Reference
+%\documentclass[sigplan,review]{acmart}\settopmatter{printfolios=true}
+%% For final camera-ready submission, w/ required CCS and ACM Reference
+%\documentclass[sigplan]{acmart}\settopmatter{}
 
-%% Note: Authors migrating a paper from PACMPL format to traditional
-%% SIGPLAN proceedings format should change 'acmlarge' to
-%% 'sigplan,10pt'.
 
-% \bibliographystyle{ACM-Reference-Format}
+%% Conference information
+%% Supplied to authors by publisher for camera-ready submission;
+%% use defaults for review submission.
+\acmConference[PL'18]{ACM SIGPLAN Conference on Programming Languages}{January 01--03, 2018}{New York, NY, USA}
+\acmYear{2018}
+\acmISBN{} % \acmISBN{978-x-xxxx-xxxx-x/YY/MM}
+\acmDOI{} % \acmDOI{10.1145/nnnnnnn.nnnnnnn}
+\startPage{1}
+
+%% Copyright information
+%% Supplied to authors (based on authors' rights management selection;
+%% see authors.acm.org) by publisher for camera-ready submission;
+%% use 'none' for review submission.
+\setcopyright{none}
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\copyrightyear{2018}           %% If different from \acmYear
+
+%% Bibliography style
+\bibliographystyle{ACM-Reference-Format}
+%% Citation style
+%\citestyle{acmauthoryear}  %% For author/year citations
+%\citestyle{acmnumeric}     %% For numeric citations
+%\setcitestyle{nosort}      %% With 'acmnumeric', to disable automatic
+                            %% sorting of references within a single citation;
+                            %% e.g., \cite{Smith99,Carpenter05,Baker12}
+                            %% rendered as [14,5,2] rather than [2,5,14].
+%\setcitesyle{nocompress}   %% With 'acmnumeric', to disable automatic
+                            %% compression of sequential references within a
+                            %% single citation;
+                            %% e.g., \cite{Baker12,Baker14,Baker16}
+                            %% rendered as [2,3,4] rather than [2-4].
 
 
 %% Some recommended packages.
@@ -176,7 +205,10 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \begin{document}
 
 %% Title information
-\title{Live Hole Filling by Direct Manipulation}         %% [Short Title] is optional;
+%% \title{Live Hole Filling by Direct Manipulation}         %% [Short Title] is optional;
+\title{Nested Palettes:\\Programmable GUIs for Programming}
+%% \title{Nested Palettes: Composable GUIs for Programming}
+
                                         %% when present, will be used in
                                         %% header instead of Full Title.
 % \titlenote{with title note}             %% \titlenote is optional;
@@ -334,6 +366,7 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 %% Keywords
 %% comma separated list
 % \keywords{keyword1, keyword2, keyword3}  %% \keywords is optional
+\keywords{Live Programming, Palettes, Hazel, Code Editors}
 
 
 %% \maketitle

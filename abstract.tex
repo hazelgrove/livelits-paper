@@ -1,7 +1,48 @@
 % !TEX root = palettes-paper.tex
 
+%% no citations in Abstract
+%%
+%% \cite{popl-paper}
+
 \begin{abstract}
 
-Palettes... \cite{popl-paper}
+We present \emph{nested palettes}, an approach to programming custom graphical
+user interfaces (GUIs) that are used to build program expressions---to ``fill
+holes'' within an incomplete program.
+%
+Nested palettes serve as an alternative and complementary code editing mechanism
+to traditional text-editing.
+%
+Compared to other ``hybrid'' text-and-GUI code editors, nested palettes provide
+several unique capabilities.
+%
+First, a palette persists even after user interactions produce a complete
+expression that fills the hole, so that the programmer can return to the GUI to
+make subsequent changes.
+%
+Second, palettes for smaller expression types can appear nested within those for
+larger expressions, allowing palettes to be composed in complex ways.
+%
+Third, palettes have access to the execution environment---even when the overall
+program is not yet complete---and can, thus, provide live feedback to the
+programmer while working to fill an incomplete expression.
+
+This paper investigates the design and implementation of nested palettes in
+several steps.
+%
+First, we propose a formal framework for nested palettes within Hazelnut, a
+foundational semantics for live programming that provides continuous code editor
+services through a combination of structured edits and dynamic evaluation of
+incomplete programs.
+%
+Second, to demonstrate the expressiveness of our framework, we describe several
+example palettes, many of which are informed by a prior study that identified
+desirable use cases for hybrid editors.
+%
+Lastly, we provide a prototype implementation of nested palettes within Hazel, a
+programming environment based on the Hazelnut theory extended with palettes.
+%
+Based on our experience, we believe nested palettes are an extensible and
+expressive approach for mixing text- and GUI-based code editing.
 
 \end{abstract}
