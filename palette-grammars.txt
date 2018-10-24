@@ -37,10 +37,10 @@ Palette Expression Typing      G; D |-_p p : PT
   D |- T_model
   D |- T_msg
   D' = model :: S(T_model), msg :: S(T_msg), D
-  0; D' |- e_init : T_model
-  0; D' |- e_update : T_msg -> T_model -> T_model
+  0; D' |- e_init : model
+  0; D' |- e_update : msg -> model -> model
   0; D' |- e_expand : Exp
-  0; D' |- e_view : Html T_msg
+  0; D' |- e_view : Html msg
   ------------------------------------------ [P-Def]
   G; D |-_p pd : Palette T_expand T_model
 
