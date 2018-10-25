@@ -206,7 +206,8 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 
 %% Title information
 %% \title{Live Hole Filling by Direct Manipulation}         %% [Short Title] is optional;
-\title{Nested Palettes:\\Programmable GUIs for Programming}
+% \title{Nested Palettes:\\Programmable GUIs for Programming}
+\title{Live and Direct Functional Programming \\with Palette Expressions}
 %% \title{Nested Palettes: Composable GUIs for Programming}
 
                                         %% when present, will be used in
@@ -402,7 +403,77 @@ Similar to Graphite paper, can cite the empirical study we did there
 \subsection{Forms}
 Show off composition + mention full-screening stuff
 
+\subsection{Equation Editor, Judgement Editor and Category Diagrams}
+Things that PL people like 
+
+\subsection{TikZ diagrams}
+...
+
+\clearpage
 \section{Defining Palettes}
+Palette definitions take the following general form:
+\begin{lstlisting}
+palette $name 
+  (arg1 : Type1) 
+  ... 
+  (argn : Typen) 
+  at ExpansionType {
+    expansion dependencies = D;
+    implementation P in package pkg;
+  }
+\end{lstlisting}
+The static semantics requires the following:
+\begin{enumerate}
+\item \li{arg1} ... \li{argn} for \li{n} $\geq 0$ are distinct labels
+\item \li{Type1} ...\li{Typen} are valid types
+\item \li{ExpansionType} is a valid type
+\item \li{D : TD} for some type \li{TD}
+\item and \li{P} identifies a closed module that can be loaded from package \li{pkg} such that \begin{lstlisting}
+P : IPalette
+    with type Arguments = { 
+      arg1 : HoleRef<Type1>, 
+      ..., 
+      argn : HoleRef<Typen> 
+    } 
+    with type ExpansionType = ExpansionType
+    with type Dependencies = TD
+\end{lstlisting}
+where \li{IPalette} is defined in Fig.~\ref{fig:IPalette}.
+\end{enumerate}
+
+\begin{figure}
+\begin{lstlisting}
+module MHoleRef : {
+  type MHoleRef('a)
+  val return : 'a -> MHoleRef('a)
+  val bind : MHoleRef('a) -> 
+             ('a -> MHoleRef('b)) -> 
+             MHoleRef('b)
+} = ...
+
+module type IPalette = {
+  type Arguments
+  type ExpansionType
+  type Dependencies
+
+  type Model
+  type Msg
+
+  type AModel = (Arguments, Model)
+  
+  val init_model : MHoleRef(Model)
+  val update : (AModel, Msg) -> Model
+  val view : AModel -> Html(Msg)
+  val expand : 
+    AModel -> 
+      ClosedExp<
+        Dependencies -> ExpansionType>
+}
+\end{lstlisting}
+\caption{\li{IPalette} module type}
+\label{fig:IPalette}
+\end{figure}
+
 \subsection{Background: Elm architecture}
 
 \subsection{GUIs with Typed Holes}
