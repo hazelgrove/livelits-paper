@@ -443,14 +443,6 @@ where \li{IPalette} is defined in Fig.~\ref{fig:IPalette}.
 
 \begin{figure}
 \begin{lstlisting}
-module MHoleRef : {
-  type MHoleRef('a)
-  val return : 'a -> MHoleRef('a)
-  val bind : MHoleRef('a) -> 
-             ('a -> MHoleRef('b)) -> 
-             MHoleRef('b)
-} = ...
-
 module type IPalette = {
   type Arguments
   type ExpansionType
@@ -472,6 +464,20 @@ module type IPalette = {
 \end{lstlisting}
 \caption{\li{IPalette} module type}
 \label{fig:IPalette}
+\end{figure}
+
+\begin{figure}
+\begin{lstlisting}
+type HoleRef('a)
+type MHoleRef('a)
+val fresh_hole('a) : MHoleRef(HoleRef('a))
+val bind : MHoleRef('a) -> 
+           ('a -> MHoleRef('b)) -> 
+           MHoleRef('b)
+val return : 'a -> MHoleRef('a)             
+\end{lstlisting}
+\caption{Signature for working with hole refs}
+\label{fig:HoleRefs}
 \end{figure}
 
 \subsection{Background: Elm architecture}
