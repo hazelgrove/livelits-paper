@@ -458,16 +458,16 @@ module type IPalette = {
 
   type Model
   type Msg
-
-  type AModel = (Arguments, Model)
   
-  val init_model : MHoleRef(Model)
-  val update : (AModel, Msg) -> Model
-  val view : AModel -> Html(Msg)
-  val expand : 
-    AModel -> 
-      ClosedExp<
-        Dependencies -> ExpansionType>
+  val init_model : Arguments -> 
+                   MHoleRef(Model)
+  val update : (Model, Msg) -> 
+               MHoleRef(Model)
+  val view : Model -> Html(Msg)
+  val expand : Model -> 
+               ClosedHRExp<
+                 Dependencies -> 
+                 ExpansionType>
 }
 \end{lstlisting}
 \caption{\li{IPalette} module type}
