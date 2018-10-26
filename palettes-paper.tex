@@ -421,42 +421,40 @@ Things that PL people like
 Palette definitions take the following general form:
 \begin{lstlisting}
 palette $name 
-  (arg1 : Type1) 
+  (arg1 : t1) 
   ... 
-  (argn : Typen) 
-  at ExpansionType 
+  (argn : tn) 
+  at t 
   implementation P in package pkg;
 \end{lstlisting}
 The static semantics requires the following:
 \begin{enumerate}
 \item \li{arg1} ... \li{argn} for \li{n} $\geq 0$ are distinct labels
-\item \li{Type1} ...\li{Typen} are valid types
-\item \li{ExpansionType} is a valid type
-\item and \li{P} identifies a closed module that can be loaded from package \li{pkg} such that \begin{lstlisting}
+\item \li{t1} ...\li{t1} are valid types
+\item \li{t} is a valid type
+\item and \li{P} identifies a module that can be loaded from package \li{pkg} such that \begin{lstlisting}
 P : IPalette
-    with type Arguments = { 
-      arg1 : HoleRef<Type1>, 
+    with type args = { 
+      arg1 : HoleRef.t<t1>, 
       ..., 
-      argn : HoleRef<Typen> 
+      argn : HoleRef.t<tn> 
     } 
-    with type ExpansionType = ExpansionType
+    with type output = t
 \end{lstlisting}
-where \li{IPalette} is defined in Fig.~\ref{fig:IPalette}.
+where \li{IPalette} is defined in Fig.~\ref{fig:IPalette} and \li{HoleRef} in Fig.~\ref{fig:HoleRefs}.
 \end{enumerate}
 
 \begin{figure}
 \begin{lstlisting}
 module type IPalette = {
   type args
-  type expansion
-
+  type output
   type model
   type msg
-  
   val init   : args -> HRG.t(model)
   val update : (model, msg) -> HRG.t(model)
   val view   : model -> HRE.t(Html.t(msg))
-  val expand : model -> HRE.t(expansion)
+  val expand : model -> HRE.t(output)
 }
 \end{lstlisting}
 \caption{\li{IPalette} module type}
