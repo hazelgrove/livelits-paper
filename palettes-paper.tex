@@ -457,8 +457,8 @@ module type IPalette = {
                MHoleRef(Model)
   val view : Model -> Html(Msg)
   val expand : Model -> 
-               ClosedHRExp<
-                 Dependencies -> 
+               HRExp<
+                 Dependencies |-  
                  ExpansionType>
 }
 \end{lstlisting}
@@ -470,7 +470,7 @@ module type IPalette = {
 \begin{lstlisting}
 type HoleRef('a)
 type MHoleRef('a)
-val fresh_hole('a) : MHoleRef(HoleRef('a))
+val fresh_hole : Type<Dependencies |- *> -> MHoleRef(HoleRef('a))
 val bind : MHoleRef('a) -> 
            ('a -> MHoleRef('b)) -> 
            MHoleRef('b)
