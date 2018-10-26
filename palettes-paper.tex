@@ -451,10 +451,10 @@ module type IPalette = {
   type output
   type model
   type msg
-  val init   : args -> HRG.t(model)
-  val update : (model, msg) -> HRG.t(model)
-  val view   : model -> HRE.t(Html.t(msg))
-  val expand : model -> HRE.t(output)
+  val init    : args -> HRG.t(model)
+  val update  : (model, msg) -> HRG.t(model)
+  val view    : model -> HRE.t(Html.t(msg))
+  val compute : model -> HRE.t(output)
 }
 \end{lstlisting}
 \caption{\li{IPalette} module type}
