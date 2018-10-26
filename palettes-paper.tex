@@ -1,9 +1,15 @@
 \PassOptionsToPackage{svgnames,dvipsnames,svgnames}{xcolor}
 
+% From https://pldi19.sigplan.org/track/pldi-2019-papers#Call-for-Papers
+\documentclass[sigplan,10pt,review,anonymous]{acmart}
+\settopmatter{printfolios=true,printccs=false,printacmref=false}
+
+%\documentclass[acmsmall,review,anonymous]{acmart}
+
 %% For double-blind review submission, w/o CCS and ACM Reference (max submission space)
 %% \documentclass[sigplan,review,anonymous]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
 %% For double-blind review submission, w/ CCS and ACM Reference
-\documentclass[sigplan,review,anonymous]{acmart}\settopmatter{printfolios=true}
+%\documentclass[sigplan,review,anonymous]{acmart}\settopmatter{printfolios=true}
 %% For single-blind review submission, w/o CCS and ACM Reference (max submission space)
 %\documentclass[sigplan,review]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
 %% For single-blind review submission, w/ CCS and ACM Reference
@@ -340,6 +346,7 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 %% Note: \begin{abstract}...\end{abstract} environment must come
 %% before \maketitle command
 \input{abstract}
+\input{defs}
 
 
 %% 2012 ACM Computing Classification System (CSS) concepts
@@ -491,7 +498,7 @@ val return : 'a -> MHoleRef('a)
 \subsection{Deriving Palettes from Type Definitions?}
 
 \section{Formal System}
-...
+\input{formal-system}
 
 \section{Related Work}
 Graphite, Relit, projectional editors, notebooks / Mathematica, 
