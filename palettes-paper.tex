@@ -424,17 +424,14 @@ palette $name
   (arg1 : Type1) 
   ... 
   (argn : Typen) 
-  at ExpansionType {
-    expansion dependencies = D;
-    implementation P in package pkg;
-  }
+  at ExpansionType 
+  implementation P in package pkg;
 \end{lstlisting}
 The static semantics requires the following:
 \begin{enumerate}
 \item \li{arg1} ... \li{argn} for \li{n} $\geq 0$ are distinct labels
 \item \li{Type1} ...\li{Typen} are valid types
 \item \li{ExpansionType} is a valid type
-\item \li{D : TD} for some type \li{TD}
 \item and \li{P} identifies a closed module that can be loaded from package \li{pkg} such that \begin{lstlisting}
 P : IPalette
     with type Arguments = { 
@@ -443,7 +440,6 @@ P : IPalette
       argn : HoleRef<Typen> 
     } 
     with type ExpansionType = ExpansionType
-    with type Dependencies = TD
 \end{lstlisting}
 where \li{IPalette} is defined in Fig.~\ref{fig:IPalette}.
 \end{enumerate}
@@ -451,22 +447,16 @@ where \li{IPalette} is defined in Fig.~\ref{fig:IPalette}.
 \begin{figure}
 \begin{lstlisting}
 module type IPalette = {
-  type Arguments
-  type ExpansionType
-  type Dependencies
+  type args
+  type expansion
 
-  type Model
-  type Msg
+  type model
+  type msg
   
-  val init_model : Arguments -> 
-                   MHoleRef(Model)
-  val update : (Model, Msg) -> 
-               MHoleRef(Model)
-  val view : Model -> Html(Msg)
-  val expand : Model -> 
-               HRExp<
-                 Dependencies |-  
-                 ExpansionType>
+  val init   : args -> HRG.t(model)
+  val update : (model, msg) -> HRG.t(model)
+  val view   : model -> HRE.t(Html.t(msg))
+  val expand : model -> HRE.t(expansion)
 }
 \end{lstlisting}
 \caption{\li{IPalette} module type}
@@ -475,15 +465,35 @@ module type IPalette = {
 
 \begin{figure}
 \begin{lstlisting}
-type HoleRef('a)
-type MHoleRef('a)
-val fresh_hole : Type<Dependencies |- *> -> MHoleRef(HoleRef('a))
-val bind : MHoleRef('a) -> 
-           ('a -> MHoleRef('b)) -> 
-           MHoleRef('b)
-val return : 'a -> MHoleRef('a)             
+(* Abstract type of hole refs *)
+module HoleRef : {
+  type t('a)
+}
+
+(* HRG is the hole ref generation monad *)
+module HRG : {
+  type t('a)
+  val fresh('a) : t(HoleRef.t('a))
+  val bind : t('a) -> 
+             ('a -> t('b)) -> 
+             t('b)
+  val return : 'a -> t('a)
+}
+
+(* HRE is the hole ref evaluation monad *)
+module HRE : {
+  type t('a) 
+  type result('a) = Value('a * Exp)
+                  | Indet(Exp)
+  val eval('a) : HoleRef.t('a) -> 
+                 t(result('a))
+  val bind : t('a) -> 
+             ('a -> t('b)) -> 
+             t('b)
+  val return : 'a -> t('a)
+}
 \end{lstlisting}
-\caption{Signature for working with hole refs}
+\caption{Modules for working with hole refs}
 \label{fig:HoleRefs}
 \end{figure}
 
