@@ -37,8 +37,40 @@
    & $\bnfas$ &
      $\absgrammar{\pexp}{\htyp}$
  \\ &&& $\bnfaltbrk \pexpPalLet{p}{\pi}{\pexp}$ & Palette definition $\pi$ as $p$ in $\pexp$
- \\ &&& $\bnfaltbrk \pexpPalAp{p}{\hexpc}{x}{C}$ & $\hexpc$ (which can contain cells labeled with $x$ in $C$)
- \\ &&&                                          & is a model that is expanded by palette definition $p$
+ \\ &&& $\bnfaltbrk \pexpPalAp{p}{\hexpc}{x}{(\htyp, \pexp)}{C}$
+                                                & $\hexpc$ (which can contain cells labeled with $x$ in $C$)
+ \\ &&&                                         & is a model that is expanded by palette definition $p$
 %
 \end{grammar}
+\begin{mathpar}
+\newcommand{\icexpand}{\iota_{c_{expand}}}
+\newcommand{\tcmodel}{\tau_{c_{model}}}
+\newcommand{\texpansion}{\tau_{expansion}}
+\newcommand{\tcexpansion}{\tau_{c_{expansion}}}
+\newcommand{\icmodel}{\iota_{c_{model}}}
+\newcommand{\icexpanded}{\iota_{c_{expanded}}}
+\newcommand{\htypx}{\htyp_x}
+\newcommand{\pexpx}{\pexp_x}
+\newcommand{\hexpx}{\hexp_x}
+\\\\
+\inferrule[PELetPal]{
+    \pi = \pDefRecord{\icexpand}{\tcmodel}{\texpansion} \\\\
+    \hsyn{\EmptyhGamma}{\icexpand}{\tarr{\tcmodel}{\tcexpansion}} \\ \\
+    \tconsistentc{\tcexpansion}{\texpansion} \\\\
+    \pexpandAna{\hGamma}{\pPhi, p : \pi}{e}{\iota}{\tau}
+  }{
+    \pexpandAna{\hGamma}{\pPhi}{\pexpPalLet{p}{\pi}{e}}{\iota}{\tau}
+  }
+\\\\
+\inferrule[PEApPal]{
+    p:\pDefRecord{\icexpand}{\tcmodel}{\texpansion} \in \pPhi \\\\
+    \hana{\EmptyhGamma}{\icmodel}{\tcmodel} \\ \\
+    \ceval{\EmptyhGamma}{\hap{\icexpand}{\icmodel}}{\icexpanded} \\\\
+    \forall x \in C, \left( \pexpandAna{\hGamma}{\pPhi}{\pexpx}{\hexpx}{\htypx} \right) \\ \\
+    \celab{\EmptyhGamma}{\fmap{x}{C}{\hexpx}}{\icexpanded}{\iota}{\texpansion}
+  }{
+    \pexpandSyn{\hGamma}{\pPhi}{\pexpPalAp{p}{\icmodel}{x}{(\htypx, \pexpx)}{C}}{\iota}{\texpansion}
+  }
+\\
+\end{mathpar}
 \end{figure*}

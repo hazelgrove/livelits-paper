@@ -39,6 +39,7 @@
 
 \newcommand{\tconsistent}[2]{#1 \sim #2}
 \newcommand{\tinconsistent}[2]{#1 \nsim #2}
+\newcommand{\tconsistentc}[2]{#1 \sim_c #2}
 
 % HExp
 \newcommand{\hlam}[2]{\lambda #1.#2}
@@ -65,6 +66,7 @@
 \newcommand{\hcase}[5]{\texttt{case}({#1},{#2}.{#3},{#4}.{#5})}
 
 \newcommand{\hGamma}{\Gamma}
+\newcommand{\pPhi}{\Phi}
 \newcommand{\EmptyhGamma}{\emptyset} % From hand-written notes, Canonical forms lemma; page 14
 \newcommand{\EmptyDelta}{\cdot} % From hand-written notes, ES-Const rule, page 1
 \newcommand{\domof}[1]{\text{dom}(#1)}
@@ -201,6 +203,8 @@
 
 \newcommand{\expandAna}[6]{#1 \vdash #2 \Leftarrow #3 \leadsto #4 : #5 \dashv #6}
 \newcommand{\expandSyn}[5]{#1 \vdash #2 \Rightarrow #3 \leadsto #4 \dashv #5}
+\newcommand{\pexpandAna}[5]{#1 \vdash_{#2} #3 \leadsto #4 \Leftarrow #5}
+\newcommand{\pexpandSyn}[5]{#1 \vdash_{#2} #3 \leadsto #4 \Rightarrow #5}
 \newcommand{\hasType}[4]{#1; #2 \vdash #3 : #4}
 \newcommand{\isValue}[1]{#1~\mathsf{val}}
 \newcommand{\isGround}[1]{#1~\mathsf{ground}}
@@ -231,6 +235,10 @@
 \newcommand{\selectEvalCtxR}[2]{#1\{#2\}}
 \newcommand{\selectEvalCtx}[3]{#1=\selectEvalCtxR{#2}{#3}}
 \newcommand{\maybePremise}[1]{{\textcolor{red}[}#1{\textcolor{red}]}}
+
+%% Cell HExp dynamics and elaboration
+\newcommand{\ceval}[3]{#1 \vdash #2 \Downarrow_c #3}
+\newcommand{\celab}[5]{#1 \vdash_{#2} #3 \leadsto_c #4 \Leftarrow #5}
 
 \newcommand{\inhole}[2]{\mathsf{inhole}(#1; #2)}
 
