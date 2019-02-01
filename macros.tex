@@ -19,6 +19,8 @@
 % \newcommand{\llparenthesiscolor}{\textcolor{red}{\lfloor}}
 % \newcommand{\rrparenthesiscolor}{\textcolor{red}{\rfloor}}
 
+\newcommand{\fmap} [3] {\{ #1 ~ \rotatebox[origin=c]{180}{$\Lsh$} ~ #3 \}_{#1 \in #2}}
+
 %% TODO if feeling really obsessive, use the following in place of x,u,c,b
 \newcommand{\varVar}{x}
 \newcommand{\varHole}{u}
@@ -29,6 +31,8 @@
 \newcommand{\isComplete}[1]{#1~\mathsf{complete}}
 
 % HTyp
+\newcommand{\htyp}[0]{\tau} % Meta variable for types
+\newcommand{\htypc}[0]{\tau_c} % Meta variable for types with cells
 \newcommand{\tarr}[2]{#1 \rightarrow #2}
 %\newcommand{\tsum}[2]{#1 + #2}
 \newcommand{\tprod}[2]{#1 \times #2}
@@ -40,6 +44,14 @@
 \newcommand{\tconsistent}[2]{#1 \sim #2}
 \newcommand{\tinconsistent}[2]{#1 \nsim #2}
 \newcommand{\tconsistentc}[2]{#1 \sim_c #2}
+
+% Expression forms
+\newcommand{\hexp}{\iota} % Hexp without cells or palettes
+\newcommand{\hexpc}{\iota_c} % Hexps with cells that can be substituted with pexps
+\newcommand{\pexp}{\rho} % Meta variable for palette expressions
+\newcommand{\cell}[1]{$Cell_{#1}$}
+\newcommand{\pexpPalLet}[3]{\keyword{let palette}\,#1\,\keyword{=}\,#2\,\keyword{in}\,#3}
+\newcommand{\pexpPalAp}[5]{#2\,\keyword{as palette}\,#1\,\keyword{where}\,\fmap{#3}{#5}{#4}}
 
 % HExp
 \newcommand{\hlam}[2]{\lambda #1.#2}
@@ -64,6 +76,10 @@
 \newcommand{\hinL}[1]{\mathsf{inl}(#1)}
 \newcommand{\hinR}[1]{\mathsf{inr}(#1)}
 \newcommand{\hcase}[5]{\texttt{case}({#1},{#2}.{#3},{#4}.{#5})}
+
+% Palette definitions
+\newcommand{\pDef}{\pi} % Meta variable for palette definitions
+\newcommand{\pDefRecord}[3]{\{ \keyword{expand}: #1, \, \keyword{modelTyp}: #2, \, \keyword{expandTyp}: #3\}}
 
 \newcommand{\hGamma}{\Gamma}
 \newcommand{\pPhi}{\Phi}
