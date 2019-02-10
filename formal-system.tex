@@ -33,20 +33,22 @@
    & $\bnfas$ &
      $\absgrammargen{\pexp}{\htyp}$
  \\ &&& $\bnfaltbrk \pexpPalLet{\rho}{\pDef}{\pexp}$ & Palette definition $\pDef$ as $\rho$ in $\pexp$
- \\ &&& $\bnfaltbrk \pexpPalAp{\rho}{\dexp}{x}{(\htyp, \pexp)}{C}$
+ \\ &&& $\bnfaltbrk \pexpPalAp{\rho}{\dexp}{\htyp}{\pexp}$
                                                 & $\dexp$ is a model that is expanded by palette definition $\rho$
- \\ &&&                                         & into an encoding of the resultant HExp
+ \\ &&&                                         & into a function that takes $\pexp$ of type $\htyp$ and returns
+ \\ &&&                                         & the resultant HExp
 %
 \end{grammar}
 \hfill \\ \hfill \\ \hfill \\ \hfill \\ TODO where do we define the meanings of $\encExp$, $\downArrowsTo{}{}$, and $\decode{}{}$?
 \begin{mathpar}
-\newcommand{\dexpand}{\dexp_{expand}}
-\newcommand{\tmodel}{\tau_{model}}
-\newcommand{\texpansion}{\tau_{expansion}}
-\newcommand{\dmodel}{\dexp_{model}}
-\newcommand{\htypx}{\htyp_x}
-\newcommand{\pexpx}{\pexp_x}
-\newcommand{\hexpx}{\hexp_x}
+\newcommand{\dexpand}{\dexp_{\keyword{expand}}}
+\newcommand{\tmodel}{\htyp_{\keyword{model}}}
+\newcommand{\texpansion}{\htyp_{\keyword{expansion}}}
+\newcommand{\dmodel}{\dexp_{\keyword{model}}}
+\newcommand{\denc}{d_{\keyword{enc}}}
+\newcommand{\tsplice}{\htyp_{\keyword{splice}}}
+\newcommand{\psplice}{\pexp_{\keyword{splice}}}
+\newcommand{\esplice}{\hexp_{\keyword{splice}}}
 \\\\
 \inferrule[SPELetPal]{
     \pi = \pDefRecord{\dexpand}{\tmodel}{\texpansion} \\\\
@@ -58,13 +60,13 @@
 \\\\
 \inferrule[SPEApPal]{
     \rho:\pDefRecord{\dexpand}{\tmodel}{\texpansion} \in \pPhi \\\\
-    \forall x \in C, \left( \pexpandAna{\hGamma}{\pPhi}{\pexpx}{\hexpx}{\htypx} \right) \\\\
+    \pexpandAna{\hGamma}{\pPhi}{\psplice}{\esplice}{\tsplice} \\\\
     \hasType{\EmptyDelta}{\EmptyhGamma}{\dmodel}{\tmodel} \\ \\
-    \downArrowsTo{\dap{\dexpand}{\dmodel}}{enc} \\\\
-    \decode{enc}{\hexp} \\ \\
-    \hana{\fmap{x}{C}{\htypx}}{\hexp}{\texpansion}
+    \downArrowsTo{\dap{\dexpand}{\dmodel}}{\denc} \\\\
+    \decode{\denc}{\hexp} \\ \\
+    \hana{\EmptyhGamma}{\hexp}{\tarr{\tsplice}{\texpansion}}
   }{
-    \pexpandSyn{\hGamma}{\pPhi}{\pexpPalAp{\rho}{\dmodel}{x}{(\htypx, \pexpx)}{C}}{\substitutesub{\hexpx}{x}{x \in C}{e}}{\texpansion}
+    \pexpandSyn{\hGamma}{\pPhi}{\pexpPalAp{\rho}{\dmodel}{\tsplice}{\psplice}}{\hap{\hexp}{\esplice}}{\texpansion}
   }
 \\\\
 \inferrule[APELetPal]{

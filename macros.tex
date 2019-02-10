@@ -47,8 +47,6 @@
 % Expression forms
 \newcommand{\hexp}{e} % Hexp without palettes
 \newcommand{\pexp}{p} % Meta variable for palette expressions
-\newcommand{\pexpPalLet}[3]{\keyword{let palette}\,#1\,\keyword{=}\,#2\,\keyword{in}\,#3}
-\newcommand{\pexpPalAp}[5]{#2\,\keyword{as palette}\,#1\,\keyword{where}\,\fmap{#3}{#5}{#4}}
 \newcommand{\encExp}{Exp} % Whatever htyp encoded things should have
 
 % HExp
@@ -74,6 +72,10 @@
 \newcommand{\hinL}[1]{\mathsf{inl}(#1)}
 \newcommand{\hinR}[1]{\mathsf{inr}(#1)}
 \newcommand{\hcase}[5]{\texttt{case}({#1},{#2}.{#3},{#4}.{#5})}
+
+% Palettes
+\newcommand{\pexpPalLet}[3]{\keyword{let palette}\,#1\,\keyword{=}\,#2\,\keyword{in}\,#3}
+\newcommand{\pexpPalAp}[4]{\hap{{#2}^{\keyword{as}\,#1}}{#4 : #3}}
 
 % Palette definitions
 \newcommand{\pDef}{\pi} % Meta variable for palette definitions
