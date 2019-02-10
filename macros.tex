@@ -32,7 +32,6 @@
 
 % HTyp
 \newcommand{\htyp}[0]{\tau} % Meta variable for types
-\newcommand{\htypc}[0]{\tau_c} % Meta variable for types with cells
 \newcommand{\tarr}[2]{#1 \rightarrow #2}
 %\newcommand{\tsum}[2]{#1 + #2}
 \newcommand{\tprod}[2]{#1 \times #2}
@@ -46,12 +45,11 @@
 \newcommand{\tconsistentc}[2]{#1 \sim_c #2}
 
 % Expression forms
-\newcommand{\hexp}{\iota} % Hexp without cells or palettes
-\newcommand{\hexpc}{\iota_c} % Hexps with cells that can be substituted with pexps
-\newcommand{\pexp}{\rho} % Meta variable for palette expressions
-\newcommand{\cell}[1]{$Cell_{#1}$}
+\newcommand{\hexp}{e} % Hexp without palettes
+\newcommand{\pexp}{p} % Meta variable for palette expressions
 \newcommand{\pexpPalLet}[3]{\keyword{let palette}\,#1\,\keyword{=}\,#2\,\keyword{in}\,#3}
 \newcommand{\pexpPalAp}[5]{#2\,\keyword{as palette}\,#1\,\keyword{where}\,\fmap{#3}{#5}{#4}}
+\newcommand{\encExp}{Exp} % Whatever htyp encoded things should have
 
 % HExp
 \newcommand{\hlam}[2]{\lambda #1.#2}
@@ -186,6 +184,7 @@
 \newcommand{\mvar}[0]{u}
 \newcommand{\subst}[0]{\sigma}
 \newcommand{\substitute}[3]{[#1/#2]#3}
+\newcommand{\substitutesub}[4]{[#1/#2]_{#3}\,#4}
 \newcommand{\fvof}[1]{\mathsf{FV}(#1)}
 \newcommand{\dexp}[0]{d}
 \newcommand{\dconst}[0]{c}
@@ -221,6 +220,7 @@
 \newcommand{\expandSyn}[5]{#1 \vdash #2 \Rightarrow #3 \leadsto #4 \dashv #5}
 \newcommand{\pexpandAna}[5]{#1 \vdash_{#2} #3 \leadsto #4 \Leftarrow #5}
 \newcommand{\pexpandSyn}[5]{#1 \vdash_{#2} #3 \leadsto #4 \Rightarrow #5}
+\newcommand{\decode}[2]{#1 \Uparrow #2}
 \newcommand{\hasType}[4]{#1; #2 \vdash #3 : #4}
 \newcommand{\isValue}[1]{#1~\mathsf{val}}
 \newcommand{\isGround}[1]{#1~\mathsf{ground}}
@@ -251,10 +251,6 @@
 \newcommand{\selectEvalCtxR}[2]{#1\{#2\}}
 \newcommand{\selectEvalCtx}[3]{#1=\selectEvalCtxR{#2}{#3}}
 \newcommand{\maybePremise}[1]{{\textcolor{red}[}#1{\textcolor{red}]}}
-
-%% Cell HExp dynamics and elaboration
-\newcommand{\ceval}[3]{#1 \vdash #2 \Downarrow_c #3}
-\newcommand{\celab}[5]{#1 \vdash_{#2} #3 \leadsto_c #4 \Leftarrow #5}
 
 \newcommand{\inhole}[2]{\mathsf{inhole}(#1; #2)}
 
