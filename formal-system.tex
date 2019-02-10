@@ -38,7 +38,7 @@
  \\ &&&                                         & into an encoding of the resultant HExp
 %
 \end{grammar}
-\hfill \\ \hfill \\ \hfill \\ \hfill \\ TODO where do we define the meanings of $\encExp$ and $\decode{}{}$?
+\hfill \\ \hfill \\ \hfill \\ \hfill \\ TODO where do we define the meanings of $\encExp$, $\downArrowsTo{}{}$, and $\decode{}{}$?
 \begin{mathpar}
 \newcommand{\dexpand}{\dexp_{expand}}
 \newcommand{\tmodel}{\tau_{model}}
@@ -60,7 +60,7 @@
     \rho:\pDefRecord{\dexpand}{\tmodel}{\texpansion} \in \pPhi \\\\
     \forall x \in C, \left( \pexpandAna{\hGamma}{\pPhi}{\pexpx}{\hexpx}{\htypx} \right) \\\\
     \hasType{\EmptyDelta}{\EmptyhGamma}{\dmodel}{\tmodel} \\ \\
-    \multiStepsTo{\dap{\dexpand}{\dmodel}}{enc} \\\\
+    \downArrowsTo{\dap{\dexpand}{\dmodel}}{enc} \\\\
     \decode{enc}{\hexp} \\ \\
     \hana{\fmap{x}{C}{\htypx}}{\hexp}{\texpansion}
   }{
