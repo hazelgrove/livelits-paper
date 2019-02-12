@@ -41,14 +41,14 @@
 \end{grammar}
 \hfill \\ \hfill \\ \hfill \\ \hfill \\ TODO where do we define the meanings of $\encExp$, $\downArrowsTo{}{}$, and $\decode{}{}$?
 \begin{mathpar}
-\newcommand{\dexpand}{\dexp_{\keyword{expand}}}
-\newcommand{\tmodel}{\htyp_{\keyword{model}}}
-\newcommand{\texpansion}{\htyp_{\keyword{expansion}}}
-\newcommand{\dmodel}{\dexp_{\keyword{model}}}
-\newcommand{\denc}{d_{\keyword{enc}}}
-\newcommand{\tsplice}{\htyp_{\keyword{splice}}}
-\newcommand{\psplice}{\pexp_{\keyword{splice}}}
-\newcommand{\esplice}{\hexp_{\keyword{splice}}}
+\newcommand{\dexpand}{\dexp_{\mathsf{expand}}}
+\newcommand{\tmodel}{\htyp_{\mathsf{model}}}
+\newcommand{\texpansion}{\htyp_{\mathsf{expansion}}}
+\newcommand{\dmodel}{\dexp_{\mathsf{model}}}
+\newcommand{\denc}{d_{\mathsf{enc}}}
+\newcommand{\tsplice}{\htyp_{\mathsf{splice}}}
+\newcommand{\psplice}{\pexp_{\mathsf{splice}}}
+\newcommand{\esplice}{\hexp_{\mathsf{splice}}}
 \\\\
 \inferrule[SPELetPal]{
     \pi = \pDefRecord{\dexpand}{\tmodel}{\texpansion} \\\\
