@@ -2,6 +2,12 @@
         \newcommand{\absgrammar}[2]{c\,|\,$x$\,|\,\hap{#1}{#1}\,|\,\halam{$x$}{#2}{#1}}
         \newcommand{\absgrammargen}[2]{\absgrammar{#1}{#2}\,|\,\hlam{$x$}{#1}\,|\,#1 : #2\,|\,\hehole{\mvar}\,|\,\hhole{#1}{\mvar}}
 \begin{grammar}
+ Palette definitions
+ & $\pDef$
+   & $\bnfas$ &
+     $\pDefRecord{\dexp}{\htyp}{\htyp}$
+%
+\\[1ex]
  Basic HTyps
  & $\htyp$
    & $\bnfas$ &
@@ -22,21 +28,14 @@
  \\ &&& $\bnfaltbrk \dcastfail{\dexp}{\htyp}{\htyp}$
 %
 \\[1ex]
- Palette definitions
- & $\pDef$
-   & $\bnfas$ &
-     $\pDefRecord{\dexp}{\htyp}{\htyp}$
-%
-\\[1ex]
  Palette HExps
  & $\pexp$
    & $\bnfas$ &
      $\absgrammargen{\pexp}{\htyp}$
  \\ &&& $\bnfaltbrk \pexpPalLet{\rho}{\pDef}{\pexp}$ & Palette definition $\pDef$ as $\rho$ in $\pexp$
  \\ &&& $\bnfaltbrk \pexpPalAp{\rho}{\dexp}{\htyp}{\pexp}$
-                                                & $\dexp$ is a model that is expanded by palette definition $\rho$
- \\ &&&                                         & into a function that takes $\pexp$ of type $\htyp$ and returns
- \\ &&&                                         & the resultant HExp
+                                                & Palette definition $\rho$ expands model $\dexp$ into a function
+ \\ &&&                                         & that takes $\pexp$ of type $\htyp$ and returns the resultant HExp
 %
 \end{grammar}
 \hfill \\ \hfill \\ \hfill \\ \hfill \\ TODO where do we define the meanings of $\encExp$, $\downArrowsTo{}{}$, and $\decode{}{}$?
