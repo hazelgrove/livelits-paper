@@ -1,3 +1,13 @@
+\newcommand{\dexpand}{\dexp_{\mathsf{expand}}}
+\newcommand{\tmodel}{\htyp_{\mathsf{model}}}
+\newcommand{\texpansion}{\htyp_{\mathsf{expansion}}}
+\newcommand{\dmodel}{\dexp_{\mathsf{model}}}
+\newcommand{\denc}{d_{\mathsf{enc}}}
+\newcommand{\eexpanded}{\hexp_{\mathsf{expanded}}}
+\newcommand{\tsplice}{\htyp_{\mathsf{splice}}}
+\newcommand{\psplice}{\pexp_{\mathsf{splice}}}
+\newcommand{\esplice}{\hexp_{\mathsf{splice}}}
+
 \begin{figure*}
         \newcommand{\absgrammar}[2]{c\,|\,$x$\,|\,\hap{#1}{#1}\,|\,\halam{$x$}{#2}{#1}}
         \newcommand{\absgrammargen}[2]{\absgrammar{#1}{#2}\,|\,\hlam{$x$}{#1}\,|\,#1 : #2\,|\,\hehole{\mvar}\,|\,\hhole{#1}{\mvar}}
@@ -40,15 +50,6 @@
 \end{grammar}
 \hfill \\ \hfill \\ \hfill \\ \hfill \\ TODO where do we define the meanings of $\encExp$, $\downArrowsTo{}{}$, and $\decode{}{}$?
 \begin{mathpar}
-\newcommand{\dexpand}{\dexp_{\mathsf{expand}}}
-\newcommand{\tmodel}{\htyp_{\mathsf{model}}}
-\newcommand{\texpansion}{\htyp_{\mathsf{expansion}}}
-\newcommand{\dmodel}{\dexp_{\mathsf{model}}}
-\newcommand{\denc}{d_{\mathsf{enc}}}
-\newcommand{\eexpanded}{\hexp_{\mathsf{expanded}}}
-\newcommand{\tsplice}{\htyp_{\mathsf{splice}}}
-\newcommand{\psplice}{\pexp_{\mathsf{splice}}}
-\newcommand{\esplice}{\hexp_{\mathsf{splice}}}
 \\\\
 \inferrule[SPELetPal]{
     \pi = \pDefRecord{\dexpand}{\tmodel}{\texpansion} \\\\
@@ -76,7 +77,12 @@
   }{
     \pexpandAna{\hGamma}{\pPhi}{\pexpPalLet{\rho}{\pi}{\pexp}}{\hexp}{\tau}
   }
-\\\\
+\\
+\end{mathpar}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
   \text{Typed palette expansion theorems:}
   \\
   \text{If} \, \pexpandSyn{\hGamma}{\pPhi}{\pexp}{\hexp}{\htyp} \, \text{then}\,
@@ -84,6 +90,47 @@
   \\
   \text{If} \, \pexpandAna{\hGamma}{\pPhi}{\pexp}{\hexp}{\htyp} \, \text{then}\,
      \hana{\hGamma}{\hexp}{\htyp}.
-\\
 \end{mathpar}
+\end{figure*}
+
+\vskip 1cm
+
+\begin{figure*}
+  Due to the particular approach of our formalization, the following always holds:
+  \\
+  If $\pexpandSyn{\hGamma}{\pPhi}{\pexpPalAp{\rho}{\dmodel}{\tsplice}{\psplice}}{\hexp}{\htyp}$
+  \\
+  then $e = \hap{\left( \eexpanded : \tarr{\tsplice}{\htyp} \right)}{\esplice}$
+  \\
+  for some $\eexpanded$, $\esplice$
+  \vskip 0.25cm
+  This fact guarantees that if a palette application expression successfully expands,
+  the expanded result always takes on this specific form.
+  We use this fact as a simplifying assumption in the expression of the reasoning principles that follow.
+  \vskip 0.75cm
+  If $\pexpandSyn{\hGamma}{\pPhi}{\pexpPalAp{\rho}{\dmodel}{\tsplice}{\psplice}}{\hap{\left( \eexpanded : \tarr{\tsplice}{\htyp} \right)}{\esplice}}{\htyp}$ then the following must hold:
+  \vskip 0.5cm
+  \begin{enumerate}
+    \item
+      \textbf{Expansion Typing}: The expanded expression synthesizes the expansion type specified in the palette definition.
+      \\
+      $\rho : \pDefRecord{\_}{\_}{\htyp} \in \pPhi$
+      \vskip 0.3cm
+    \item
+      \textbf{Responsibility}: The palette definition's $\mathsf{expand}$ function is responsible for expanding the model -
+      \\
+      the result of this expansion is evaluated to a value, then that value is decoded into an hexp.
+      \\
+      $\rho : \pDefRecord{\dexpand}{\_}{\_} \in \pPhi$ and $\downArrowsTo{\dap{\dexpand}{\dmodel}}{\denc}$ and $\decode{\denc}{\eexpanded}$
+      \vskip 0.3cm
+    \item
+      \textbf{Splice Typing}: The splice expression will also expand successfully, and the result can be analyzed against the type specified by the palette application expression.
+      \\
+      $\pexpandAna{\hGamma}{\pPhi}{\psplice}{\esplice}{\tsplice}$ and therefore $\hana{\hGamma}{\esplice}{\tsplice}$
+      \vskip 0.3cm
+    \item
+      \textbf{Context Independence}: The function component of the expanded form has no free variables, guaranteeing that it does not rely on any bindings in the application site context.
+      \\
+      $\mathsf{free\_vars} \left( \eexpanded : \tarr{\tsplice}{\htyp} \right) = \emptyset$
+  \end{enumerate}
 \end{figure*}
