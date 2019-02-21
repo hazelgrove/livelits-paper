@@ -5,7 +5,6 @@
 % }
 
 \newcommand{\cmttclo}[2]{\mathsf{clo}(#1, #2)}
-\renewcommand{\keyword}[1]{\mathsf{#1}}
 
 % \newcommand{\CaptionLabel}[2]{
 %   \caption{#1 {\small\textcolor{cyan}{(#2)}}}
@@ -76,16 +75,16 @@
 
 % Palettes
 \newcommand{\pexpPalLet}[3]{\keyword{let palette}\,#1\,\keyword{=}\,#2\,\keyword{in}\,#3}
-\newcommand{\pexpPalAp}[4]{\hap{{#2}^{\keyword{as}\,#1}}{#4 : #3}}
+\newcommand{\pexpPalAp}[4]{#1 \left(#2;\,#4 : #3 \right)}
 
 % Palette definitions
 \newcommand{\pDef}{\pi} % Meta variable for palette definitions
-\newcommand{\pDefRecord}[3]{\{ \keyword{expand}: #1, \, \keyword{modelTyp}: #2, \, \keyword{expandTyp}: #3\}}
+\newcommand{\pDefRecord}[3]{\{ \mathsf{expand}: #1, \, \mathsf{modelTyp}: #2, \, \mathsf{expandTyp}: #3\}}
 
 \newcommand{\hGamma}{\Gamma}
 \newcommand{\pPhi}{\Phi}
-\newcommand{\EmptyhGamma}{\emptyset} % From hand-written notes, Canonical forms lemma; page 14
-\newcommand{\EmptyDelta}{\cdot} % From hand-written notes, ES-Const rule, page 1
+\newcommand{\EmptyhGamma}{\emptyset}
+\newcommand{\EmptyDelta}{\emptyset}
 \newcommand{\domof}[1]{\text{dom}(#1)}
 \newcommand{\hsyn}[3]{#1 \vdash #2 \Rightarrow #3}
 \newcommand{\hana}[3]{#1 \vdash #2 \Leftarrow #3}
@@ -223,7 +222,7 @@
 \newcommand{\expandSyn}[5]{#1 \vdash #2 \Rightarrow #3 \leadsto #4 \dashv #5}
 \newcommand{\pexpandAna}[5]{#1 \vdash_{#2} #3 \leadsto #4 \Leftarrow #5}
 \newcommand{\pexpandSyn}[5]{#1 \vdash_{#2} #3 \leadsto #4 \Rightarrow #5}
-\newcommand{\decode}[2]{#1 \Uparrow #2}
+\newcommand{\decode}[2]{#1 \uparrow #2}
 \newcommand{\hasType}[4]{#1; #2 \vdash #3 : #4}
 \newcommand{\isValue}[1]{#1~\mathsf{val}}
 \newcommand{\isGround}[1]{#1~\mathsf{ground}}
