@@ -96,41 +96,52 @@
 \vskip 1cm
 
 \begin{figure*}
-  Due to the particular approach of our formalization, the following always holds:
-  \\
-  If $\pexpandSyn{\hGamma}{\pPhi}{\pexpPalAp{\rho}{\dmodel}{\tsplice}{\psplice}}{\hexp}{\htyp}$
-  \\
-  then $e = \hap{\left( \eexpanded : \tarr{\tsplice}{\htyp} \right)}{\esplice}$
-  \\
-  for some $\eexpanded$, $\esplice$
-  \vskip 0.25cm
-  This fact guarantees that if a palette application expression successfully expands,
-  the expanded result always takes on this specific form.
-  We use this fact as a simplifying assumption in the expression of the reasoning principles that follow.
-  \vskip 0.75cm
-  If $\pexpandSyn{\hGamma}{\pPhi}{\pexpPalAp{\rho}{\dmodel}{\tsplice}{\psplice}}{\hap{\left( \eexpanded : \tarr{\tsplice}{\htyp} \right)}{\esplice}}{\htyp}$ then the following must hold:
+  If $\pexpandSyn{\hGamma}{\pPhi}{\pexpPalAp{\rho}{\dmodel}{\tsplice}{\psplice}}{\hexp}{\htyp}$ then the following must hold:
   \vskip 0.5cm
   \begin{enumerate}
     \item
-      \textbf{Expansion Typing}: The expanded expression synthesizes the expansion type specified in the palette definition.
+      \textbf{Expanded Application Form}: The expansion result has a specific form; particularly that of a function application,
+      where the function part is ascripted with an arrow type from the splice type (specified by the original expression) to the
+      expansion result type.
       \\
-      $\rho : \pDefRecord{\_}{\_}{\htyp} \in \pPhi$
+      \hskip 2em $e = \hap{\left( \eexpanded : \tarr{\tsplice}{\htyp} \right)}{\esplice}$ for some $\eexpanded$, $\esplice$
+      \\
+      This form satisfies the \textbf{Capture Avoidance} principle described in (TODO - cite the TLM paper),
+      as it renders incorrect capturing structurally impossible.
+      \vskip 0.3cm
+    \item
+      \textbf{Context Lookup}: The palette context contains a definition for the specified palette name.
+      \\
+      \hskip 2em $\rho : \pDefRecord{\dexpand}{\tmodel}{\texpansion} \in \pPhi$
+      \vskip 0.3cm
+    \item
+      \textbf{Expansion Typing}: The expanded expression synthesizes the result type (a consequence of the "Typed Palette Expansion"
+      theorem), and the result type is the same as the expansion type specified in the palette definition.
+      \\
+      \hskip 2em $\rho : \hsyn{\hGamma}{\hexp}{\htyp}$ and $\htyp = \texpansion$
+      \vskip 0.3cm
+    \item
+      \textbf{Model Typing}: The model specified in the original expression has the type specified in the palette definition, and it
+      does not rely on any bindings in the application site context.
+      \\
+      \hskip 2em $\hasType{\EmptyDelta}{\EmptyhGamma}{\dmodel}{\tmodel}$
       \vskip 0.3cm
     \item
       \textbf{Responsibility}: The palette definition's $\mathsf{expand}$ function is responsible for expanding the model -
-      \\
       the result of this expansion is evaluated to a value, then that value is decoded into an hexp.
       \\
-      $\rho : \pDefRecord{\dexpand}{\_}{\_} \in \pPhi$ and $\downArrowsTo{\dap{\dexpand}{\dmodel}}{\denc}$ and $\decode{\denc}{\eexpanded}$
+      \hskip 2em $\downArrowsTo{\dap{\dexpand}{\dmodel}}{\denc}$ and $\decode{\denc}{\eexpanded}$
       \vskip 0.3cm
     \item
-      \textbf{Splice Typing}: The splice expression will also expand successfully, and the result can be analyzed against the type specified by the palette application expression.
+      \textbf{Splice Typing}: The splice expression expands into the argument part of the expanded form,
+      which can be analyzed against the type specified by the original expression.
       \\
-      $\pexpandAna{\hGamma}{\pPhi}{\psplice}{\esplice}{\tsplice}$ and therefore $\hana{\hGamma}{\esplice}{\tsplice}$
+      \hskip 2em $\pexpandAna{\hGamma}{\pPhi}{\psplice}{\esplice}{\tsplice}$ and therefore $\hana{\hGamma}{\esplice}{\tsplice}$
       \vskip 0.3cm
     \item
-      \textbf{Context Independence}: The function component of the expanded form has no free variables, guaranteeing that it does not rely on any bindings in the application site context.
+      \textbf{Context Independence}: The function part of the expanded form has no free variables, guaranteeing that it does not
+      rely on any bindings in the application site context.
       \\
-      $\mathsf{free\_vars} \left( \eexpanded : \tarr{\tsplice}{\htyp} \right) = \emptyset$
+      \hskip 2em $\mathsf{free\_vars} \left( \eexpanded : \tarr{\tsplice}{\htyp} \right) = \emptyset$
   \end{enumerate}
 \end{figure*}
