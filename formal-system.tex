@@ -96,7 +96,13 @@
 \vskip 1cm
 
 \begin{figure*}
-  If $\pexpandSyn{\hGamma}{\pPhi}{\pexpPalAp{\rho}{\dmodel}{\tsplice}{\psplice}}{\hexp}{\htyp}$ then the following must hold:
+  For all $\hGamma$, $\pPhi$, $\rho$, $\dmodel$, $\psplice$, $\tsplice$, $\hexp$, and $\htyp$,
+  \\
+  if $\pexpandSyn{\hGamma}{\pPhi}{\pexpPalAp{\rho}{\dmodel}{\tsplice}{\psplice}}{\hexp}{\htyp}$
+  \\
+  then $\rho$ must be defined (i.e. $\rho : \pDefRecord{\dexpand}{\tmodel}{\texpansion} \in \pPhi$)
+  \\
+  and there must exist $\eexpanded$ and $\esplice$ such that the following hold:
   \vskip 0.5cm
   \begin{enumerate}
     \item
@@ -104,27 +110,16 @@
       where the function part is ascripted with an arrow type from the splice type (specified by the original expression) to the
       expansion result type.
       \\
-      \hskip 2em $e = \hap{\left( \eexpanded : \tarr{\tsplice}{\htyp} \right)}{\esplice}$ for some $\eexpanded$, $\esplice$
+      \hskip 2em $e = \hap{\left( \eexpanded : \tarr{\tsplice}{\htyp} \right)}{\esplice}$
       \\
       This form satisfies the \textbf{Capture Avoidance} principle described in (TODO - cite the TLM paper),
       as it renders incorrect capturing structurally impossible.
       \vskip 0.3cm
     \item
-      \textbf{Context Lookup}: The palette context contains a definition for the specified palette name.
-      \\
-      \hskip 2em $\rho : \pDefRecord{\dexpand}{\tmodel}{\texpansion} \in \pPhi$
-      \vskip 0.3cm
-    \item
       \textbf{Expansion Typing}: The expanded expression synthesizes the result type (a consequence of the "Typed Palette Expansion"
       theorem), and the result type is the same as the expansion type specified in the palette definition.
       \\
-      \hskip 2em $\rho : \hsyn{\hGamma}{\hexp}{\htyp}$ and $\htyp = \texpansion$
-      \vskip 0.3cm
-    \item
-      \textbf{Model Typing}: The model specified in the original expression has the type specified in the palette definition, and it
-      does not rely on any bindings in the application site context.
-      \\
-      \hskip 2em $\hasType{\EmptyDelta}{\EmptyhGamma}{\dmodel}{\tmodel}$
+      \hskip 2em $\hsyn{\hGamma}{\hexp}{\htyp}$ and $\htyp = \texpansion$
       \vskip 0.3cm
     \item
       \textbf{Responsibility}: The palette definition's $\mathsf{expand}$ function is responsible for expanding the model -
