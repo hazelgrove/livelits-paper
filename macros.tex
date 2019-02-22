@@ -76,10 +76,12 @@
 % Palettes
 \newcommand{\pexpPalLet}[3]{\keyword{let palette}\,#1\,\keyword{=}\,#2\,\keyword{in}\,#3}
 \newcommand{\pexpPalAp}[4]{#1 \left(#2;\,#4 : #3 \right)}
+\newcommand{\pexpPalApF}[3]{#1 \left(#2;\,#3\right)}
 
 % Palette definitions
 \newcommand{\pDef}{\pi} % Meta variable for palette definitions
 \newcommand{\pDefRecord}[3]{\{ \mathsf{expand}: #1, \, \mathsf{modelTyp}: #2, \, \mathsf{expandTyp}: #3\}}
+\newcommand{\pDefRecordF}[4]{\{ \mathsf{expand}: #1, \, \mathsf{modelTyp}: #2, \, \mathsf{spliceTyp}: #3, \, \mathsf{expandTyp}: #4\}}
 
 \newcommand{\hGamma}{\Gamma}
 \newcommand{\pPhi}{\Phi}

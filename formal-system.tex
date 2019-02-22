@@ -8,6 +8,9 @@
 \newcommand{\psplice}{\pexp_{\mathsf{splice}}}
 \newcommand{\esplice}{\hexp_{\mathsf{splice}}}
 
+\newcommand{\eexpand}{\hexp_{\mathsf{expand}}}
+\newcommand{\emodel}{\hexp_{\mathsf{model}}}
+
 \begin{figure*}
         \newcommand{\absgrammar}[2]{c\,|\,$x$\,|\,\hap{#1}{#1}\,|\,\halam{$x$}{#2}{#1}}
         \newcommand{\absgrammargen}[2]{\absgrammar{#1}{#2}\,|\,\hlam{$x$}{#1}\,|\,#1 : #2\,|\,\hehole{\mvar}\,|\,\hhole{#1}{\mvar}}
@@ -93,9 +96,40 @@
 \end{mathpar}
 \end{figure*}
 
-\vskip 1cm
+\begin{figure*}
+Function-style palettes
+\begin{mathpar}
+\\\\
+\inferrule[SPELetPal]{
+    \pi = \pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion} \\\\
+    \hsyn{\EmptyhGamma}{\eexpand}{\tarr{\tmodel}{\tarr{\tsplice}{\texpansion}}} \\ \\
+    \pexpandSyn{\hGamma}{\pPhi, \rho : \pi}{\pexp}{\hexp}{\tau}
+  }{
+    \pexpandSyn{\hGamma}{\pPhi}{\pexpPalLet{\rho}{\pi}{\pexp}}{\hexp}{\tau}
+  }
+\\\\
+\inferrule[SPEApPal]{
+    \rho:\pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion} \in \pPhi \\\\
+    \pexpandAna{\hGamma}{\pPhi}{\psplice}{\esplice}{\tsplice} \\ \\
+    \hana{\EmptyhGamma}{\emodel}{\tmodel} \\\\
+    \hsyn{\EmptyhGamma}{\eexpand}{\tarr{\tmodel}{\tarr{\tsplice}{\texpansion}}}
+  }{
+    \pexpandSyn{\hGamma}{\pPhi}{\pexpPalApF{\rho}{\emodel}{\psplice}}{\hap{\hap{\eexpand}{\emodel}}{\esplice}}{\texpansion}
+  }
+\\\\
+\inferrule[APELetPal]{
+    \pi = \pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion} \\\\
+    \hsyn{\EmptyhGamma}{\eexpand}{\tarr{\tmodel}{\tarr{\tsplice}{\texpansion}}} \\ \\
+    \pexpandAna{\hGamma}{\pPhi, \rho : \pi}{\pexp}{\hexp}{\tau}
+  }{
+    \pexpandAna{\hGamma}{\pPhi}{\pexpPalLet{\rho}{\pi}{\pexp}}{\hexp}{\tau}
+  }
+\\
+\end{mathpar}
+\end{figure*}
 
 \begin{figure*}
+  \vskip 1cm
   For all $\hGamma$, $\pPhi$, $\rho$, $\dmodel$, $\psplice$, $\tsplice$, $\hexp$, and $\htyp$,
   \\
   if $\pexpandSyn{\hGamma}{\pPhi}{\pexpPalAp{\rho}{\dmodel}{\tsplice}{\psplice}}{\hexp}{\htyp}$
