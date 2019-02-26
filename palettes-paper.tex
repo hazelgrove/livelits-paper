@@ -398,37 +398,14 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \end{quote}
 
 \input{intro}
-
-\section{Examples}
-\subsection{Boolean}
-Checkbox
-
-\subsection{Matrix}
-Simple example
-
-\subsection{Grade Cutoffs}
-Uses liveness more obviously
-
-\subsection{Table}
-Uses type reflection
-
-\subsection{Pixel Art}
-Cool example
-
-\subsection{Regex}
-Similar to Graphite paper, can cite the empirical study we did there
-
-\subsection{Forms}
-Show off composition + mention full-screening stuff
-
-\subsection{Equation Editor, Judgement Editor and Category Diagrams}
-Things that PL people like 
-
-\subsection{TikZ diagrams}
-...
+\input{overview}
 
 \clearpage
-\section{Defining Palettes}
+
+%% \section{Defining Palettes}
+
+\section{Overview Examples: Defining Palettes}
+
 Palette definitions take the following general form:
 \begin{lstlisting}
 palette $name 
@@ -516,9 +493,34 @@ module HRE : {
 
 \subsection{Deriving Palettes from Type Definitions?}
 
+\clearpage
+
 \section{Formal System}
+
+\begin{itemize}
+
+\item
+%
+3 systems, 3 pairs of def/app rules
+
+\begin{enumerate}
+  \item functions / analytic
+  \item macros / analytic
+  \item macros / synthetic
+\end{enumerate}
+
+\item edit actions
+
+\item live palettes
+
+\end{itemize}
+
 \input{formal-system}
 
+\clearpage
+\input{evaluation}
+
+\clearpage
 \section{Related Work}
 Graphite, Relit, projectional editors, notebooks / Mathematica, 
 
