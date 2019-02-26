@@ -14,6 +14,11 @@
 \newcommand{\mattTodo}[1]{\todo[linecolor=green,backgroundcolor=green!2,bordercolor=green]{\tiny\textit{#1}}}
 \newcommand{\mattOmit}[1]{\colorbox{yellow}{(Matt omitted stuff here)}}
 
+\usepackage{amssymb}% http://ctan.org/pkg/amssymb
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
 \def\parahead#1{\paragraph{\textbf{#1.}}}
 %% \def\paraheadNoDot#1{\paragraph{{\textbf{#1}}}}
 \def\subparahead#1{\paragraph{\textit{#1.}}}
@@ -30,8 +35,12 @@
 %% \newcommand{\sns}{\ensuremath{\textsc{Sketch-n-Sketch}}}
 %% \newcommand{\deuce}{\ensuremath{\textsc{Deuce}}}
 \newcommand{\Elm}{\ensuremath{\textsf{Elm}}}
-\newcommand{\sns}{\ensuremath{\textrm{Sketch-n-Sketch}}}
-\newcommand{\deuce}{\ensuremath{\textrm{Deuce}}}
+\newcommand{\sns}
+  %% {\ensuremath{\textrm{Sketch-n-Sketch}}}
+  {\ensuremath{\textsf{Sketch-n-Sketch}}}
+\newcommand{\deuce}
+  %% {\ensuremath{\textrm{Deuce}}}
+  {\ensuremath{\textsf{Deuce}}}
 
 \newcommand{\sectionDescription}[1]{\section{#1}}
 \newcommand{\subsectionDescription}[1]{\subsection{#1}}

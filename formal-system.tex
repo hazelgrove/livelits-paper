@@ -1,3 +1,97 @@
+\section{Formal System}
+
+\subsection{Background: \Hazelnut}
+
+\begin{itemize}
+
+\item typed expressions with holes
+
+\end{itemize}
+
+\parahead{Static Semantics}
+
+\begin{itemize}
+
+\item \cite{Hazelnut}
+
+\end{itemize}
+
+\parahead{Dynamic Semantics}
+
+\begin{itemize}
+
+\item \cite{HazelnutLive}
+
+\end{itemize}
+
+\subsection{Palette Expressions}
+
+\parahead{Palette Macros}
+
+\begin{itemize}
+
+\item macros / analytic
+
+\item macros / synthetic
+
+\item synthetic requires type splices
+
+\item can there be an ``untyped'' version that is like synthetic but relies on casts rather than type splices?
+
+\end{itemize}
+
+\parahead{Palette Functions}
+
+\begin{itemize}
+
+\item functions / analytic
+
+\end{itemize}
+
+\subsection{Edit Actions}
+
+\parahead{Palette Initialization}
+
+\begin{itemize}
+
+\item init 
+
+\end{itemize}
+
+\parahead{Palette-Specific Actions}
+
+\begin{itemize}
+
+\item defined and registered with the editor, can be used for the ``normal''
+action tool box
+
+\item like other actions, can be recorded in action history and, in the future,
+scripted in edit action macros
+
+\end{itemize}
+
+\subsection{Live Palettes}
+
+\begin{itemize}
+
+\item for view function
+
+\item hole for palette application, run, collect hole closures, pass to view
+
+\end{itemize}
+
+\subsection{Extensions}
+
+\begin{itemize}
+
+\item parameterized palettes (value arguments)
+
+\item polymorphic analytic palettes (type arguments)
+
+\end{itemize}
+
+
+
 \newcommand{\dexpand}{\dexp_{\mathsf{expand}}}
 \newcommand{\tmodel}{\htyp_{\mathsf{model}}}
 \newcommand{\texpansion}{\htyp_{\mathsf{expansion}}}

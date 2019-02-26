@@ -384,20 +384,30 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \maketitle
 \thispagestyle{empty} % suppresses the footer
 
-\begin{quote}
-%
-\textit{
-%
-``The arithmetical symbols are written diagrams and the geometrical figures are graphic formulas.''
-%
-}
+\setcounter{section}{-1}
+\section{TODO List}
 
-\vspace{3pt}
+\begin{itemize}
 
-\hfill{}--- David Hilbert~\cite{XXX}
-\end{quote}
+\item[\cmark] palette macros
+\item action semantics
+\item \Hazel{} in \Hazel{} (sums, productions, recursive types)
+\item palette functions
+\item live palettes
+\item synthetic (or fancy record-type-level-computation) (or not-fancy untyped) palettes
+\item parameterized palettes
+\item palette-specific actions
+\item option to render palette macro expansion as expression or value
+\item \Hazel{} UI: ``formula bar'' for expressions
+\item \sns{} implementation
+\item examples!
 
+\end{itemize}
+
+\clearpage
 \input{intro}
+
+\clearpage
 \input{overview}
 
 \clearpage
@@ -494,27 +504,6 @@ module HRE : {
 \subsection{Deriving Palettes from Type Definitions?}
 
 \clearpage
-
-\section{Formal System}
-
-\begin{itemize}
-
-\item
-%
-3 systems, 3 pairs of def/app rules
-
-\begin{enumerate}
-  \item functions / analytic
-  \item macros / analytic
-  \item macros / synthetic
-\end{enumerate}
-
-\item edit actions
-
-\item live palettes
-
-\end{itemize}
-
 \input{formal-system}
 
 \clearpage
@@ -543,6 +532,43 @@ formalized        N           N                       Y        Y
 \end{figure*}
 
 \section{Discussion}
+
+\parahead{User Interface Design}
+
+\begin{itemize}
+
+\item
+%
+our \Hazel{} and \sns{} prototypes demonstrated two simple approaches to palette
+layout: inline and floating, respectively.
+%
+might also want user-controlled layout and pinning.
+
+\end{itemize}
+
+\parahead{Deriving Palettes from Type Definitions}
+
+\begin{itemize}
+
+\item \cite{SSS}
+
+\end{itemize}
+
+\section{Conclusion}
+
+\begin{quote}
+%
+\textit{
+%
+``The arithmetical symbols are written diagrams and the geometrical figures are graphic formulas.''
+%
+}
+
+\vspace{3pt}
+
+\hfill{}--- David Hilbert~\cite{XXX}
+\end{quote}
+
 
 %\clearpage
 \bibliography{references,all.short,hazel_NSF}
