@@ -191,12 +191,21 @@ scripted in edit action macros
 \end{figure*}
 
 \begin{figure*}
+\vskip 2cm
 Function-style palettes
+\vskip 0.5cm
+Well-formed context principle: In the following, any instance of a palette context (e.g. $\pPhi$) is taken
+to be "well-formed", in the sense that:
+\\
+For all $\rho : \pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion} \in \pPhi$,
+$\hana{\EmptyhGamma}{\eexpand}{\tarr{\tmodel}{\tarr{\tsplice}{\texpansion}}}$.
+\\
+The rules enforce the inductive case of this principle.
 \begin{mathpar}
 \\\\
 \inferrule[SPELetPal]{
     \pi = \pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion} \\\\
-    \hsyn{\EmptyhGamma}{\eexpand}{\tarr{\tmodel}{\tarr{\tsplice}{\texpansion}}} \\ \\
+    \hana{\EmptyhGamma}{\eexpand}{\tarr{\tmodel}{\tarr{\tsplice}{\texpansion}}} \\ \\
     \pexpandSyn{\hGamma}{\pPhi, \rho : \pi}{\pexp}{\hexp}{\tau}
   }{
     \pexpandSyn{\hGamma}{\pPhi}{\pexpPalLet{\rho}{\pi}{\pexp}}{\hexp}{\tau}
@@ -205,10 +214,9 @@ Function-style palettes
 \inferrule[SPEApPal]{
     \rho:\pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion} \in \pPhi \\\\
     \pexpandAna{\hGamma}{\pPhi}{\psplice}{\esplice}{\tsplice} \\ \\
-    \hana{\EmptyhGamma}{\emodel}{\tmodel} \\\\
-    \hsyn{\EmptyhGamma}{\eexpand}{\tarr{\tmodel}{\tarr{\tsplice}{\texpansion}}}
+    \hana{\EmptyhGamma}{\emodel}{\tmodel}
   }{
-    \pexpandSyn{\hGamma}{\pPhi}{\pexpPalApF{\rho}{\emodel}{\psplice}}{\hap{\hap{\eexpand}{\emodel}}{\esplice}}{\texpansion}
+    \pexpandSyn{\hGamma}{\pPhi}{\pexpPalApF{\rho}{\emodel}{\psplice}}{\hap{\hap{\left( \eexpand : \tarr{\tmodel}{\tarr{\tsplice}{\texpansion}} \right)}{\emodel}}{\esplice}}{\texpansion}
   }
 \\\\
 \inferrule[APELetPal]{
