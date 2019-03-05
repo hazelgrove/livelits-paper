@@ -216,7 +216,7 @@ Function-style palettes
 
 \begin{mathpar}
 \\\\
-\inferrule[SPELetPal]{
+\inferrule[SPELetFPal]{
     \pi = \pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion} \\\\
     \pPhiWF{\pPhi} \\ \\
     \pexpandSyn{\hGamma}{\pPhi, \rho : \pi}{\pexp}{\hexp}{\tau} \\\\
@@ -225,7 +225,7 @@ Function-style palettes
     \pexpandSyn{\hGamma}{\pPhi}{\pexpPalLet{\rho}{\pi}{\pexp}}{\hexp}{\tau}
   }
 \\\\
-\inferrule[SPEApPal]{
+\inferrule[SPEApFPal]{
     \rho:\pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion} \in \pPhi \\\\
     \pPhiWF{\pPhi} \\ \\
     \pexpandAna{\hGamma}{\pPhi}{\psplice}{\esplice}{\tsplice} \\\\
@@ -234,7 +234,7 @@ Function-style palettes
     \pexpandSyn{\hGamma}{\pPhi}{\pexpPalApF{\rho}{\emodel}{\psplice}}{\hap{\hap{\left( \eexpand : \tarr{\tmodel}{\tarr{\tsplice}{\texpansion}} \right)}{\emodel}}{\esplice}}{\texpansion}
   }
 \\\\
-\inferrule[APELetPal]{
+\inferrule[APELetFPal]{
     \pi = \pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion} \\\\
     \pPhiWF{\pPhi} \\ \\
     \pexpandAna{\hGamma}{\pPhi, \rho : \pi}{\pexp}{\hexp}{\tau} \\\\
