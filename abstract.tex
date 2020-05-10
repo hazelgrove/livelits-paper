@@ -1,50 +1,32 @@
-% !TEX root = palettes-paper.tex
+% !TEX root = livelits-paper.tex
 
 %% no citations in Abstract
 %%
 %% \cite{popl-paper}
 
 \begin{abstract}
-%
-%% \vspace{2.00in} %% TODO leave room for authors/copyright
-%
-We present \emph{palette expressions}, an approach to programming custom
-graphical user interfaces (GUIs) that are used to build expressions---to ``fill
-holes''---within an incomplete program.
-%
-Palette expressions serve as an alternative and complementary code editing
-mechanism to traditional text-editing.
-%
-Compared to other ``hybrid'' text-and-GUI code editors, palette expressions
-provide several unique capabilities.
-%
-First, a palette persists even after user interactions produce a complete
-expression that fills the hole, so that the programmer can return to the GUI to
-make subsequent changes.
-%
-Second, palettes for smaller expression types can appear nested within those for
-larger expressions, allowing palettes to be composed in complex ways.
-%
-Third, palettes have access to the execution environment---even when the overall
-program is not yet complete---and can, thus, provide live feedback to the
-programmer while working to fill an incomplete expression.
-
-This paper investigates the design and implementation of palettes in several
-steps.
-%
-First, we propose a formal framework for palettes within Hazelnut, a
-foundational semantics for live programming that provides continuous code editor
-services through a combination of structured edits and dynamic evaluation of
-incomplete programs.
-%
-Second, to demonstrate the expressiveness of our framework, we describe several
-example palettes, many of which are informed by a prior study that identified
-desirable use cases for hybrid editors.
-%
-Lastly, we provide a prototype implementation of palettes within Hazel, a
-programming environment based on the Hazelnut theory extended with palettes.
-%
-Based on our experience, we believe palettes are an extensible and expressive
-approach for mixing text- and GUI-based code editing.
-
+    Although textual program manipulation is powerful, 
+    some types of expressions are more naturally represented and manipulated
+    graphically.     
+    Examples include expressions computing   
+    colors,
+    animation parameters,
+    musical sequences,
+    tabular data, 
+    plot parameters,
+    GUI widgets, 
+    and many other domain-specific data structures.
+    This paper introduces \emph{live literals}, or \emph{livelits}, which allow
+    a programmer to fill holes of types like these by directly manipulating a corresponding    
+    GUI embedded persistently into the code. 
+    Livelits are compositional: the GUI can itself contain
+    spliced expressions, which in turn can contain other livelits. Splices are typed, and the system 
+    requires that the livelit treat each splice hygienically. 
+    Livelits are also live: they can provide {immediate feedback} about the dynamic implications 
+    of the programmer's choices 
+    even when the spliced expressions mention bound variables, because the system gathers closures associated with the hole that the livelit is tasked with filling.
+    This paper details the livelits mechanism with several non-trivial case studies. 
+    It then defines a typed lambda calculus that captures the essence of the mechanism.     
+    Our implementation extends Hazel, a web-based live programming environment able to assign
+    static and dynamic meaning to programs with holes. 
 \end{abstract}

@@ -1,4 +1,4 @@
-MAIN=palettes-paper
+MAIN=livelits-paper
 
 all:
 	pdflatex $(MAIN)

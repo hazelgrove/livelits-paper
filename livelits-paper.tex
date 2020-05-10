@@ -5,7 +5,8 @@
 %% \settopmatter{printfolios=true,printccs=false,printacmref=false}
 
 %% For double-blind review submission, w/o CCS and ACM Reference (max submission space)
-\documentclass[acmsmall,review,anonymous]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
+\documentclass[acmsmall,review,anonymous,nonacm]{acmart}
+\settopmatter{printfolios=true,printccs=false,printacmref=false}
 %% For double-blind review submission, w/ CCS and ACM Reference
 %\documentclass[acmsmall,review,anonymous]{acmart}\settopmatter{printfolios=true}
 %% For single-blind review submission, w/o CCS and ACM Reference (max submission space)
@@ -36,7 +37,7 @@
 %\copyrightyear{2018}           %% If different from \acmYear
 
 %% Bibliography style
-\bibliographystyle{ACM-Reference-Format}
+% \bibliographystyle{ACM-Reference-Format}
 %% Citation style
 %\citestyle{acmauthoryear}  %% For author/year citations
 %\citestyle{acmnumeric}     %% For numeric citations
@@ -209,11 +210,9 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \begin{document}
 
 %% Title information
-%% \title{Live Hole Filling by Direct Manipulation}         %% [Short Title] is optional;
-%% \title{Live and Direct Functional Programming \\with Palette Expressions}
 \title
-  [Programming with Direct Manipulation of Palette Expressions]
-  {Programming with Direct Manipulation of\\Palette Expressions}
+  [Filling Typed Holes with Live GUIs]
+  {Filling Typed Holes with Live GUIs}
   %% [Programming by Direct Manipulation of Palettes]
   %% {Functional Programming by\\Direct Manipulation of Live Palette Expressions}
 
@@ -246,7 +245,7 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \affiliation{
   % \position{Position1}
   % \department{Department1}              %% \department is recommended
-  \institution{University of Chicago}            %% \institution is required
+  \institution{University of Michigan}            %% \institution is required
   % \streetaddress{Street1 Address1}
   % \city{City1}
   % \state{State1}
@@ -254,6 +253,39 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
   % \country{Country1}
 }
 \email{comar@cs.uchicago.edu}          %% \email is recommended
+
+\author{Nick Collins}
+% \authornote{with author1 note}          %% \authornote is optional;
+                                        %% can be repeated if necessary
+% \orcid{nnnn-nnnn-nnnn-nnnn}             %% \orcid is optional
+\affiliation{
+  % \position{Position1}
+  % \department{Department1}              %% \department is recommended
+  \institution{University of Chicago}            %% \institution is required
+  % \streetaddress{Street1 Address1}
+  % \city{City1}
+  % \state{State1}
+  % \postcode{Post-Code1}
+  % \country{Country1}
+}
+\email{nickmc@uchicago.edu}          %% \email is recommended
+
+\author{David Moon}
+% \authornote{with author1 note}          %% \authornote is optional;
+                                        %% can be repeated if necessary
+% \orcid{nnnn-nnnn-nnnn-nnnn}             %% \orcid is optional
+\affiliation{
+  % \position{Position1}
+  % \department{Department1}              %% \department is recommended
+  \institution{University of Colorado Boulder}            %% \institution is required
+  % \streetaddress{Street1 Address1}
+  % \city{City1}
+  % \state{State1}
+  % \postcode{Post-Code1}
+  % \country{Country1}
+}
+\email{domo9239@colorado.edu}          %% \email is recommended
+
 
 \author{Ian Voysey}
 % \authornote{with author1 note}          %% \authornote is optional;
@@ -287,22 +319,21 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 }
 \email{rchugh@cs.uchicago.edu}          %% \email is recommended
 
-\author{Matthew A. Hammer}
+\author{Ravi Chugh}
 % \authornote{with author1 note}          %% \authornote is optional;
                                         %% can be repeated if necessary
 % \orcid{nnnn-nnnn-nnnn-nnnn}             %% \orcid is optional
 \affiliation{
   % \position{Position1}
   % \department{Department1}              %% \department is recommended
-  \institution{University of Colorado Boulder}            %% \institution is required
+  \institution{University of Chicago}            %% \institution is required
   % \streetaddress{Street1 Address1}
   % \city{City1}
   % \state{State1}
   % \postcode{Post-Code1}
   % \country{Country1}
 }
-\email{matthew.hammer@colorado.edu}          %% \email is recommended
-
+\email{rchugh@cs.uchicago.edu}          %% \email is recommended
 
 % %% Author with two affiliations and emails.
 % \author{First2 Last2}
@@ -374,7 +405,7 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 %% Keywords
 %% comma separated list
 % \keywords{keyword1, keyword2, keyword3}  %% \keywords is optional
-\keywords{Live Programming, Palettes, Hazel, Code Editors}
+% \keywords{Live Programming, Palettes, Hazel, Code Editors}
 
 
 %% \maketitle
@@ -382,35 +413,30 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 %% commands, abstract environment, Computing Classification System
 %% environment and commands, and keywords command.
 \maketitle
-\thispagestyle{empty} % suppresses the footer
+% \thispagestyle{empty} % suppresses the footer
 
-\setcounter{section}{-1}
-\section{TODO List}
+% \section{TODO List}
 
-\begin{itemize}
+% \begin{itemize}
 
-\item[\cmark] palette macros
-\item action semantics
-\item \Hazel{} in \Hazel{} (sums, productions, recursive types)
-\item palette functions
-\item live palettes
-\item synthetic (or fancy record-type-level-computation) (or not-fancy untyped) palettes
-\item parameterized palettes
-\item palette-specific actions
-\item option to render palette macro expansion as expression or value
-\item \Hazel{} UI: ``formula bar'' for expressions
-\item \sns{} implementation
-\item examples!
+% \item[\cmark] palette macros
+% \item action semantics
+% \item \Hazel{} in \Hazel{} (sums, productions, recursive types)
+% \item palette functions
+% \item live palettes
+% \item synthetic (or fancy record-type-level-computation) (or not-fancy untyped) palettes
+% \item parameterized palettes
+% \item palette-specific actions
+% \item option to render palette macro expansion as expression or value
+% \item \Hazel{} UI: ``formula bar'' for expressions
+% \item \sns{} implementation
+% \item examples!
 
-\end{itemize}
+% \end{itemize}
 
-\clearpage
 \input{intro}
 
-\clearpage
 \input{overview}
-
-\clearpage
 
 %% \section{Defining Palettes}
 
