@@ -158,6 +158,17 @@ in each of the following ways.
   to capture the relationship between the red, green, and blue components.
   The client is also able to use a slider inline in the splice governing 
   the alpha (A) component.
+
+  \item \textbf{Parameterization}: It is possible to define parameterized families of livelits. 
+  For example, \li{\$slider} in Fig.~\ref{fig:color}(b) is parameterized by the lower and upper bound. 
+  Parameters behave like splices, differing in that (1) livelits support partial parameter application, and (2) 
+  livelit applications can be abbreviated. For example, it is possible to define a livelit named \li{\$percentage} 
+  that operates as a \li{\$slider} from \li{0} to \li{100} by scoped abbreviation:
+  \begin{lstlisting}[numbers=none]
+  let livelit $percentage = $slider(0, 100) in ...
+  \end{lstlisting}
+  Parameterization also underlies the hygiene mechanism, as we will discuss in Sec. 4\todo{sec}{}.
+
   \item \textbf{Liveness}: Graphite's palettes do not have 
   access to the run-time environment. By contrast, livelits can evaluate splices
   and therefore provide feedback related to the run-time behavior of the expression being generated. 
@@ -167,17 +178,8 @@ in each of the following ways.
   leaving the hole being filled by the livelit temporarily unfilled and then evaluating
   using a two-phased variation on the semantics for incomplete programs developed by \citet{HazelnutLive}. 
   We will see more sophisticated examples later in the paper, including a livelit 
-  that appears inside a function that is called multiple times, leading to multiple closures for the client 
+  that appears inside a function that is called multiple times, leading to multiple closures for the client to 
   select from.
-  \item \textbf{Parameterization}: Finally, it is possible to define parameterized families of livelits. 
-  For example, the \li{\$slider} livelit in Fig.~\ref{fig:color}(b) is parameterized by the lower and upper bound. 
-  Parameters behave like splices, differing in that (1) livelits support partial parameter application, and (2) 
-  livelit applications can be abbreviated. For example, it is possible to define a livelit named \li{\$percentage} 
-  that operates as a \li{\$slider} from \li{0} to \li{100} by abbreviation:
-  \begin{lstlisting}[numbers=none]
-  let livelit $percentage = $slider(0, 100) in ...
-  \end{lstlisting}
-  Parameterization also underlies the hygiene mechanism, as we will discuss in Sec. 4\todo{sec}{}.
 \end{enumerate}
 \clearpage
 
