@@ -244,3 +244,6 @@ TSWLatexianTemp*
 # vim
 *.swp
 *.swo
+
+# temporaries (misc.)
+*~
