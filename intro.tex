@@ -213,14 +213,14 @@ It would be nice to have a gallery-style figure and a brief overview of some oth
 and how they exercise the novel features of the livelits mechanism. Maybe some statistics on how
 many lines of code it took.
 
-\section{Livelit Implementation}
+\section{Livelit Definitions}
 Which livelit implementation do we want to show? Maybe grade cutoffs? Slider as simple intro + color chooser?
 
 Talk about each component of a livelit definition:
 \begin{itemize}
   \item livelit name (talk about binding structure)
   \item expansion type
-  \item model type
+  \item model type (must be serializable)
   \item action type (mention integration into Hazel's undo system)
   \item initial model
   \item update function (monadic actions; talk about color palette update; SpliceRefs)
@@ -262,6 +262,7 @@ Future work:
   \item \dots
   \item collaborative editing?
   \item side effects?
+  \item full screening livelits (or compositions thereof) as a way to create end-user workflows
   \item big vision: authoring environment based on livelits
 \end{itemize}
 \clearpage
