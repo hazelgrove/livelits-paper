@@ -169,10 +169,15 @@ in each of the following ways.
   We will see more sophisticated examples later in the paper, including a livelit 
   that appears inside a function that is called multiple times, leading to multiple closures for the client 
   select from.
-  \item \textbf{Parameterization}: 
-    \cyrus{... this would be really nice to include + demonstrate with slider bounds and later data flow + 
-    we need it to do anything non-trivial with hygiene 
-    ...}
+  \item \textbf{Parameterization}: Finally, it is possible to define parameterized families of livelits. 
+  For example, the \li{\$slider} livelit in Fig.~\ref{fig:color}(b) is parameterized by the lower and upper bound. 
+  Parameters behave like splices, differing in that (1) livelits support partial parameter application, and (2) 
+  livelit applications can be abbreviated. For example, it is possible to define a livelit named \li{\$percentage} 
+  that operates as a \li{\$slider} from \li{0} to \li{100} by abbreviation:
+  \begin{lstlisting}[numbers=none]
+  let livelit $percentage = $slider(0, 100) in ...
+  \end{lstlisting}
+  Parameterization also underlies the hygiene mechanism, as we will discuss in Sec. 4\todo{sec}{}.
 \end{enumerate}
 \clearpage
 
