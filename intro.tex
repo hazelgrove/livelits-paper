@@ -71,7 +71,7 @@ available in modern general-purpose languages.
 We are not, of course, the first to integrate direct manipulation user interfaces
 into general-purpose programming systems.
 Prior work on projectional editing
-and active code completion, summarized in Sec. \ref{sec:related-work}\todo{sections}{}, 
+and active code completion, summarized in Sec. \ref{sec:related-work}, 
 has also considered the problem of entering expressions 
 of certain types, like \li{Color}, 
 using specialized GUIs integrated into an editor. 
@@ -168,7 +168,7 @@ in each of the following ways.
   \begin{lstlisting}[numbers=none]
   let livelit $percentage = $slider(0, 100) in ...
   \end{lstlisting}
-  Parameterization also underlies the hygiene mechanism, as we will discuss in Sec. 4\todo{sec}{}.
+  Parameterization also underlies the hygiene mechanism, as we will discuss in Sec.~\ref{sec:livelit-definitions}.
 
   \item \textbf{Liveness}: Graphite's palettes do not have 
   access to the run-time environment. By contrast, livelits can evaluate splices
@@ -183,14 +183,16 @@ in each of the following ways.
   interactively select between.
 \end{enumerate}
 
-The remainder of this paper is organized as follows. We begin in Sec.~2 with two case studies 
+The remainder of this paper is organized as follows. We begin in Sec.~\ref{sec:case-studies} with two case studies 
 involving several non-trivial livelits, focusing on the livelit client's perspective. 
-We then consider the livelit provider's perspective in Sec.~3.
-In Sec.~4, we provide a formal account of the mechanism as a typed lambda calculus. 
+In Sec.~\ref{sec:livelit-definitions}, we consider the livelit provider's perspective by detailing the livelit
+definition mechanism by example. 
+In Sec.~\ref{sec:livelit-calculus}, we provide a formal account of the livelit mechanism as a typed lambda calculus. 
 This calculus formally specifies the essential aspects of livelit definition, representation, expansion, 
-and run-time closure collection independent of the particularities of our implementation, 
-and establishes essential type safety and hygiene properties. 
-In Sec.~5, we describe some extensions of the core mechanism\todo{what are the extensions?}{}.
-In Sec.~6, we outline our implementation of livelits within Hazel.
-In Sec.~7, we situate livelits relative to other related work. 
-Finally, we conclude in Sec.~8 with a discussion of some present limitations and future work.\todo{section refs}{}
+and run-time closure collection independent of the particularities of GUI framework and other implementation details. 
+This calculus and the key metatheoretic properties has been mechanized in Agda.
+In Sec.~\ref{sec:extensions}, we describe some extensions of the core calculus\todo{what are the extensions?}{}.
+In Sec.~\ref{sec:implementation}, we provide a more detailed account of our implementation of livelits within Hazel, 
+and discuss several implementation details that would need to be considered by other implementations.  
+In Sec.~\ref{sec:related-work}, we compare livelits to related work. 
+Finally, we conclude in Sec.~\ref{sec:discussion} with a discussion of some present limitations and future work.
