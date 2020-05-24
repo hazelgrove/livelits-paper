@@ -1,0 +1,17 @@
+\section{Livelit Definitions}\label{sec:livelit-definitions}
+Which livelit implementation do we want to show? Maybe grade cutoffs? Slider as simple intro + color chooser?
+
+Talk about each component of a livelit definition:
+\begin{itemize}
+  \item livelit name (talk about binding structure)
+  \item expansion type
+  \item model type (must be serializable)
+  \item action type (mention integration into Hazel's undo system)
+  \item initial model
+  \item update function (monadic actions; talk about color palette update; SpliceRefs)
+  \item view function (monadic actions; talk about GUI stuff? tab order? dimensions? mostly defer to Elm for details)
+  \item expand function (should we call it fill?)
+\end{itemize}
+
+Hygiene from a provider's perspective -- have to use parameters to explicitly capture definition site bindings.
+
