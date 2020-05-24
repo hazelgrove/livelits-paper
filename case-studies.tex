@@ -1,9 +1,34 @@
 \section{Case Studies}\label{sec:case-studies}
-\subsection{Hazel Overview}\label{sec:hazel-overview}
-Brief overview (1/2 page) on Hazel (what do holes look like? structure editing, but not in too much detail,
-live evaluation)
+This section introduces livelits from the client programmer's perspective by way of 
+two domain-specific case studies:
+a course grading case study in Sec.~\ref{sec:live-grading} 
+and an image transformation case study in Sec.~\ref{sec:image-transformation}. 
+We also briefly provide several other examples in Sec.~\ref{sec:additional-examples}. 
+These case studies and examples have been implemented\todo{make this not a lie}{}
+in Hazel, a browser-based live programming environment for a pure typed functional language in the
+ML family, with which we assume basic familiarity. 
+We will describe the implementation of livelits in Hazel, and more generally, in Sec.~\ref{sec:implementation}.
 
-\subsection{Live Grading}\label{sec:live-grading}
+\subsection{Case Study: Grading with Livelits}\label{sec:live-grading}
+\begin{figure}
+\begin{lstlisting}
+let grades = $dataframe in 
+            A1          A2          A3          A4       Midterm      Final  +
+  Cyrus
+  Nick
+  David
+    + 
+let averages = compute_averages(grades) in 
+let cutoffs = $cutoffs(averages) in 
+
+  |---------------------------------------------------|
+
+assign_grades(averages, cutoffs)
+\end{lstlisting}
+\caption{Grading Example}
+\label{fig:grading}
+\end{figure}
+
 \subsubsection{Overview}\label{sec:live-grading-overview}
 Talk about the scenario
 
@@ -13,7 +38,7 @@ Live matrix: what is a matrix structurally? (data frame? list of lists?) + how d
 Grade cutoffs: how does it work wrt liveness? (do we use a parameter here instead of a splice?) -- 
 focus on domain-specific benefits here.
 
-\subsection{Image Transformation Pipeline}\label{sec:transformation}
+\subsection{Case Study: Image Transformations}\label{sec:image-transformation}
 Show example of an image transformation pipeline going through livelits
 
 This might also benefit from Parameterization
