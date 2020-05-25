@@ -49,21 +49,19 @@ sacrifice the ability to receive live feedback and directly manipulate the data 
 Livelits are able to address this tension. 
 Fig.~\ref{fig:grading} shows a Hazel program where the user has:\todo{label each of these 1-5 in figure?}{}
 \begin{enumerate}
-\item directly recorded numeric \li{grades} for each student using a livelit, \li{\$dataframe}, that implements a tabular spreadsheet-like interface suitable for this purpose, 
-\item programmatically computed the overall \li{averages} for each student by calling a function, \li{compute_averages}, defined in a library (not shown), 
-\item determined the \li{cutoffs} between letter grades by directly manipulating a livelit that provides a drag-and-drop interface superimposed on a visualization of the grade distribution, 
-\item programmatically assigned letter grades to each student based on the cutoffs determined by the livelit in (3) by calling a library function, \li{assign_grades}, and 
-\item formatted the final grade assignments in a manner suitable for submission to a university system by calling another library function, \li{format_for_university}.
+\item recorded numeric \li{grades} for each student using a livelit, \li{\$dataframe}, that implements a tabular user interface with support for live evaluation of the Hazel expressions in cells, 
+\item programmatically computed the overall \li{averages} for each student by applying a function, \li{compute_averages}, defined in a library  (not shown) shared between multiple courses, 
+\item determined reasonable \li{cutoffs} between letter grades by directly manipulating a livelit that offers a domain-specific drag-and-drop interface superimposed on a live visualization of the grade distribution 
+(for the sake of space, we plot dots rather than a full histogram)\todo{should we do a histogram?}{}, 
+\item programmatically assigned letter grades to each student based on the \li{cutoffs} determined in step (3) by calling another shared library function, \li{assign_grades}, 
+\item formatted the final grade assignments in a manner suitable for submission to the university system by calling another shared library function, \li{format_for_university}.
 \end{enumerate}
 
-\subsubsection{Overview}\label{sec:live-grading-overview}
-Talk about the scenario
+\subsubsection{Livelit Expansion} abc
 
-Live matrix: what is a matrix structurally? (data frame? list of lists?) + how does liveness work
-+ overview of hygiene guarantees
+\subsubsection{Typed Hygienic Splicing} abc
 
-Grade cutoffs: how does it work wrt liveness? (do we use a parameter here instead of a splice?) -- 
-focus on domain-specific benefits here.
+\subsubsection{Live Evaluation} abc
 
 \subsection{Case Study: Image Transformations}\label{sec:image-transformation}
 Show example of an image transformation pipeline going through livelits
