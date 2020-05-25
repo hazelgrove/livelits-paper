@@ -1,13 +1,12 @@
 \section{Case Studies}\label{sec:case-studies}
 This section introduces livelits from the client programmer's perspective by way of 
 two domain-specific case studies:
-a course grading case study in Sec.~\ref{sec:live-grading} 
+a course grade assignment case study in Sec.~\ref{sec:live-grading} 
 and an image transformation case study in Sec.~\ref{sec:image-transformation}. 
-We also briefly provide several other examples in Sec.~\ref{sec:additional-examples}. 
+We also briefly mention several other examples in Sec.~\ref{sec:additional-examples}. 
 These case studies and examples have been implemented\todo{make this not a lie}{}
 in Hazel, a browser-based live programming environment for a pure typed functional language in the
-ML family, with which we assume basic familiarity. 
-We will describe the implementation of livelits in Hazel, and more generally, in Sec.~\ref{sec:implementation}.
+ML family, with which we assume basic familiarity.\todo{cite Elm tutorial for readers who are not familiar?}{} 
 
 \subsection{Case Study: Grading with Livelits}\label{sec:live-grading}
 \begin{figure}
@@ -23,11 +22,39 @@ let cutoffs = $cutoffs(averages) in
 
   |---------------------------------------------------|
 
-assign_grades(averages, cutoffs)
+format_for_university(assign_grades(averages, cutoffs))
 \end{lstlisting}
 \caption{Grading Example}
 \label{fig:grading}
 \end{figure}
+
+Consider this commonplace scenario: an instructor needs 
+(1) to record numeric grades for various assignments and exams, and 
+(2) to visualize and perform various computations with these numeric grades 
+in order ultimately to assign final letter grades (\textbf{A} through \textbf{F}) to the students in the course.
+
+Perhaps the most common end-user application in this domain is the spreadsheet.
+A spreadsheet allows the instructor to record student grades using a natural tabular interface,
+visualize this data in one of a finite number of styles, and perform basic computations on this data,
+with results updated live, i.e. automatically after each cell has been edited. 
+However, these affordances are limited. It is difficult to package up common operations and workflows 
+into reusable libraries, interact with the data using domain-specific visualizations, 
+and perform operations that have not been anticipated by the designers of the spreadsheet system 
+(e.g. operations that prepare the data in an idiosyncratic format suitable for automated submission 
+to the university's grading system). 
+General-purpose programming languages equipped with suitable libraries for working with numeric data
+are flexible enough to handle these scenarios, but users of these languages 
+sacrifice the ability to receive live feedback and directly manipulate the data and visualizations thereof.
+
+Livelits are able to address this tension. 
+Fig.~\ref{fig:grading} shows a Hazel program where the user has:\todo{label each of these 1-5 in figure?}{}
+\begin{enumerate}
+\item directly recorded numeric \li{grades} for each student using a livelit, \li{\$dataframe}, that implements a tabular spreadsheet-like interface suitable for this purpose, 
+\item programmatically computed the overall \li{averages} for each student by calling a function, \li{compute_averages}, defined in a library (not shown), 
+\item determined the \li{cutoffs} between letter grades by directly manipulating a livelit that provides a drag-and-drop interface superimposed on a visualization of the grade distribution, 
+\item programmatically assigned letter grades to each student based on the cutoffs determined by the livelit in (3) by calling a library function, \li{assign_grades}, and 
+\item formatted the final grade assignments in a manner suitable for submission to a university system by calling another library function, \li{format_for_university}.
+\end{enumerate}
 
 \subsubsection{Overview}\label{sec:live-grading-overview}
 Talk about the scenario
