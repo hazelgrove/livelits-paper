@@ -57,9 +57,48 @@ Fig.~\ref{fig:grading} shows a Hazel program where the user has:\todo{label each
 \item formatted the final grade assignments in a manner suitable for submission to the university system by calling another shared library function, \li{format_for_university}.
 \end{enumerate}
 
-\subsubsection{Livelit Expansion} abc
+\subsubsection{Livelit Expansion} 
+Livelit expressions are given dynamic meaning by expansion to standard expressions, i.e. expressions without livelits.
+The expansion of Fig.~\ref{fig:grading} is:\todo{change code once figure is final}{}
 
-\subsubsection{Typed Hygienic Splicing} abc
+\begin{lstlisting}
+let grades = (
+  ["A1", "A2", "A3", "A4", "Midterm", "Final"],
+  ("Cyrus", [0.0, 0.0, 0.0, 0.0, 0.0]),
+  ("Nick", [0.0, 0.0, 0.0, 0.0, 0.0]),
+  ("David", [0.0, 0.0, 0.0, 0.0, 0.0])) in 
+let averages = compute_averages(grades) in 
+let cutoffs = (.A 90.0, .B 80.0, .C 70.0, .D 60.0) in 
+format_for_university(assign_grades(averages, cutoffs))
+\end{lstlisting}
+
+The programmer can request to see this expansion in Hazel. 
+Ideally, however, it would not be necessary to inspect the underlying expansion 
+(or the livelit implementation, discussed in Sec.~\ref{sec:livelit-definitions}) 
+to reason about types and binding. 
+After all, one does not need to look inside 
+function bodies to reason about types and binding.
+Instead, in the words of Reynolds\todo{cite}{}, 
+``type structure is a syntactic discipline for maintaining levels of abstraction''.
+The livelits mechanism supports reasoning abstractly about types and binding by 
+several means.
+
+First, to support abstract reasoning about the type of the expansion, 
+livelit definitions must specify an \emph{expansion type} in their declarations.
+The declarations of the two livelits in Fig.~\ref{fig:grading}, 
+eliding their implementations for now, are:
+\begin{lstlisting}[numbers=none]
+livelit $dataframe at Dataframe { ... }
+livelit $cutoffs(averages: List(Float)) 
+  at (.A Float, .B Float, .C Float, .D Float) { ... }
+\end{lstlisting}
+The expansion type of \li{\$dataframe} is \li{Dataframe} 
+(a type for tabular floating point data together with string row and column keys, consistent with the expression in the expansion above)
+and the expansion type of \li{\$cutoffs} is a labeled product of grade cutoffs (Hazel notates labels \li{.label}).
+
+\subsubsection{Typed Hygienic Splicing and Parameterization} abc
+
+unlike arguments, not a fixed number of splices (e.g. adding a new row or column by pressing those buttons)
 
 \subsubsection{Live Evaluation} abc
 
