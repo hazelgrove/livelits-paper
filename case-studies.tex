@@ -58,23 +58,25 @@ Fig.~\ref{fig:grading} shows a Hazel program where the user has:\todo{label each
 \end{enumerate}
 
 \subsubsection{Livelit Expansion} 
-Livelit expressions are given dynamic meaning by expansion to standard expressions, i.e. expressions without livelits.
-The expansion of Fig.~\ref{fig:grading} is:\todo{change code once figure is final}{}
+Livelit expressions are given dynamic meaning by expansion to core expressions, i.e. expressions that do not contain livelits.
+For example, the expansion of Fig.~\ref{fig:grading} is:\todo{change code once figure is final}{}
 
 \begin{lstlisting}
-let grades = (
+let grades = Dataframe (
   ["A1", "A2", "A3", "A4", "Midterm", "Final"],
-  ("Cyrus", [0.0, 0.0, 0.0, 0.0, 0.0]),
-  ("Nick", [0.0, 0.0, 0.0, 0.0, 0.0]),
-  ("David", [0.0, 0.0, 0.0, 0.0, 0.0])) in 
+  [
+    ("Cyrus", [0.0, 0.0, 0.0, 0.0, 0.0]),
+    ("Nick", [0.0, 0.0, 0.0, 0.0, 0.0]),
+    ("David", [0.0, 0.0, 0.0, 0.0, 0.0])
+  ]) in 
 let averages = compute_averages(grades) in 
 let cutoffs = (.A 90.0, .B 80.0, .C 70.0, .D 60.0) in 
 format_for_university(assign_grades(averages, cutoffs))
 \end{lstlisting}
 
-The programmer can request to see this expansion in Hazel. 
-Ideally, however, it would not be necessary to inspect the underlying expansion 
-(or the livelit implementation, discussed in Sec.~\ref{sec:livelit-definitions}) 
+The programmer can inspect this expansion in Hazel. 
+Ideally, however, it would not be necessary to inspect the expansion 
+(or the livelit implementation, which specifies the expansion logic and is discussed in Sec.~\ref{sec:livelit-definitions}) 
 to reason about types and binding. 
 After all, one does not need to look inside 
 function bodies to reason about types and binding.
@@ -83,22 +85,50 @@ Instead, in the words of Reynolds\todo{cite}{},
 The livelits mechanism supports reasoning abstractly about types and binding by 
 several means.
 
-First, to support abstract reasoning about the type of the expansion, 
-livelit definitions must specify an \emph{expansion type} in their declarations.
+To support abstract reasoning about the type of the expansion, 
+livelit definitions declare an \emph{expansion type}.
 The declarations of the two livelits in Fig.~\ref{fig:grading}, 
-eliding their implementations for now, are:
+eliding their implementations, are:
 \begin{lstlisting}[numbers=none]
 livelit $dataframe at Dataframe { ... }
-livelit $cutoffs(averages: List(Float)) 
+livelit $cutoffs(avgs: List(Float)) 
   at (.A Float, .B Float, .C Float, .D Float) { ... }
 \end{lstlisting}
 The expansion type of \li{\$dataframe} is \li{Dataframe} 
-(a type for tabular floating point data together with string row and column keys, consistent with the expression in the expansion above)
+(a type classifying tabular floating point data together with string row and column keys, consistent with the expansion above)
 and the expansion type of \li{\$cutoffs} is a labeled product of grade cutoffs (Hazel notates labels \li{.label}).
-Hazel summarizes this typing information for the programmer when the cursor is on the livelit name 
-just as it displays a function's type when its name is under the cursor (not shown).
+Hazel summarizes the typing information from the livelit definition for the programmer when the cursor is on the livelit's name, 
+just as it displays a function's type when its name is under the cursor (not shown).\todo{could show if Hannah et al are finished}{}
 
-\subsubsection{Typed Hygienic Splicing and Parameterization} abc
+\subsubsection{Typed Hygienic Splicing and Parameterization} 
+Livelit expressions can have sub-expressions provided by the client in one of two ways:
+as parameters or as splices. 
+
+\paragraph{Parameters} Parameters appear immediately after the livelit name. 
+For example, \li{averages} is provided as a parameter to \li{\$cutoffs} in Fig.~\ref{fig:grading}.
+Livelits can declare a fixed number of parameters and specify their types in their declarations. 
+For example, the declaration of \li{\$cutoffs} above specifies one parameter of type \li{List(Float)}.
+Parameters can be partially applied in livelit abbreviations. For example, consider the slider livelit
+from Fig.~\ref{fig:color}:
+\begin{lstlisting}[numbers=none]
+livelit $slider (min: Float) (max: Float) at Float { ... }
+\end{lstlisting}
+We can partially apply the first parameter as follows to create a non-negative slider with one remaining parameter:
+\begin{lstlisting}[numbers=none]
+livelit $nnslider = $slider 0.0 in ...
+\end{lstlisting}
+The client must provide all remaining parameters to use a livelit to fill a hole in the program.
+So writing \li{\$nnslider} in expression position will not display the slider GUI. Instead, it will display as a livelit parameterization error.%
+\footnote{In Hazel, erroneous expressions are placed inside holes so that they do not prevent other parts of the program from executing
+\cite{HazelnutLive}.}
+
+We can apply both parameters in an abbreviation to create an unparameterized livelit:
+\begin{lstlisting}[numbers=none]
+livelit $percentage = $slider 0.0 1.0 in ...
+\end{lstlisting}
+
+\paragraph{Splices} Splices appear directly inside the livelit GUI.
+For example, the column headings and the cells in the \li{\$}
 
 unlike arguments, not a fixed number of splices (e.g. adding a new row or column by pressing those buttons)
 
@@ -119,3 +149,8 @@ Talk about probes?
 It would be nice to have a gallery-style figure and a brief overview of some other case studies
 and how they exercise the novel features of the livelits mechanism. Maybe some statistics on how
 many lines of code it took.
+
+Ideas:
+\begin{itemize}
+  \item derivation trees like Joomy's system (\url{https://joom.github.io/proof-tree-builder/src/})
+\end{itemize}
