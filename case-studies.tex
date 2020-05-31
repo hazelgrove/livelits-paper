@@ -148,12 +148,9 @@ deleted, and filled through user interaction with the livelit. For example, clic
 in Fig.~\ref{fig:grading} will create new rows or columns, which will in turn generate new splices.
 
 \paragraph{Hygiene}\label{sec:hygiene}
-Parameters and splices can both appear in the underlying expansion. For example,
+Parameters and splices can both appear in the expansion. For example,
 the expansion of the \li{\$dataframe} livelit in Fig.~\ref{fig:grading} includes the 
-spliced expressions that the client entered the cell contents and the row and column keys.
-(Not every parameter or splice needs to appear in the expansion. For example,
-the bounds provided to the \li{\$slider} livelit are used only to constrain the user 
-interface, and do not appear directly in the expansion, which is simply a number literal.)
+entered cell contents and the row and column keys.
 
 The client cannot know, without looking at the expansion or the livelit implementation, 
 where in the expansion each parameter or splice will appear. This becomes relevant when 
@@ -165,17 +162,18 @@ of the following form:
 let len = strlen <splice1> in 
 (<splice2>, <splice2> + 1)
 \end{lstlisting}
-Here, \li{<splice2>} appears under the binding of \li{len}. If the client enters an expression
-for \li{<splice2>} that itself refers to a client-side binding of the same variable, \li{len},
-it would na\"ively be captured. This sort of bug would difficult to debug, both for the provider
-and the client. 
+Here, \li{<splice2>} appears under the binding of \li{len}. If the client's choice for 
+\li{<splice2>} itself refers to a client-side binding of the same identifier, \li{len},
+it would na\"ively be captured. This sort of bug would difficult to debug, 
+both for the livelit provider and the client. 
 
 To avoid this situation, the livelit expansion mechanism 
 maintains parameter and splice hygiene: parameters and splices are included in the expansion 
 in a capture-avoiding manner.
 Consequently, clients can reason abstractly about binding in splices: variables in splices
 always refer to bindings visible to the client, rather than bindings that are hidden inside expansions.
-(We discuss potentially relaxed variations of this discipline in Sec.~\ref{sec:discussion}).
+This is implemented by alpha-renaming bindings internal to the expansion as necessary.
+(We discuss potentially relaxed variations of this hygiene discipline in Sec.~\ref{sec:discussion}).
 \subsubsection{Live Evaluation}\label{sec:live-evaluation}
 
 \subsection{Case Study: Image Transformations}\label{sec:image-transformation}
