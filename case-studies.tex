@@ -100,39 +100,83 @@ and the expansion type of \li{\$cutoffs} is a labeled product of grade cutoffs (
 Hazel summarizes the typing information from the livelit definition for the programmer when the cursor is on the livelit's name, 
 just as it displays a function's type when its name is under the cursor (not shown).\todo{could show if Hannah et al are finished}{}
 
-\subsubsection{Typed Hygienic Splicing and Parameterization} 
-Livelit expressions can have sub-expressions provided by the client in one of two ways:
+\subsubsection{Typed Hygienic Splicing and Parameterization}\label{sec:splicing-and-parameterization}
+Livelit expressions can include sub-expressions in one of two ways:
 as parameters or as splices. 
 
-\paragraph{Parameters} Parameters appear immediately after the livelit name. 
+\paragraph{Parameters}\label{sec:parameterization} Parameters appear immediately after the name of the applied livelit. 
 For example, \li{averages} is provided as a parameter to \li{\$cutoffs} in Fig.~\ref{fig:grading}.
-Livelits can declare a fixed number of parameters and specify their types in their declarations. 
-For example, the declaration of \li{\$cutoffs} above specifies one parameter of type \li{List(Float)}.
-Parameters can be partially applied in livelit abbreviations. For example, consider the slider livelit
+The livelit declares a fixed number of parameters and specifies their types in its declaration. 
+For example, the declaration of \li{\$cutoffs} shown above specifies one parameter of type \li{List(Float)}
+(the grades data to be plotted, see below).
+
+Livelit abbreviations can partially apply parameters. Consider the slider livelit
 from Fig.~\ref{fig:color}:
 \begin{lstlisting}[numbers=none]
 livelit $slider (min: Float) (max: Float) at Float { ... }
 \end{lstlisting}
-We can partially apply the first parameter as follows to create a non-negative slider with one remaining parameter:
+We can partially apply the first parameter as follows to define a parameterized non-negative slider livelit with one remaining parameter:
 \begin{lstlisting}[numbers=none]
 livelit $nnslider = $slider 0.0 in ...
 \end{lstlisting}
-The client must provide all remaining parameters to use a livelit to fill a hole in the program.
-So writing \li{\$nnslider} in expression position will not display the slider GUI. Instead, it will display as a livelit parameterization error.%
-\footnote{In Hazel, erroneous expressions are placed inside holes so that they do not prevent other parts of the program from executing
+Only livelits with no remaining parameters can be used to fill a hole.
+So writing \li{\$nnslider} in expression position will not display the slider GUI. Instead, it will display as a ``missing livelit parameter'' error.%
+\footnote{\label{footnote:typing}In Hazel, erroneous expressions are automatically placed inside holes so that they do not prevent other parts of the program from executing
 \cite{HazelnutLive}.}
 
-We can apply both parameters in an abbreviation to create an unparameterized livelit:
+\paragraph{Splices}\label{sec:splices}
+Spliced expressions (or \emph{splices}) appear directly inside the livelit GUI.
+Splices can be filled with Hazel expressions of any form, including other livelit expressions, 
+and all of Hazel's editing affordances are available when editing these expressions.
+For example, each cell in the \li{\$dataframe} GUI in Fig.~\ref{fig:grading} 
+has a corresponding splice, which appears in the formula bar at the top of the livelit 
+when the user has selected that cell. 
+The cell itself displays the live value of the spliced expression, 
+following the example of spreadsheet interfaces 
+(we return to live evaluation in Sec.~\ref{sec:live-evaluation} below).
+
+The livelit provides an expected type for each splice.
+For example, the splices for the row and column keys in Fig.~\ref{fig:grading} are expected to be expressions
+of type \li{String}, and the remaining cells are expected to be expressions of type \li{Float}. 
+Hazel surfaces this typing information for the programmer when the cursor is in a splice, 
+so it is not necessary to inspect the expansion or the livelit implementation.
+If an expression of invalid type is entered, it will display in an error hole as usual,
+and in Hazel this will not prevent evaluation of other expressions (see Footnote \ref{footnote:typing}).
+
+Unlike parameters, the number of splices is not fixed in the livelit declaration. Splices can be created, 
+deleted, and filled through user interaction with the livelit. For example, clicking the \li{+} buttons
+in Fig.~\ref{fig:grading} will create new rows or columns, which will in turn generate new splices.
+
+\paragraph{Hygiene}\label{sec:hygiene}
+Parameters and splices can both appear in the underlying expansion. For example,
+the expansion of the \li{\$dataframe} livelit in Fig.~\ref{fig:grading} includes the 
+spliced expressions that the client entered the cell contents and the row and column keys.
+(Not every parameter or splice needs to appear in the expansion. For example,
+the bounds provided to the \li{\$slider} livelit are used only to constrain the user 
+interface, and do not appear directly in the expansion, which is simply a number literal.)
+
+The client cannot know, without looking at the expansion or the livelit implementation, 
+where in the expansion each parameter or splice will appear. This becomes relevant when 
+the expansion places the parameter or splice under a binder, e.g. in the body of a function or let binding.
+Na\"ively, this could cause inadvertent capture of the bound variable by a free variable 
+in the parameter or splice. For example, consider a livelit that generates an expansion 
+of the following form:
 \begin{lstlisting}[numbers=none]
-livelit $percentage = $slider 0.0 1.0 in ...
+let len = strlen <splice1> in 
+(<splice2>, <splice2> + 1)
 \end{lstlisting}
+Here, \li{<splice2>} appears under the binding of \li{len}. If the client enters an expression
+for \li{<splice2>} that itself refers to a client-side binding of the same variable, \li{len},
+it would na\"ively be captured. This sort of bug would difficult to debug, both for the provider
+and the client. 
 
-\paragraph{Splices} Splices appear directly inside the livelit GUI.
-For example, the column headings and the cells in the \li{\$}
-
-unlike arguments, not a fixed number of splices (e.g. adding a new row or column by pressing those buttons)
-
-\subsubsection{Live Evaluation} abc
+To avoid this situation, the livelit expansion mechanism 
+maintains parameter and splice hygiene: parameters and splices are included in the expansion 
+in a capture-avoiding manner.
+Consequently, clients can reason abstractly about binding in splices: variables in splices
+always refer to bindings visible to the client, rather than bindings that are hidden inside expansions.
+(We discuss potentially relaxed variations of this discipline in Sec.~\ref{sec:discussion}).
+\subsubsection{Live Evaluation}\label{sec:live-evaluation}
 
 \subsection{Case Study: Image Transformations}\label{sec:image-transformation}
 Show example of an image transformation pipeline going through livelits
