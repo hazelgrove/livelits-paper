@@ -177,31 +177,57 @@ This is implemented by alpha-renaming bindings internal to the expansion as nece
 (We discuss potentially relaxed variations of this hygiene discipline in Sec.~\ref{sec:discussion}.)
 
 \subsubsection{Live Evaluation}\label{sec:live-evaluation}
-Livelits can request the result of evaluating a splice or parameter.
-However, evaluation is, as usual, defined only for closed expressions, 
-whereas parameters and splices can both refer to variables in the surrounding
-context. In order to provide evaluation results for these free variables, 
-Hazel performs \textbf{closure collection}. This proceeds in two phases.
+Livelits can request the result of evaluating a splice or a parameter. 
+For example, the \li{\$dataframe} livelit uses this facility to display
+the evaluation result for each cell when the cursor is not on it, like a spreadsheet.
+The \li{\$cutoffs} livelit uses this facility to plot the grades list, provided
+as a parameter, on the number line. 
 
-In the first phase, Hazel evaluates the program with holes appearing in place of each livelit 
-application and collects closures around each of these holes \cite{HazelnutLive}. 
-For example, the closure around the application of \li{\$dataframe} in Fig.~\ref{fig:grading}
-contains the value of the \li{weights} variable from Line 1 and any other bound variables, e.g. 
+\paragraph{Closure Collection} Evaluation in Hazel is, as usual, defined only for closed expressions, 
+but parameters and splices can both refer to variables in the surrounding
+context. In order to provide evaluation results for parameters or splices containing free variables, 
+Hazel performs \textbf{closure collection} in two phases.
+
+In the first phase, Hazel evaluates the program after placing holes in place of each livelit, 
+following the evaluation semantics for incomplete programs developed by \citet{HazelnutLive}. 
+The result is an expression with holes in it, each of which is equipped with a closure. 
+For example, there is a single closure associated with the application of \li{\$dataframe} in Fig.~\ref{fig:grading}.
+This closure contains the value of the \li{weights} variable from Line 1 and any other variables in the context 
+around that livelit, e.g. 
 from imported libraries, not shown. Consequently, when the livelit requests the evaluation result for
-splices that use these variables, such as the cell shown selected in Fig.~\ref{fig:grading}, their values are available. 
+splices that use these variables, such as the cell shown selected in Fig.~\ref{fig:grading}, 
+an evaluation result is available. (We consider the situation where more than one closure is available
+in the Sec.~\ref{sec:image-transformation}.)
 
-The closure for the \li{\$cutoffs} livelit in Fig.~\ref{fig:grading} includes a binding for 
-the \li{grades} variable. However, this variable's evaluation result, along with the evaluation 
+Similarly, the closure for the \li{\$cutoffs} livelit in Fig.~\ref{fig:grading} includes a result for 
+the \li{grades} variable. However, this variable's result, along with the 
 results for other variables that depend on \li{grades}, such as \li{averages}, ultimately depend on the 
 expansion of the \li{\$dataframe} livelit. If we stop after the first phase of closure collection,
-then no useful result will be available here because that livelit has been replaced with a hole.
+where these expansions have not yet been included, 
+then no useful result will be available here.
 For this reason, there is a second phase of closure collection where any livelit holes that appear 
-in the collected closures are \emph{resumed}, i.e. the expansion is generated 
+in the collected livelit closures are \emph{resumed}, i.e. the expansion is generated 
 (in this case, for the \li{\$dataframe} livelit) and is used to fill 
 the hole before evaluation resumes, following the semantics for resumption developed by \citet{HazelnutLive}.
 Livelit expansions do not themselves contain livelits, so no subsequent resumption phases are necessary.
 
+The final evaluation result for the program as a whole can also proceed by resumption, because 
+closure collection performs all of the computations that do not ultimately depend on the livelit expansion.
+Consequently, Hazel does not need to evaluate the program multiple times in order to support edit-time 
+(i.e. live) evaluation in this way.
 
+\paragraph{Indeterminate Results}
+We used the phrase \emph{evaluation result} rather than \emph{value} above purposefully: 
+splices and parameters can be incomplete, i.e. they can contain holes, so 
+evaluation does not always result in a value \cite{HazelnutLive}.
+In particular, when a hole appears in elimination position, e.g. in function position of a function application,
+ the result is instead an indeterminate expression. 
+When a livelit requests an evaluation result, it must be able to handle indeterminate results.
+For example, if the parameter to \li{\$cutoffs} were a hole or some other indeterminate expression\todo{small screenshot?}{}, 
+then it would have degraded functionality 
+(in this case, it would display the list elements that are values on the timeline, skipping indeterminate elements\todo{implement this}{}). 
+We will return to how livelit implementations handle this situation in Sec.~\ref{sec:implementation}.
+\todo{make sure we cover this}{}
 
 \subsection{Case Study: Image Transformations}\label{sec:image-transformation}
 Show example of an image transformation pipeline going through livelits
