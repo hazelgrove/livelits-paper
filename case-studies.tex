@@ -11,13 +11,14 @@ ML family, with which we assume basic familiarity.\todo{cite Elm tutorial for re
 \subsection{Case Study: Grading with Livelits}\label{sec:live-grading}
 \begin{figure}
 \begin{lstlisting}
+let weights = [0.1, 0.1, 0.1, 0.1, 0.25, 0.35] in 
 let grades = $dataframe in 
             A1          A2          A3          A4       Midterm      Final  +
   Cyrus
   Nick
   David
     + 
-let averages = compute_averages(grades) in 
+let averages = compute_averages(grades, weights) in 
 let cutoffs = $cutoffs(averages) in 
 
   |---------------------------------------------------|
@@ -173,8 +174,34 @@ in a capture-avoiding manner.
 Consequently, clients can reason abstractly about binding in splices: variables in splices
 always refer to bindings visible to the client, rather than bindings that are hidden inside expansions.
 This is implemented by alpha-renaming bindings internal to the expansion as necessary.
-(We discuss potentially relaxed variations of this hygiene discipline in Sec.~\ref{sec:discussion}).
+(We discuss potentially relaxed variations of this hygiene discipline in Sec.~\ref{sec:discussion}.)
+
 \subsubsection{Live Evaluation}\label{sec:live-evaluation}
+Livelits can request the result of evaluating a splice or parameter.
+However, evaluation is, as usual, defined only for closed expressions, 
+whereas parameters and splices can both refer to variables in the surrounding
+context. In order to provide evaluation results for these free variables, 
+Hazel performs \textbf{closure collection}. This proceeds in two phases.
+
+In the first phase, Hazel evaluates the program with holes appearing in place of each livelit 
+application and collects closures around each of these holes \cite{HazelnutLive}. 
+For example, the closure around the application of \li{\$dataframe} in Fig.~\ref{fig:grading}
+contains the value of the \li{weights} variable from Line 1 and any other bound variables, e.g. 
+from imported libraries, not shown. Consequently, when the livelit requests the evaluation result for
+splices that use these variables, such as the cell shown selected in Fig.~\ref{fig:grading}, their values are available. 
+
+The closure for the \li{\$cutoffs} livelit in Fig.~\ref{fig:grading} includes a binding for 
+the \li{grades} variable. However, this variable's evaluation result, along with the evaluation 
+results for other variables that depend on \li{grades}, such as \li{averages}, ultimately depend on the 
+expansion of the \li{\$dataframe} livelit. If we stop after the first phase of closure collection,
+then no useful result will be available here because that livelit has been replaced with a hole.
+For this reason, there is a second phase of closure collection where any livelit holes that appear 
+in the collected closures are \emph{resumed}, i.e. the expansion is generated 
+(in this case, for the \li{\$dataframe} livelit) and is used to fill 
+the hole before evaluation resumes, following the semantics for resumption developed by \citet{HazelnutLive}.
+Livelit expansions do not themselves contain livelits, so no subsequent resumption phases are necessary.
+
+
 
 \subsection{Case Study: Image Transformations}\label{sec:image-transformation}
 Show example of an image transformation pipeline going through livelits
