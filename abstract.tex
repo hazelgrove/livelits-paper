@@ -6,7 +6,7 @@
 
 \begin{abstract}
     Although textual program manipulation is powerful, 
-    some types of expressions are more naturally manipulated
+    some types of expressions are more naturally represented and manipulated
     graphically.     
     Examples include expressions computing   
     colors,
@@ -15,21 +15,21 @@
     tabular data, 
     plot parameters,
     GUI widgets, 
-    and many other domain-specific data structures.
+    and various other domain-specific data structures.
     This paper introduces \emph{live literals}, or \emph{livelits}, which allow
-    a programmer to fill holes of types like these by directly manipulating a     
+    the programmer to fill holes of types like these by directly manipulating a     
     GUI embedded persistently into the code. 
     Livelits are compositional: the GUI can itself contain
-    spliced expressions, which in turn can contain other livelits. 
+    spliced expressions, which can in turn contain other livelits. 
     These splices are typed, and the system 
     requires that the livelit treat each splice hygienically. 
     Livelits are also live: they can provide {immediate feedback} about the dynamic implications 
     of the programmer's choices 
     even when the spliced expressions mention bound variables, because the system gathers closures associated with the hole that the livelit is tasked with filling.
     This paper introduces livelits with several non-trivial case studies that exercise these capabilities. 
-    Our implementation extends Hazel, a web-based live programming environment able to assign
+    Our implementation extends Hazel, a browser-based live programming environment able to assign
     static and dynamic meaning to programs with holes. 
     We then define a typed lambda calculus that captures the essence of livelits, which
-    operate as graphical macros.     
+    operate as live, graphical macros.     
     The formalism is mechanized in Agda.
 \end{abstract}

@@ -1,12 +1,12 @@
 \section{Case Studies}\label{sec:case-studies}
-This section introduces livelits from the client programmer's perspective by way of 
+Let us begin by considering livelits from the client programmer's perspective by way of 
 two domain-specific case studies:
 a course grade assignment case study in Sec.~\ref{sec:live-grading} 
 and an image transformation case study in Sec.~\ref{sec:image-transformation}. 
 We also briefly mention several other examples in Sec.~\ref{sec:additional-examples}. 
 These case studies and examples have been implemented\todo{make this not a lie}{}
 in Hazel, a browser-based live programming environment for a pure typed functional language in the
-ML family, with which we assume basic familiarity.\todo{cite Elm tutorial for readers who are not familiar?}{} 
+ML family. We assume basic familiarity with ML.\todo{cite Elm tutorial for readers who are not familiar?}{} 
 
 \subsection{Case Study: Grading with Livelits}\label{sec:live-grading}
 \begin{figure}
@@ -29,7 +29,7 @@ format_for_university(assign_grades(averages, cutoffs))
 \label{fig:grading}
 \end{figure}
 
-Consider this commonplace scenario: an instructor needs 
+Consider this familiar scenario: an instructor needs 
 (1) to record numeric grades for various assignments and exams, and 
 (2) to visualize and perform various computations with these numeric grades 
 in order ultimately to assign final letter grades (\textbf{A} through \textbf{F}) to the students in the course.
@@ -50,7 +50,7 @@ sacrifice the ability to receive live feedback and directly manipulate the data 
 Livelits are able to address this tension. 
 Fig.~\ref{fig:grading} shows a Hazel program where the user has:\todo{label each of these 1-5 in figure?}{}
 \begin{enumerate}
-\item recorded numeric \li{grades} for each student using a livelit, \li{\$dataframe}, that implements a tabular user interface with support for live evaluation of the Hazel expressions in cells, 
+\item recorded numeric \li{grades} for each student using a livelit, \li{\$dataframe}, that implements a tabular user interface with support for live evaluation of the Hazel expression in each cell, 
 \item programmatically computed the overall \li{averages} for each student by applying a function, \li{compute_averages}, defined in a library  (not shown) shared between multiple courses, 
 \item determined reasonable \li{cutoffs} between letter grades by directly manipulating a livelit that offers a domain-specific drag-and-drop interface superimposed on a live visualization of the grade distribution 
 (for the sake of space, we plot dots rather than a full histogram)\todo{should we do a histogram?}{}, 
