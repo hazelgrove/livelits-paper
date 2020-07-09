@@ -1,4 +1,4 @@
-% !TEX root = palettes-paper.tex
+% !TEX root = livelits-paper.tex
 
 % \newcommand{\Label}[1]{\vspace{-20px}\label{#1}%
 %   {\small\textcolor{cyan}{(\texttt{#1})}}\vspace{20px}%
@@ -35,10 +35,12 @@
 \newcommand{\tarr}[2]{#1 \rightarrow #2}
 %\newcommand{\tsum}[2]{#1 + #2}
 \newcommand{\tprod}[2]{#1 \times #2}
-\newcommand{\tnum}{\texttt{num}}
+\newcommand{\tunit}{\mathsf{1}}
+\newcommand{\tnum}{\mathsf{num}}
 \newcommand{\tb}{\texttt{b}}
 \newcommand{\tehole}{\llparenthesiscolor\rrparenthesiscolor}
 \newcommand{\tsum}[2]{{#1} + {#2}}
+\newcommand{\trec}[2]{\mu(#1.#2)}
 
 \newcommand{\tconsistent}[2]{#1 \sim #2}
 \newcommand{\tinconsistent}[2]{#1 \nsim #2}
@@ -56,9 +58,13 @@
 \newcommand{\hapP}[2]{(#1)~(#2)} % Extra paren around function term
 \newcommand{\hpair}[2]{(#1, #2)}
 \newcommand{\hprj}[2]{\mathsf{prj}_{#1}(#2)}
+\newcommand{\hprl}[1]{\mathsf{prl}(#1)}
+\newcommand{\hprr}[1]{\mathsf{prr}(#1)}
+\newcommand{\htriv}{()}
 \newcommand{\lblL}{\mathsf{L}}
 \newcommand{\lblR}{\mathsf{R}}
 \newcommand{\hnum}[1]{\underline{#1}}
+\newcommand{\helet}[3]{\mathsf{let}~#1=#2~\mathsf{in}~#3}
 %\newcommand{\hcase}[5]{\mathsf{case}\,#1\,\mathsf{of}\,#2\Rightarrow#3~\vert~#4\Rightarrow#5}
 \newcommand{\hadd}[2]{#1 + #2}
 \newcommand{\hehole}[1]{\llparenthesiscolor\rrparenthesiscolor^{#1}}
@@ -72,6 +78,11 @@
 \newcommand{\hinL}[1]{\mathsf{inl}(#1)}
 \newcommand{\hinR}[1]{\mathsf{inr}(#1)}
 \newcommand{\hcase}[5]{\texttt{case}({#1},{#2}.{#3},{#4}.{#5})}
+\newcommand{\hroll}[1]{\mathsf{roll}(#1)}
+\newcommand{\hunroll}[1]{\mathsf{unroll}(#1)}
+\newcommand{\livelitname}[1]{\$#1}
+\newcommand{\haplivelit}[4]{\livelitname{#2}\langle #3; #4 \rangle^{#1}}
+\newcommand{\hsplice}[2]{#1 : #2}
 
 % Palettes
 \newcommand{\pexpPalLet}[3]{\keyword{let palette}\,#1\,\keyword{=}\,#2\,\keyword{in}\,#3}
@@ -210,7 +221,7 @@
 %\newcommand{\dcase}[5]{\mathsf{case}\,#1\,\mathsf{of}\,#2\Rightarrow#3~\vert~#4\Rightarrow#5}
 \newcommand{\dadd}[2]{#1 + #2}
 %% TODO third arg should be empty
-\newcommand{\dehole}[3]{\leftidx{^{#3}}{\llparenthesiscolor\rrparenthesiscolor}{^{#1}_{#2}}}
+\newcommand{\dehole}[2]{{\llparenthesiscolor\rrparenthesiscolor}{^{#1}_{#2}}}
 %% TODO fourth arg should be empty
 \newcommand{\dhole}[4]{\leftidx{^{#4}}{\llparenthesiscolor#1\rrparenthesiscolor}{^{#2}_{#3}}}
 \newcommand{\dindet}[1]{\lceil#1\rceil}
@@ -221,12 +232,18 @@
 \newcommand{\dpair}[2]{(#1,#2)}
 \newcommand{\dprj}[2]{\mathsf{prj}_{#1}(#2)}
 
+\newcommand{\isType}[2]{#1 \vdash #2~\mathtt{type}}
+\newcommand{\elabs}[5]{#1 \vdash #2 \leadsto #3 : #4 \dashv #5}
+\newcommand{\expands}[5]{#1; #2 \vdash #3 \leadsto #4 : #5}
+\newcommand{\ccexpands}[5]{#1; #2 \vdash_\text{cc} #3 \leadsto #4 : #5}
 \newcommand{\expandAna}[6]{#1 \vdash #2 \Leftarrow #3 \leadsto #4 : #5 \dashv #6}
 \newcommand{\expandSyn}[5]{#1 \vdash #2 \Rightarrow #3 \leadsto #4 \dashv #5}
 \newcommand{\pexpandAna}[5]{#1 \vdash_{#2} #3 \leadsto #4 \Leftarrow #5}
 \newcommand{\pexpandSyn}[5]{#1 \vdash_{#2} #3 \leadsto #4 \Rightarrow #5}
-\newcommand{\decode}[2]{#1 \uparrow #2}
-\newcommand{\hasType}[4]{#1; #2 \vdash #3 : #4}
+\newcommand{\decodeExp}[2]{#1 \uparrow #2}
+\newcommand{\encodeExp}[2]{#1 \downarrow #2}
+\newcommand{\hasType}[3]{#1 \vdash #2 : #3}
+\newcommand{\hasTypeD}[4]{#1; #2 \vdash #3 : #4}
 \newcommand{\isValue}[1]{#1~\mathsf{val}}
 \newcommand{\isGround}[1]{#1~\mathsf{ground}}
 \newcommand{\isBoxedValue}[1]{#1~\mathsf{boxedval}}
@@ -238,7 +255,7 @@
 %% \newcommand{\stepsToD}[3]{#1 \vdash #2 \mapsto #3}
 \newcommand{\stepsToD}[3]{#2 \mapsto #3}
 \newcommand{\multiStepsTo}[2]{#1 \mapsto^* #2}
-\newcommand{\downArrowsTo}[2]{#1 \Downarrow #2}
+\newcommand{\evalsTo}[2]{#1 \Downarrow #2}
 
 %% TODO if feeling obsessive, replace direct uses of \Delta
 \newcommand{\hDelta}{\Delta}
@@ -261,3 +278,14 @@
 \newcommand{\inhole}[2]{\mathsf{inhole}(#1; #2)}
 
 \newcommand{\DoSubst}[3]{[#1/#2]{#3}}
+
+\newcommand{\splat}[1]{\{#1\}_{i < n}}
+\newcommand{\taut}[1]{\tau_\text{#1}}
+\newcommand{\etxt}[1]{e_\text{#1}}
+\newcommand{\dtxt}[1]{d_\text{#1}}
+\newcommand{\splices}{\splat{\psi_i}}
+
+\newcommand{\livelitCtxEntry}[4]{\mathsf{livelit}~\livelitname{#1}~\mathsf{at}~#2~\{#3; #4\}}
+\newcommand{\expType}{\mathsf{Exp}}
+\newcommand{\livelitsIn}[1]{\mathsf{livelits}(#1)}
+\newcommand{\protoEnvsOf}[2]{\mathsf{protoenvs}(#1; #2)}
