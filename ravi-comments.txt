@@ -1,0 +1,109 @@
+First couple sections are looking pretty good. Excited to read more (literally, more). Here are my suggestions:
+23:10
+Abstract
+23:10
+Maybe move the “livelits operate as graphical macros” up to where the sentence(s) where livelits is first mentioned. And say something like “Compared to previous approaches to embedding GUIs within text-based code editors, livelits are [list of notable characteristics].”
+23:10
+The noted characteristics of livelits are (1) persistence, (2) compositionality, (3) hygiene, (4) live. The hygiene aspect seems less relevant “compared to previous approaches to embedding GUIs within text-based code editors.” Maybe keep the livelits characteristics to persistent, compositional, and live, and then separately describe the PL mechanisms needed to support this UI: live evaluation, now with a two-phase twist; and parameterized hygienic macros.
+23:10
+Introduction
+23:10
+If you cite Graphite in the first paragraph, maybe summarize the results of the survey.
+23:10
+Footnote 1: I think you can drop this entirely, or at least delay the beginning of Section 2, here you talk about Hazel/ML.
+23:10
+Minor: “bg” ==> “background_” or “” or “hazel_green_or_whatever_the_color_value_defines” ?
+23:10
+Maybe add the underline portion: “it is difficult _for users (or library writers)_ to add new”
+23:11
+“into an _otherwise text-based_ editor”
+23:11
+“most closely related”: The Intro cites three papers... all of which of yours. Regardless of how highly the reviewers regard Cyrus-version-2012 and Graphite, I think the Intro comes off as too Graphite-focused. What is a slightly broader landscape of tools that belong to the GUI-in-code-editors bucket? How are they not-persistent and not-compositional and not-live? Then make the case that Graphite is the best among these to compare to.
+23:11
+“, or livelits _,_”
+23:11
+Compared to the list in the Abstract, the 5 contributions add “Decentralized Extensibility” and “Parameterization” and drop “Hygiene.” As suggested above, maybe made Persistence, Compositionally, and Liveness the first three.
+23:11
+I’m not sure “Decentralized Extensibility” warrants a place (and certainly not the lead) in this list; prior systems may have restricted things to one livelit per type, but this seems like an incidental detail (and certainly at this point without having provided context for the necessary PL macro machinery).
+23:11
+“Parameterization” also seems to fall somewhat into the previous camp, like an incidental limitation of Graphite.
+23:11
+Here in the Intro, can you relate the necessary machinery to prior macro systems, summarizing a bit of the related work and context for the cited ICFP 2018 paper, and what new twists there are for “graphical macros” rather than textual? Maybe describe all of these issues --- hygiene, parameterization, extensibility, and also the need for a twist on live evaluation --- after the big three (persistent, compositional, live).
+23:11
+Whatever list and order you decide, it should probably be the same in the Abstract and here.
+23:11
+Footnote 3: This seems like TMI here. (Why doesn’t the API give palettes a Java parser?)
+23:11
+Case Studies
+23:11
+Rename to Overview. There’s much more discussion of the techniques under the hood than of the “client programmer’s perspective.”
+23:11
+It is potentially distracting why "end-user" applications appears first. Maybe move the "general-purpose programming languages _are_ equipped" sentence up here, and then transition to programmers/instructors using spreadsheets anyway. (Need to mention computational notebooks and any live/GUI features they provide?)
+23:11
+“finite number of styles”: This hints at the need for customizability, but not sure exactly why. “Styles” doesn’t seem to describe the issue of lacking canned functionality for grade-cutoffs.
+23:12
+"Dataframe" ==> "StudentTable" ?
+23:12
+Label syntax: I could guess what the label syntax meant, and it’s mentioned below. But maybe it’s better to head off confusion about the syntax by saying something like “For example, consider the following expansion of Fig. 2; the expression (.A 90.0, .B 90.0) is Hazel syntax for defining a record...”
+23:12
+The expansions have only literal floats, not more complicated expressions involving variables, so I’m not this is a great place to talk about not having “to reason about types and binding” in expansions.
+23:12
+2.1.2: Swap order of “Splicing” and “Parameterization” to match what follows.
+23:12
+I can’t quite follow the directions in the “shown above ... (see below)” sentence.
+23:12
+2.1.3: The transition to start this section could be smoother.
+23:12
+Say “edit-time” (and preview the two-phase variant of live evaluation) earlier and more often?
+
+Hi @cyrus, Section 4 (8:11pm ET version) is coming along nicely. Here are my minor comments/suggestions: (edited) 
+22:14
+4.1
+22:15
+Maybe drop the italics, since Hazelnut Live was already mentioned and cited.
+22:15
+Maybe provide a reminder why Hazelnut Live is the right starting point (holes, to be filled by livelits, are represented explicitly; and programs with holes can be evaluated).
+22:15
+The background and summary of Hazelnut Live is probably all just fine, but it would be even friendlier if there was a simple example at the top --- such as let x = 0 in let f = \y. ?? in (f 1, f2) --- after the current first paragraph. This would provide hooks to make the next couple paragraphs more concrete. And a benefit compared to the current example, which appears later on, is that there are multiple hole closures. (edited) 
+22:15
+“detalis”
+22:15
+It’s just notation and it doesn’t matter, but did you purposely hijack \Downarrow to mean multi-step reduction? (If you have buyer’s remorse about the \mapsto^* syntax, you could use \rightarrow^* without any fear of confusion.) (edited) 
+22:15
+“work.)” ==> “work).”
+22:16
+4.2
+22:16
+“Livelit definitions are collected” suggests that they are collected. (Later on you say it’s a fixed context.) How about “recorded”?
+22:16
+“which generates” ==> “which --- when applied, as discussed below --- generates”. I think something like this is needed because EApLivelit isn’t discussed for a while.
+22:16
+“by a definition form in the language”: Maybe add something like “let livelit $a = ... in e, as shown in ...” because currently that form is shown in the Sec 1, and maybe it will appear again in Sec 3?
+22:16
+Any reason (not) to summarize the fill-and-resume properties? (Then, in Sec 4.3, you mention how those properties are extended to account for livelits.)
+22:16
+4.2.2
+22:16
+There are lots of places where “livelit” is said instead of “livelit application”. Maybe I missed the terminology earlier, but it might be better to say “livelit application” everywhere or at least say that it’s often abbreviated to “livelit” when it’s clear that you’re referring to an application and not the definition.
+22:16
+“unexpanded, so it may contain other livelits”: You might say “compositional” to make the connection.
+22:16
+(1) Maybe “livelit name” ==> “livelit definition”
+(2) Say why type checking during evaluation. (So that entire program does not need to be re-analyzed when only the livelit application models are changing.) Say why type checking might fail. (Because the livelit expansion is just arbitrary code.) (edited) 
+22:16
+(5) Subscript is missing the leading p.
+22:16
+(6) This seems to be a rare use of the phrase “livelit expression”
+22:16
+“manner.)” ==> “manner).”
+22:16
+4.3
+22:16
+"with the livelit": Here is the one place I noticed where you used "livelit" to refer the definition rather than applications.
+22:17
+“by example”: Say which one(s).
+22:17
+“efficiently”: Is this necessary? Are there other less efficient ways that come to mind?
+22:17
+Between Definition 4.8 and “This same fill and resume”: Somewhere around here might be a good place to say (remind?) how livelit applications may request one (or all) of the collected closures. (Do any of the examples involve requesting/using multiple closures?)
+
