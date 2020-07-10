@@ -1,21 +1,255 @@
 \section{Livelit Definitions}\label{sec:livelit-definitions}
-Which livelit implementation do we want to show? Maybe grade cutoffs? Slider as simple intro + color chooser?
 
-Talk about each component of a livelit definition:
-\begin{itemize}
-  \item livelit name (talk about binding structure)
-  \item expansion type
-  \item model type (must be serializable)
-  \item action type (mention integration into Hazel's undo system)
-  \item initial model
-  \item update function (monadic actions; talk about color palette update; SpliceRefs)
-  \item view function (monadic actions; talk about GUI stuff? tab order? dimensions? mostly defer to Elm for details)
-  \item expand function (should we call it fill?)
-\end{itemize}
+\begin{figure}
+\begin{lstlisting}
+  type Color = (.r Int, .g Int, .b Int, .a Int)
 
-Hygiene from a provider's perspective -- have to use parameters to explicitly capture definition site bindings.
+  livelit $color at Color {
+    capture { }
 
-Talk about how you can use livelits inside the view function, e.g. livelits for GUI widgets.
+    type Model = (.r SpliceRef, .g SpliceRef, .b SpliceRef, .a SpliceRef)
+    let init : UpdateMonad(Model) = do 
+      r <- new_splice(`Int`, Some(`0`))
+      g <- new_splice(`Int`, Some(`0`))
+      b <- new_splice(`Int`, Some(`0`))
+      a <- new_splice(`Int`, Some(`100`))
+      return (r, g, b, a)
 
-Stylesheet namespace isolation mechanism? (implementation section?)
+    type Action = 
+    | ClickOnColor(Color)
+  
+    let view : Model -> ViewMonad(Html(Action)) = 
+      fun model -> do 
+        (* determine a color to display to the client, if possible *)
+        r_res <- eval_splice(model.r)
+        g_res <- eval_splice(model.g)
+        b_res <- eval_splice(model.b)
+        a_res <- eval_splice(model.a)
+        let cur_color : Color = 
+          case (r_res, g_res, b_res, a_res) 
+          | (Some(Val(IntLit(r))), 
+             Some(Val(IntLit(g))), 
+             Some(Val(IntLit(b))), 
+             Some(Val(IntLit(a)))) -> 
+            Some((r, g, b, a))
+          | _ -> None
+        in 
+        
+        r_editor <- editor(model.r, FixedWidth(20))
+        g_editor <- editor(model.g, FixedWidth(20))
+        b_editor <- editor(model.b, FixedWidth(20))
+        a_editor <- editor(model.a, FixedWidth(20))
+        
+        (* ...render the UI using these splice editors... *)
+      
+    let update : Model -> Action -> UpdateMonad(Model) =
+      fun model (ClickOnColor(r, g, b, a)) -> do 
+        set_splice(model.r, IntLit(r))
+        set_splice(model.g, IntLit(g))
+        set_splice(model.b, IntLit(b))
+        set_splice(model.a, IntLit(a))
+        return (r, g, b, a)
+    
+    let expand : Model -> (Exp, List(SpliceRef)) = 
+      fun model -> 
+        (`fun r g b a -> (r, g, b, a)`, [model.r, model.g, model.b, model.a])
+  }
+\end{lstlisting}
+\caption{Livelit Implementation: \li{\$color} (simplified for presentation)}
+\label{fig:color-impl}
+\end{figure}
 
+\noindent
+Let us now look in more detail at a livelit definition. Fig.~\ref{fig:color-impl}
+outlines the \li{\$color} livelit from Fig.~\ref{fig:color}. (We omit certain 
+incidental implementation details and use unimplemented syntactic sugar, including
+Haskell-style \li{do} notation and simplified quasiquotation, for the sake of presentation.
+We say more about the implementation in Sec.~\ref{sec:implementation}.)
+
+Line 1 of Fig.~\ref{fig:color-impl} specifies the livelit's name, \li{\$color}, and its \emph{expansion type},
+\li{Color}, which was discussed in Sec.~\ref{sec:livelit-expansion}.
+The remainder of the definition is the livelit's implementation.
+Livelits are implemented using a variation on the functional model-view-update
+framework popularized by the Elm programming language\todo{cites}. We add a fourth component,
+expansion generation. In addition, we add a simple monadic framework to provide the necessary  
+interface between the livelit and the programming environment, discussed below, while retaining
+a pure functional programming model.\todo{cite monads in Haskell}
+
+\subsection{Model}\label{sec:model}
+\todo{final check of line numbers}{}Line 2 of Fig.~\ref{fig:color-impl} specifies the livelit's \emph{model type},
+here a labeled 4-tuple of \emph{splice references}, one for each of the four splices
+that appear in the GUI in Fig.~\ref{fig:color}.
+Models are persisted in the syntax tree of the program, so in practice,
+ the system would check that the model type supports automatic serialization. 
+ (Hazel is able to serialize all types because it is implemented as a 
+ simple interpreter.)
+
+The initial value of the model is specified starting on Line 4, 
+which defines a command in the \li{UpdateMonad} that returns the 
+initial model value after generating four new splice references
+using the \li{new_splice} command:
+\begin{lstlisting}[numbers=none]
+  new_splice : (Typ, Option(Exp)) -> UpdateMonad(SpliceRef)
+\end{lstlisting}
+This command creates a fresh splice
+of the given type and, optionally, with the given initial expression,
+and returns a unique splice reference, which uniquely and abstractly identifies that splice.
+Bolded types like \li{Typ}, \li{Exp}, \li{UpdateMonad}, and \li{SpliceRef}
+are provided by the standard library. The \li{Typ} and \li{Exp} types 
+encode the syntax of Hazel's types and expressions.
+These two arguments are provided here in quasiquoted form, e.g. \li{`0`}\todo{cite something}. 
+If no initial expression is provided, the splice is initialized with 
+an empty hole.
+
+The system checks that the provided type and initial content is valid 
+assuming only the explicitly specified set of captured bindings on Line 3.
+Here, we do not need to capture anything because \li{Int} is a built in type
+and the initial content is closed. However, 
+for splices of user-defined types, those types need to be explicitly captured.
+Similarly, helper functions that are used in initial splices (and in the expansion,
+discussed below) must be explicitly captured. 
+This serves to ensure \emph{context independence} -- the livelit needs to make no 
+assumptions about the typing context at use sites.
+We use an explicit capture set, rather than implicitly capture of all bindings at the definition site, 
+both to prevent inadvertent capture\todo{cite heathers paper}{} 
+and to ensure that the capture set is part
+of the interface of the livelit definition, which simplifies matters related to 
+module export and determining paths to the captured bindings at use sites \cite{TLMs}.
+
+\subsection{Action}
+Line 11 defines the \li{Action} type for the \li{\$color} livelit, which 
+specifies a single user-initiated action: clicking on a color using the user 
+interface on the right side of Fig.~\ref{fig:color}. Actions are emitted
+from event handlers (e.g. click handlers) defined in the computed \li{view}, 
+and actions are consumed by the \li{update} function, causing a change in the model. 
+Let us discuss each of these functions in turn.
+
+\subsection{View}
+The \li{view} function computes the view given a model and access to the commands in 
+the \li{ViewMonad}. The computed view is a value of type \li{Html(Action)}.  
+The type family \li{Html(a)} provides a simple immutable
+encoding of an HTML tree, where the type parameter \li{a} is the type of actions that 
+are emitted by event handlers that can be attached to elements of the tree, e.g.
+\li{on_click} and so on. 
+We elide the details of the particular user interface in Fig.~\ref{fig:color}
+to focus on two key mechanisms exposed by \li{ViewMonad}: live evaluation 
+and splice rendering.
+
+\subsubsection{Live Evaluation}
+In order to provide the client with live feedback about the dynamic implications 
+of the programmer's choices, 
+the view function can ask the system to evaluate a splice, or an encoded function of 
+multiple splices as long as the function is well-typed using only the capture set, 
+under the closure that the client has selected using one of the following
+commands:
+\begin{lstlisting}[numbers=none]
+eval_splice : SpliceRef -> ViewMonad(Option(Result))
+eval_fun    : (Exp, List(SpliceRef)) -> ViewMonad(Option(Result))
+\end{lstlisting}
+
+The \li{None} case 
+arises when evaluation is not possible, either because no closures are available
+or because the free variables in the selected closure overlap with the free 
+variables in the provided expression. This occurs only when the user has selected
+a closure that appears under a binder in the evaluation result (e.g. because 
+the result is a lambda). 
+We discuss this further in Sec.~\ref{sec:calculus-closure-collection}.
+
+If a result is available, the \li{Result} type distinguishes two possibilities:
+\begin{lstlisting}[numbers=none]
+type Result = 
+| Val(Exp)
+| Indet(Exp)
+\end{lstlisting}
+The \li{Val} case arises when evaluation produces a true value, whereas the 
+\li{Indet} case arises when evaluation results in an indeterminate expression,
+i.e. an expression that cannot be further evaluated due to one or more holes 
+in critical elimination positions \cite{HazelnutLive}.
+
+In our example, the livelit determines a color to display to the client 
+if all four splices evaluate to integer literals. Otherwise, there is not 
+enough information to determine a color, and the livelit can decide how to 
+communicate this information to the client, e.g. with an "X" over the color 
+preview.
+
+Livelits can attempt to offer feedback even when the result is indeterminate,
+because indeterminate expressions might nevertheless contain useful information.
+For example, a livelit that previews a sequence of notes as audio might be able 
+to handle a list of notes where certain notes are missing, i.e. holes, by 
+simply playing silence or some other default sound when it encounters them.
+This behavior is highly domain-specific, so each livelit provider must decide 
+whether and how indeterminate results are supported.
+
+\subsubsection{Splice Rendering}
+The remainder of the \li{view} function is responsible for computing the view.
+This is straightforward but for the question of splices. In Fig.~\ref{fig:color},
+we want the splices to render as expression editors, with all of Hazel's editor 
+services available to the user. In order to support this, the \li{view} function
+can request an editor for a given splice, with given dimensions:
+\begin{lstlisting}[numbers=none]
+editor : (SpliceRef, Dimensions) -> ViewMonad(Html(a))
+\end{lstlisting}
+The result is an opaque \li{Html(a)} value that the remainder of the function 
+can place as needed. When the livelit is rendered, this part of the tree is 
+under the control of Hazel. The \li{Dimensions} parameter currently supports only a fixed
+character width, with overflow causing scrolling, but in the future we plan to offer 
+to offer more flexible layout options.
+
+Another situation that can arise is when the UI needs to include not an editor but 
+a rendered evaluation result. For example, each of the cells in the \li{\$dataframe}
+livelit in Fig.~\ref{fig:grading} shows the evaluation result for the corresponding 
+cell. Only the formula bar at the top is an editor. To support this, the \li{view}
+function can use the \li{result_view} commands, which mirror the \li{eval} commands:
+\begin{lstlisting}[numbers=none]
+result_view_splice : (SpliceRef, Dimensions) -> ViewMonad(Html(a))
+result_view_fun    : (Exp, List(SpliceRef), Dimensions) -> ViewMonad(Html(a))
+\end{lstlisting}
+
+
+\subsection{Update}
+When the user triggers an event in a livelit view, it emits an \li{Action}.
+The system responds by calling the \li{update} function to determine how 
+this action should affect the model and the splices. 
+
+We discussed in Sec.~\ref{sec:model} that the \li{UpdateMonad}
+allows new splices to be generated in response to user actions. 
+For example, the \li{\$dataframe} livelit uses this when new rows
+or columns are added.
+
+In Fig.~\ref{fig:color-impl}, we see that the \li{\$color} livelit responds to 
+the \li{ClickOnColor} action by invoking the \li{set_splice} command to overwrite 
+the current splices with integer literals determined based on which color the user
+clicked on:
+\begin{lstlisting}[numbers=none]
+  set_splice : (SpliceRef, Exp) -> UpdateMonad(Unit)
+\end{lstlisting}
+The provided expression must satisfy the splice type and only make use of the capture set.
+
+When the model is updated, a new view is 
+computed. The system then performs a diff between the old and new view in order to 
+efficiently perform the necessary imperative updates to the editor's visual state.
+Changes to splices can also cause the view to be recomputed, because the view might 
+need to evaluate the splices\todo{optimizaiton?}. The \li{update} function does not itself 
+have the ability to request evaluation, because the model should not depend directly  
+which closure the user has selected. Of course, the \li{view} might emit 
+result-dependent actions when appropriate.
+
+\subsection{Expansion}
+The ultimate purpose of a livelit is to fill the hole where it appears by generating an expansion,
+i.e. a standard symbolic expression of the expansion type, here \li{Color}.
+The \li{expand} function, shown in Fig.~\ref{fig:color-impl}, is responsible for generating 
+an expansion given the current model.
+
+The expansion can include splices, but we the system does not make the contents of a splice 
+available directly. Instead, the \li{expand} must return a pair consisting of an encoded expression, of type 
+\li{Exp}, with a list of \li{SpliceRef}s that the expansion depends on. 
+We call the \li{Exp} the \emph{parameterized expansion}
+ because it must take an argument for each listed \li{SpliceRef}s. 
+ That argument will be the corresponding splice 
+type, which was provided when the splice was initialized. 
+ The return type of the parameterized expansion is the expansion type, here \li{Color}.
+
+This parameterization strategy makes it simple to enforce hygiene: the parameterized expansion 
+can depend only on the capture set, whereas the splices are entered by the client and so they can 
+depend only on the client site typing context. The use of standard function application ensures
+that splices are capture avoiding. We consider this more formally in the next section.

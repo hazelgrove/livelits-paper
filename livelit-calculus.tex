@@ -227,13 +227,13 @@ as determined when the livelit definition first requested the splice (discussed 
 
 Rule \rulename{EApLivelit} performs livelit expansion. Its premises, in order, operate as follows:
 \begin{enumerate}
-    \item The first premise looks up the livelit name in the livelit context.
-    \item The second premise serves to ensure that the model value, $\dtxt{model}$, is of the 
+    \item \textbf{Lookup.} The first premise looks up the livelit name in the livelit context.
+    \item \textbf{Model Validation.} The second premise serves to ensure that the model value, $\dtxt{model}$, is of the 
     specified model type, $\taut{model}$.
-    \item The third premise applies the expansion function, $\dtxt{expand}$, to the model value, $\dtxt{model}$, 
+    \item \textbf{Expansion.} The third premise applies the expansion function, $\dtxt{expand}$, to the model value, $\dtxt{model}$, 
     producing the encoded expansion, $\dtxt{encoded}$, which, by the definitions given above, is of type $\mathsf{Exp}$.
-    \item The fourth premise decodes $\dtxt{encoded}$, producing the external expression it encodes, $\etxt{pexpansion}$.
-    \item We call $\etxt{expansion}$ the \emph{parameterized expansion} because, according to the fifth premise,
+    \item \textbf{Decoding.} The fourth premise decodes $\dtxt{encoded}$, producing the external expression it encodes, $\etxt{pexpansion}$.
+    \item \textbf{Expansion Validation.} We call $\etxt{expansion}$ the \emph{parameterized expansion} because, according to the fifth premise,
     it must be a function that returns a value of the expansion type, $\taut{expand}$, when applied (in curried fashion, though this is not critical)
     to the splices, whose types, $\splat{\tau_i}$, are explicitly recorded in the livelit.
     We must take care to ensure that the parameterized expansion is \emph{context independent}, 
@@ -244,8 +244,8 @@ Rule \rulename{EApLivelit} performs livelit expansion. Its premises, in order, o
     closed. Consequently, any necessary helper functions used in the expansion must be provided explicitly by the client 
     via a splice. In Sec.~\ref{sec:calculus-parameterization}, we will see how this context independence 
     restriction can be made 
-    less onerous by passing definition-site bindings along as partially applied parameters.
-    \item Finally, the sixth premise inductively expands each of the spliced expressions in the same context as the livelit
+    less onerous by passing definition-site bindings along as partially applied parameters.\todo{remove?}{}
+    \item \textbf{Splice Expansion.} Finally, the sixth premise inductively expands each of the spliced expressions in the same context as the livelit
     expression itself.
 \end{enumerate}
 The conclusion of the rule then applies the parameterized expansion to the expanded splices. 
@@ -390,10 +390,10 @@ and then return to finish the job once they have been filled.
 \end{proof}
 
 In a language with side effects, one would instead need to modify evaluation of  
-cc-expansions such that the expansion of each livelit application is evaluated alongside the 
-temporary livelit expansions,
+cc-expansions such that the full expansion of each livelit application is evaluated at the same time as the 
+temporary expansion,
 with the result stored for subsequent hole filling. This would ensure that
-side effects happen in the same order and only once. The details are beyond the scope of this work.
+side effects happen in the same order and only once. The full details are beyond the scope of this work.
 
 \subsection{Parameterization}
 
