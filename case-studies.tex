@@ -229,26 +229,30 @@ We will return to how livelit implementations handle this situation in Sec.~\ref
       \caption{}
     \end{subfigure}
   \end{center}
-  \caption{hello world}
-  \label{fig:color}
+  \caption{Case Study: Image Transformation. The image shown is determined based on the selected closure.}
+  \label{fig:img-transformation}
 \end{figure*}
 
-Show example of an image transformation pipeline going through livelits
+Our next case study is a simple image transformation livelit, \li{\$img_filter},
+demonstrated in Fig.~\ref{fig:img-transformation}. This livelit takes 
+a URL to an image as a parameter, and contains two splices of type \li{Int},
+one to adjust the contrast, and the other to adjust the brightness.
+In this example, we have filled those splices with a \li{\$slider}, but 
+as above we could enter any expression of type \li{Int}.
+The livelit shows a live preview of the transformed image.
+The expansion generates the necessary calls to image processing functions, 
+not shown.
 
-This might also benefit from Parameterization
-
-Show multiple calls with different example images + closure selector UIs
-
-Go into more detail about how evaluation works + fill-and-resume mechanics (and efficiency nod)
-
-Talk about probes?
-
-We assume that the user has selected at most one closure for each livelit in the unexpanded expression.
-The corresponding environment is applied as a substitution before attempting to evaluate the requested expression.
-To maintain the context independence principle, this request must take the form of a closed function
-of the splices.
-As discussed in Sec.~\ref{sec:live-evaluation}, evaluation can fail if the free variables in the splices
-overlap with the free variables in selected closure.
+The novelty in this example is that the livelit appears inside a function, 
+\li{classic}, which takes an image URL as input. At the bottom 
+of the figure, \li{classic} is mapped over a list (here, containing only 
+two elements for the sake of presentation). Consequently, there are now 
+two closures associated with the application of \li{\$img_filter} in the 
+body of \li{classic}. Rather than disabling live evaluation in situations like 
+this, Hazel instead allows the programmer to select between the closures 
+as shown (inset). The live feedback is derived based on the selected closure.
+This makes it easy to see how the image filter being designed here will affect a
+number of example images by quickly toggling between closures. The underlying expansion remains abstract, i.e. it refers to the image via the \li{url} variable.
 
 % \subsection{Additional Examples}\label{sec:additional-examples}
 % It would be nice to have a gallery-style figure and a brief overview of some other case studies
