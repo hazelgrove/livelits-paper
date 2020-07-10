@@ -249,8 +249,10 @@ of the figure, \li{classic} is mapped over a list (here, containing only
 two elements for the sake of presentation). Consequently, there are now 
 two closures associated with the application of \li{\$img_filter} in the 
 body of \li{classic}. Rather than disabling live evaluation in situations like 
-this, Hazel instead allows the programmer to select between the closures 
-as shown (inset). The live feedback is derived based on the selected closure.
+this, Hazel instead allows the programmer to select between the closures when 
+the cursor is on the livelit expression (via a simple sidebar toggle, not shown, which is shared 
+with the general closure selection UI \cite{HazelnutLive}). 
+The live feedback is based on the selected closure.
 This makes it easy to see how the image filter being designed here will affect a
 number of example images by quickly toggling between closures. The underlying expansion remains abstract, i.e. it refers to the image via the \li{url} variable.
 
