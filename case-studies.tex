@@ -240,6 +240,13 @@ Go into more detail about how evaluation works + fill-and-resume mechanics (and 
 
 Talk about probes?
 
+We assume that the user has selected at most one closure for each livelit in the unexpanded expression.
+The corresponding environment is applied as a substitution before attempting to evaluate the requested expression.
+To maintain the context independence principle, this request must take the form of a closed function 
+of the splices. 
+As discussed in Sec.~\ref{sec:live-evaluation}, evaluation can fail if the free variables in the splices 
+overlap with the free variables in selected closure.
+
 \subsection{Additional Examples}\label{sec:additional-examples}
 It would be nice to have a gallery-style figure and a brief overview of some other case studies
 and how they exercise the novel features of the livelits mechanism. Maybe some statistics on how

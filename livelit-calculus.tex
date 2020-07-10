@@ -283,72 +283,117 @@ using the Agda proof assistant.\todo{say more}{}
 
 \subsection{Live Feedback via Closure Collection}
 In order to support live feedback, a livelit needs to be able to ask the system
-to evaluate expressions under a selected closure for the hole that the livelit is filling.
-This mechanism was described by example in Sec.~\ref{sec:image-transformation}.
-
+to evaluate expressions under one of the closures associated with the livelit.
+This mechanism was introduced by example in Sec.~\ref{sec:image-transformation}.
 In this section, we will formalize the process of efficiently collecting closures 
-for the livelits that appear in a program. The key idea is that we generate a temporary expansion,
+for the livelits that appear in a program. 
+
+The key idea is that we generate an alternative expansion,
 called the \emph{cc-expansion}, 
-where each livelit expands to an empty hole applied to each of its splices. 
-The key rule for the cc-expansion judgement, $\ccexpands{\Phi}{\Gamma}{\hat e}{e}{\tau}$, is:
+where each livelit expands to an empty hole applied to the splices. In other words,
+we leave a hole in place of the parameterized expansion, which we expand and record in the \emph{cc-context}, $\Omega$, on the side.
+The key rule for the cc-expansion judgement, $\ccexpands{\Phi}{\Gamma}{\hat e}{e}{\tau}{\Omega}$, is:
 \begin{mathpar}
 \inferrule[CCApLivelit]{
-    \livelitCtxEntry{a}{\taut{expand}}{\taut{model}}{\dtxt{expand}} \in \Phi\\\\
-    \{ \ccexpands{\Phi}{\Gamma}{\hat e_i}{e_i}{\tau_i} \}_{i < n}
+    \{ \ccexpands{\Phi}{\Gamma}{\hat e_i}{e_i}{\tau_i}{\Omega_i} \}_{i < n}\\
+    \expands{\Phi}{\Gamma}{\haplivelit{u}{a}{\dtxt{model}}{\splat{\hsplice{\hat e_i}{\tau_i}}}}{
+        \hap{\etxt{pexpansion}}{\splat{e_i}}
+    }{\taut{expand}}\\
+    \elabs{ }{\etxt{pexpansion}}{\dtxt{pexpansion}}{\tarr{\splat{\tau_i}}{\taut{expand}}}{\Delta}
 }{
     \ccexpands{\Phi}{\Gamma}{\haplivelit{u}{a}{\dtxt{model}}{\splat{\hsplice{\hat e_i}{\tau_i}}}}{\hap{\hehole{u}}{\splat{e_i}}}{\taut{expand}}
+    {\cup_{i<n} \Omega_i \cup \{\Omegaitem{u}{\dtxt{pexpansion}}\}}
 }
 \end{mathpar}
+
 We then elaborate and evaluate the cc-expansion 
 following Hazelnut Live's dynamic semantics for programs with holes, which were summarized 
 in Sec.~\ref{sec:external-and-internal-lang}. The result will contain some number of hole closures
 for each livelit hole. We call these the proto-closures and their associated environments the proto-environments for that livelit hole, formally defined as follows.
 \begin{definition}[Proto-Environment Collection]
-If $\ccexpands{\Phi}{\cdot}{\hat e}{e}{\tau}$ and $\elabs{}{e}{d}{\tau}{\Delta}$
-and $\evalsTo{d}{d'}$ then $\protoEnvsOf{\hat e}{u} = \{ \sigma \mid \dehole{u}{\sigma} \in d' \}$.
+If $\ccexpands{\Phi}{\cdot}{\hat e}{e}{\tau}{\Omega}$ and $\elabs{}{e}{d}{\tau}{\Delta}$
+and $\evalsTo{d}{d'}$ and $u \in \domof{\Omega}$ then $\protoEnvsOf{\Phi}{\hat e}{u} = \{ \sigma \mid \dehole{u}{\sigma} \in d' \}$.
     % protoclosures(\hat e, u) = { sigma | hole^u_sigma in d' } where \hat e cc-expands to e and e elaborates to d and d evaluates to d' 
 \end{definition}
 A proto-environment for a livelit hole might itself contain a proto-closure for another livelit hole.
 For example, in Fig.~\ref{fig:color}, the proto-environment for the \li{\$color} livelit contained the 
-proto-closure for the \li{\$slider} livelit because it was used in the value of a bound variable, \li{grayLevel}.
-This is unsatisfying, because it means that the actual value of that variable, which requires computing the expansion,
- is not available to the \li{\$color}
-livelit as expected.
-Consequently, we must fill any livelit holes that appear in the proto-environments for other livelit holes.
-We do so by computing the parameterized expansions of the corresponding livelits,  
-as specified in Sec.~\ref{sec:calculus-expansion} (we can skip the final premise of Rule \rulename{EApLivelit} because the 
-splice arguments have already been applied in the cc-expansion). We then perform a hole filling operation, 
-$\instantiate{\dtxt{pexpansion}}{u}{d}$ over each of the proto-environments associated with livelit holes. 
-Hole filling was defined by Hazelnut Live and operates to 
-fill every closure for hole $u$ in $d'$ with $\dtxt{pexpansion}$ and derives from the metavariable
-instantiation operation of contextual modal type theory (CMTT) \cite{HazelnutLive,Nanevski2008}. 
+proto-closure for the \li{\$slider} livelit, via the \li{grayLevel} variable.
+If we use proto-environments for live evaluation, then the actual value of that variable
+would not be available (here, the color could not be displayed).
+
+Consequently, the second step of closure selection is to fill any livelit holes that appear in the proto-environments for other livelit holes.
+We do so by filling them using the parameterized expansions gathered in $\Omega$ and then resuming
+evaluation where appropriate.
+Formally, this involves the hole filling operation $\instantiate{d_1}{u}{d_2}$ for Hazelnut Live
+(which derives from the metavariable instantation operation of contextual modal type theory \cite{HazelnutLive,Nanevski2008}).
+This operation 
+fills every closure for hole $u$ in $d_2$ with $d_1$. 
 Unlike substitution, hole filling is
 not capture-avoiding. Instead, the environment on each of these closures is applied to $\dtxt{pexpansion}$
 as a substitution, i.e. the delayed substitutions captured in the environment are realized.
-In this case, however, the proto-expansion is guaranteed to be closed due to 
+In this case, however, the parameterized expansion is guaranteed to be closed due to 
 the context independence discipline we maintain in Rule \rulename{EApLivelit}, 
 so hole filling acts simply as a syntactic replacement.
 
-Let $\livelitsIn{\hat e}$ by the set of hole names for the livelits that appear in $\hat{e}$. 
-
-\begin{definition}[Environment Collection]
-    If $u \in \livelitsIn{\hat e}$ and $\protoEnvsOf{\hat e}{u} = \splat{\sigma_i}$ 
-    % then $\EnvsOf{\hat e}{u} = \splat{fillem{\hat e\sigma_i}}$.
+Formally, we begin by defining an operation $\fillof{\Omega}{\sigma}$ which acts on proto-environments 
+to fill any livelit holes that appear.
+\begin{definition}[Livelit Hole Filling] ~
+    \begin{enumerate}
+        \item $\fillof{\Omega}{[d_1/x_1, \ldots, d_n/x_n]} = [\fillof{\Omega}{d_1}/x_1, \ldots, \fillof{\Omega}{d_n}/x_n]$
+        \item $\fillof{\Omega}{d} = \instantiateB{\dtxt{pexpansion}}{u}_{\Omegaitem{u}{\dtxt{pexpansion}} \in \Omega}{d}$
+    \end{enumerate}
 \end{definition}
 
-This is not sufficient, however, because some of these hole closures might themselves 
-contain livelit holes. However, a livelit that uses this closure needs the final result, 
-not a hole. Consequently, we need to \emph{fill and resume} livelit closures that appear inside 
-other livelit closures. Fortunately, for a pure functional language can do so efficiently 
-by computing the expansion for the corresponding livelit expression, elaborating it in isolation,
-filling the closure with the resulting elaboration, and then resuming evaluation. A theorem from
-the prior paper establishes the correctness of this process, i.e. that the resulting program will 
-produce the same result as if it had been evaluated from scratch.
+This first step may cause certain expressions to become non-final, because the filled hole is no longer
+blocking evaluation. We therefore define an operation $\resumeof{\sigma}$ that resumes evalution for all closed expressions in $\sigma$.
+(Open expressions can remain because some closures appear under binders in the final result, so a substitution has not yet been recorded
+for the bound variables.)
+\begin{definition}[Environment Resumption] ~
+    \begin{enumerate}
+        \item $\resumeof{[d_1/x_1, \ldots, d_n/x_n]} = [\resumeof{d_1}/x_1, \ldots, \resumeof{d_n}/x_n]$
+        \item $\resumeof{d} = d'$ if $\fvof{d} = \emptyset$ and $\evalsTo{d}{d'}$
+        \item $\resumeof{d} = d$ if $\fvof{d} \neq \emptyset$
+    \end{enumerate}
+\end{definition}
 
-In fact, even the cc-expansion evaluation process does not go to waste -- we can resume the 
-result of cc-expansion evaluation in the same way to arrive at the same final result 
-as the standard expansion and evaluation process.
+Finally, we can produce the final set of environments by filling and resuming the proto-environments.
+\begin{definition}[Environment Collection]
+    If $\ccexpands{\Phi}{\cdot}{\hat e}{e}{\tau}{\Omega}$
+    % and $\elabs{}{e}{d}{\tau}{\Delta}$
+    % and $\evalsTo{d}{d'}$ and $u \in \domof{\Omega}$
+    then \[\envsOf{\Phi}{\hat e}{u} = \{\resumeof{\fillof{\Omega}{\sigma}} \mid \sigma \in \protoEnvsOf{\Phi}{\hat e}{u}\}\]
+\end{definition}
 
+This same fill and resume operation can be used to avoid recomputation when evaluating the fully expanded version of the user's program.
+If the editor has already performed environment collection, then it can simply continue from where it left off
+by filling and resuming
+the remaining top-level livelit holes (those that do not appear in a proto-environment).
+
+The correctness of the mechanisms described in this section rest on the fact that evaluation commutes with hole filling. 
+This only holds when the language is pure: evaluation order does not matter 
+so the system is free to evaluate around holes initially, 
+and then return to finish the job once they have been filled. 
+
+\begin{theorem}[Post-Collection Resumption]
+    If $\ccexpands{\Phi}{\cdot}{\hat e}{\etxt{cc}}{\tau}{\Omega}$ and $\elabs{}{\etxt{cc}}{\dtxt{cc}}{\tau}{\Delta}$
+    and $\evalsTo{\dtxt{cc}}{\dtxt{cc}'}$ and $\resumeof{\fillof{\Omega}{\dtxt{cc}'}} = d_1$ 
+    and $\expands{\Phi}{\cdot}{\hat e}{\etxt{full}}{\tau}$
+    and $\elabs{}{\etxt{full}}{\dtxt{full}}{\tau}{\Delta}$ 
+    and $\evalsTo{\dtxt{full}}{d_2}$ then $d_1 = d_2$.
+\end{theorem}
+\begin{proof}
+    The key observation is that filling the livelit holes in the cc-expansion gives the full expansion,
+    i.e. $\fillof{\Omega}{\dtxt{cc}} = \dtxt{full}$. Resumption is simply evaluation for closed expressions.
+    By commutativity of hole filling, established in the prior work \cite{HazelnutLive}, 
+    we can delay hole filling until $\dtxt{cc}$ has first been evaluated to
+    $\dtxt{cc}'$.
+\end{proof}
+
+In a language with side effects, one would instead need to modify evaluation of  
+cc-expansions such that the expansion of each livelit application is evaluated alongside the 
+temporary livelit expansions,
+with the result stored for subsequent hole filling. This would ensure that
+side effects happen in the same order and only once. The details are beyond the scope of this work.
 
 \subsection{Parameterization}
 

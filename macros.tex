@@ -54,7 +54,7 @@
 % HExp
 \newcommand{\hlam}[2]{\lambda #1.#2}
 \newcommand{\halam}[3]{\lambda #1{:}#2.#3}
-\newcommand{\hap}[2]{#1(#2)}
+\newcommand{\hap}[2]{#1~#2}
 \newcommand{\hapP}[2]{(#1)~(#2)} % Extra paren around function term
 \newcommand{\hpair}[2]{(#1, #2)}
 \newcommand{\hprj}[2]{\mathsf{prj}_{#1}(#2)}
@@ -235,7 +235,8 @@
 \newcommand{\isType}[2]{#1 \vdash #2~\mathtt{type}}
 \newcommand{\elabs}[5]{#1 \vdash #2 \leadsto #3 : #4 \dashv #5}
 \newcommand{\expands}[5]{#1; #2 \vdash #3 \leadsto #4 : #5}
-\newcommand{\ccexpands}[5]{#1; #2 \vdash_\text{cc} #3 \leadsto #4 : #5}
+\newcommand{\ccexpands}[6]{#1; #2 \vdash_\text{cc} #3 \leadsto #4 : #5 \dashv #6}
+\newcommand{\Omegaitem}[2]{#1 \hookrightarrow #2}
 \newcommand{\expandAna}[6]{#1 \vdash #2 \Leftarrow #3 \leadsto #4 : #5 \dashv #6}
 \newcommand{\expandSyn}[5]{#1 \vdash #2 \Rightarrow #3 \leadsto #4 \dashv #5}
 \newcommand{\pexpandAna}[5]{#1 \vdash_{#2} #3 \leadsto #4 \Leftarrow #5}
@@ -263,6 +264,7 @@
 \newcommand{\idof}[1]{\mathsf{id}(#1)}
 \newcommand{\Dbinding}[3]{#1 :: #3[#2]}
 \newcommand{\instantiate}[3]{\llbracket#1 / #2\rrbracket #3}
+\newcommand{\instantiateB}[2]{\llbracket #1 / #2\rrbracket}
 
 % Contextual dynamics
 \newcommand{\evalctx}{\mathcal{E}}
@@ -288,4 +290,7 @@
 \newcommand{\livelitCtxEntry}[4]{\mathsf{livelit}~\livelitname{#1}~\mathsf{at}~#2~\{#3; #4\}}
 \newcommand{\expType}{\mathsf{Exp}}
 \newcommand{\livelitsIn}[1]{\mathsf{livelits}(#1)}
-\newcommand{\protoEnvsOf}[2]{\mathsf{protoenvs}(#1; #2)}
+\newcommand{\protoEnvsOf}[3]{\mathsf{protoenvs}_{#1}(#2; #3)}
+\newcommand{\envsOf}[3]{\mathsf{envs}_{#1}(#2; #3)}
+\newcommand{\fillof}[2]{\mathsf{fill}_{#1}(#2)}
+\newcommand{\resumeof}[1]{\mathsf{resume}(#1)}
