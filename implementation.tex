@@ -52,7 +52,8 @@ livelit to specify dimensions in terms of character counts rather than pixels.
 Livelits can be laid out in one of two ways: as inline livelits, like \li{\$slider},
 which must be exactly one character high and appear inline with the code,
 or as \emph{multi-line livelits}, which occupy up to the full width of the editor 
-and a specified number of code lines. The pretty printer lays out multi-line livelits
+and a specified number of code lines (not shown in Fig.~\ref{fig:color-impl}). 
+The pretty printer lays out multi-line livelits
 on their own line, as seen in the figures in this paper. 
 
 We are currently exploring a more flexible system whereby 
@@ -66,7 +67,8 @@ on a separate canvas or document while still formally being located within an un
 This latter option 
 would be particularly interesting for end-user programming scenarios: users with limited
 programming experience 
-could interact with a collection of livelits laid out separately, without necessarily
+could interact with a collection of livelits laid out separately in the popular ``dashboard'' style, 
+without necessarily
 even being aware that their interactions are actually edits to an underlying typed
 functional program. More experienced users on the team could then make programmatic use of the entered
 data and parameters in a seamless manner. We are also excited about the possibility of end users
@@ -80,8 +82,9 @@ printing could be of substantial use in some settings. Formula bars, like the on
 livelit, are a useful design pattern to avoid splice layout issues, and it may be possible to provide 
 a generalized formula bar in the editor user interface that multiple livelits could share.
 While splices can in principle contain other livelits, it is difficult for small splice editors to 
-accomodate large livelit views. Fortunately, variables can be used to support composition via substitution 
-rather than nesting. A linter might suggest such a refactoring.
+visually accomodate large livelit views in practice. 
+Fortunately, variables can be used to support composition via substitution 
+rather than nesting. A linter might suggest a refactoring to a variable in these scenarios.
 
 The Hazel pretty printer uses memoization and incremental diffs to maintain reasonable performance,
 and adding livelits to the system did not substantially interfere with the existing approach.
@@ -92,4 +95,6 @@ This could perhaps be resolved by performing livelit-related computations asynch
 would need to be taken to ensure that intervening edits do not cause synchronization issues.
 
 Many livelit-related computations can be intelligently memoized, e.g. view computations and unchanged splice evaluations,
-especially with the edit awareness that Hazel provides. We leave further optimizations along these lines to future work.
+especially with the edit awareness that Hazel provides. 
+We leave further optimizations along these lines to future work.
+Prior work on incrementally updating UIs as code changes could be relevant to this effort \cite{burckhardt2013s}.

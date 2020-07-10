@@ -1,3 +1,90 @@
 \section{Related Work}\label{sec:related-work}
-Cyrus has a list somewhere, ask if you want to work on this section
+As detailed in Sec.~\ref{sec:intro},
+the \emph{Graphite} system introduced the idea of filling 
+typed holes using a type-specific user interface \cite{Graphite}.
+This prior work engaged in substantial qualitative evaluation, 
+which due to the fundamental similarities between the two systems 
+is as relevant to our design as theirs. However, the prior work 
+left a number of core technical issues unresolved, 
+as summarized in Sec.~\ref{sec:intro}. 
+Livelits resolve these issues in large part by bringing together 
+seemingly disparate ideas from several other pieces of recent work.
 
+In particular, recent work on type-specific languages (TSLs) \cite{TSLs} 
+and typed literal macros (TLMs) \cite{TLMs}
+explored similar ideas of user-defined
+literal forms with support for hygienic splicing, with the former 
+using type-directed dispatch similar to Graphite and the latter supporting 
+decentralized extensibility via explicit naming as in our approach. 
+However, these systems operate in a purely 
+textual setting. There is no support for graphical notation or 
+interaction, nor live feedback, which are the primary contributions of this paper.
+The typed expansion judgement central to the typed livelit calculus in this paper 
+is structured similarly 
+to the corresponding judgements in the formal systems describing TLMs and TSLs,
+and the reasoning principles (e.g. hygiene properties, the focus on reasoning abstractly 
+about typing) was inspired directly by this work. However, the  
+approach to hygiene we take is cleaner by its use of function application 
+rather than direct insertion of splices (and could perhaps be ported to those formalisms).
+Splices also operate quite differently in our work,
+because they are placed automatically and structurally delimited in the user interface, rather than 
+placed by the client and then parsed out of the text by a custom parser charged 
+with retaining provenance information.
+This substantially complicates the design of splices in the prior work.
+
+This structural delimitation of different notations is reminiscent of work on 
+\emph{language boxes} \cite{DBLP:conf/sle/RenggliDN09}, which focused primarily on 
+combining different notations, primarily textual, using structural delimiters inserted 
+explicitly by the user using a special-purpose editor.,
+
+There has been a long line of research on \emph{projectional editing}, where
+the user edits graphical representations (projections) of code constructs \cite{DBLP:journals/ile/MillerPMV94,read1996generating,DBLP:conf/sde/Reiss84,DBLP:conf/uist/KoM05}. 
+Many of the oldest systems offer only a fixed set of projections and interaction techniques. 
+More recently, language workbenches with support for projectional editing like Citrus \cite{DBLP:conf/uist/KoM05}
+and MPS \cite{voelter2011language} have made it easier to define new projectional editors.
+However, these systems generate entire editors, whereas livelit definitions can be 
+included granularly in a livelit context and support decentralized extensibility.
+Furthermore, livelit definitions are governed by a type and binding discipline that 
+serves to ensure that a programmer unfamiliar with the semantics of an unfamiliar livelit
+can still be sure that it is not operating outside of the bounds of the type system.
+In many ways, an unfamiliar livelit can be approached much like an unfamiliar function
+can be approached: by inspecting its type signature and reasoning compositionally 
+about arguments, i.e. splices.
+Finally, livelits integrate cleanly with live evaluation of programs with holes \cite{HazelnutLive},
+whereas other projectional editors either do not support evaluation of holes or do 
+not use that information to provide feedback to the user.
+
+Related to projectional editors are ``syntax-recognizing editors'' \cite{DBLP:journals/tosem/BallanceGV92,DBLP:conf/sde/HorganM84} and 
+a great variety of systems that generate visualizations from code \cite{DBLP:conf/chi/Lerner20,koschke2003software,urquiza2004survey}. Livelits differ 
+from these systems in directionality: visualization systems are given code and generate
+a visualization, whereas livelits are asked to create code where there would otherwise
+be a hole based on interactions that the programmer has with a visual interface.
+
+Conal Elliott's work on tangible functional programming \cite{DBLP:conf/icfp/Elliott07} similarly explored a
+system that provides visual feedback about the result of a computation, 
+but the computation itself could be constructed using only a fixed structural syntax
+manifest as a series of connected windows.
+
+The Vital programming environment for Haskell \cite{hanna2002interactive} supports type-specific stylesheets
+that can be used to create custom user interfaces for both editing and displaying
+values. The editors support splices, called \emph{cells}, that can contain 
+Haskell code. Results are computed in a live manner, though there is no support
+for evaluating incomplete programs. The visualizations themselves also cannot provide
+live feedback. Moreover, the system does not enforce any hygiene or typing principles:
+the user is entirely responsible for syntactic and semantic correctness, and the 
+underlying semantics have not been formally defined.
+
+
+% Hazelnut
+% Hazelnut Live
+% Its Alive! paper (GUI widgets)
+% Tangible FUnctional Programming 
+% Vital https://dl.acm.org/doi/10.1145/581478.581493 and https://link.springer.com/chapter/10.1007/11964681_12
+% Projection Boxes http://cseweb.ucsd.edu/~lerner/proj-boxes.html
+% Tiny Structure Editors for Low Low Prices
+% Typed Holes Work (synthesis stuff from Haskell, mention Haskell)
+% Pharo / Smalltalk 
+% GEC Toolkit: https://link.springer.com/chapter/10.1007/11546382_5
+% Previous use of live literals https://homepages.cwi.nl/~storm/livelit/livelit.html
+% Visual Haskell and related visual programming environments: https://pdfs.semanticscholar.org/6e43/5494ef1aaaa6ec0fcf47bb5b03d7c06ef937.pdf
+% widgets in dataflow languages like puredata and labview
