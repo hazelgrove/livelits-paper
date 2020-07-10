@@ -66,17 +66,17 @@ incidental implementation details and use unimplemented syntactic sugar, includi
 Haskell-style \li{do} notation and simplified quasiquotation, for the sake of presentation.
 We say more about the implementation in Sec.~\ref{sec:implementation}.)
 
-Line 1 of Fig.~\ref{fig:color-impl} specifies the livelit's name, \li{\$color}, and its \emph{expansion type},
+Line 3 of Fig.~\ref{fig:color-impl} specifies the livelit's name, \li{\$color}, and its \emph{expansion type},
 \li{Color}, which was discussed in Sec.~\ref{sec:livelit-expansion}.
 The remainder of the definition is the livelit's implementation.
 Livelits are implemented using a variation on the functional model-view-update
-framework popularized by the Elm programming language\todo{cites}. We add a fourth component,
+framework popularized by the Elm programming language \cite{ElmArchitecture}. We add a fourth component,
 expansion generation. In addition, we add a simple monadic framework to provide the necessary  
 interface between the livelit and the programming environment, discussed below, while retaining
-a pure functional programming model.\todo{cite monads in Haskell}
+a pure functional programming style.
 
 \subsection{Model}\label{sec:model}
-\todo{final check of line numbers}{}Line 2 of Fig.~\ref{fig:color-impl} specifies the livelit's \emph{model type},
+Line 6 of Fig.~\ref{fig:color-impl} specifies the livelit's \emph{model type},
 here a labeled 4-tuple of \emph{splice references}, one for each of the four splices
 that appear in the GUI in Fig.~\ref{fig:color}.
 Models are persisted in the syntax tree of the program, so in practice,
@@ -84,12 +84,12 @@ Models are persisted in the syntax tree of the program, so in practice,
  (Hazel is able to serialize all types because it is implemented as a 
  simple interpreter.)
 
-The initial value of the model is specified starting on Line 4, 
+The initial value of the model is specified starting on Line 7, 
 which defines a command in the \li{UpdateMonad} that returns the 
 initial model value after generating four new splice references
 using the \li{new_splice} command:
 \begin{lstlisting}[numbers=none]
-  new_splice : (Typ, Option(Exp)) -> UpdateMonad(SpliceRef)
+new_splice : (Typ, Option(Exp)) -> UpdateMonad(SpliceRef)
 \end{lstlisting}
 This command creates a fresh splice
 of the given type and, optionally, with the given initial expression,
@@ -97,13 +97,13 @@ and returns a unique splice reference, which uniquely and abstractly identifies 
 Bolded types like \li{Typ}, \li{Exp}, \li{UpdateMonad}, and \li{SpliceRef}
 are provided by the standard library. The \li{Typ} and \li{Exp} types 
 encode the syntax of Hazel's types and expressions.
-These two arguments are provided here in quasiquoted form, e.g. \li{`0`}\todo{cite something}. 
+These two arguments are provided here in quasiquoted form, e.g. \li{`0`} \cite{bawden1999quasiquotation}. 
 If no initial expression is provided, the splice is initialized with 
 an empty hole.
 
 The system checks that the provided type and initial content is valid 
-assuming only the explicitly specified set of captured bindings on Line 3.
-Here, we do not need to capture anything because \li{Int} is a built in type
+assuming only the explicitly specified set of captured bindings on Line 4.
+Here, we do not need to capture any bindings because \li{Int} is a built in type
 and the initial content is closed. However, 
 for splices of user-defined types, those types need to be explicitly captured.
 Similarly, helper functions that are used in initial splices (and in the expansion,
@@ -111,13 +111,15 @@ discussed below) must be explicitly captured.
 This serves to ensure \emph{context independence} -- the livelit needs to make no 
 assumptions about the typing context at use sites.
 We use an explicit capture set, rather than implicitly capture of all bindings at the definition site, 
-both to prevent inadvertent capture\todo{cite heathers paper}{} 
+both to prevent inadvertent capture 
 and to ensure that the capture set is part
 of the interface of the livelit definition, which simplifies matters related to 
 module export and determining paths to the captured bindings at use sites \cite{TLMs}.
+Formally, captured variables can be understood as parameters that have been 
+immediately partially applied.
 
 \subsection{Action}
-Line 11 defines the \li{Action} type for the \li{\$color} livelit, which 
+Line 14 defines the \li{Action} type for the \li{\$color} livelit, which 
 specifies a single user-initiated action: clicking on a color using the user 
 interface on the right side of Fig.~\ref{fig:color}. Actions are emitted
 from event handlers (e.g. click handlers) defined in the computed \li{view}, 
@@ -229,7 +231,7 @@ When the model is updated, a new view is
 computed. The system then performs a diff between the old and new view in order to 
 efficiently perform the necessary imperative updates to the editor's visual state.
 Changes to splices can also cause the view to be recomputed, because the view might 
-need to evaluate the splices\todo{optimizaiton?}. The \li{update} function does not itself 
+need to evaluate the splices. The \li{update} function does not itself 
 have the ability to request evaluation, because the model should not depend directly  
 which closure the user has selected. Of course, the \li{view} might emit 
 result-dependent actions when appropriate.
