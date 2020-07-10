@@ -53,13 +53,14 @@ available in modern general-purpose languages.
   \begin{center}
     \begin{subfigure}[t]{0.5\textwidth}
       \centering
-      \vspace{-3.4cm}
-      \includegraphics[width=15pc]{graphite-color-palette.png}
-      \vspace{0.45cm}
+       \vspace{-3.4cm}
+       \includegraphics[width=15pc]{graphite-color-palette.png}
+      \vspace{0.1cm}
       \caption{}
     \end{subfigure}\begin{subfigure}[t]{0.5\textwidth}
       \centering
       \includegraphics[width=15pc]{slider-color-livelits.png}
+      \vspace{-11px}
       \caption{}
     \end{subfigure}
   \end{center}
@@ -93,7 +94,7 @@ the programming environment offers the programmer the option, via the code compl
 to activate the palette.
 Once the interaction is finished, the palette must generate a
 Java expression to fill the hole.
-Figure~\ref{fig:color}(a)\todo{use subfigure?}{}, adapted from this prior work, demonstrates a color palette invoked using Graphite.
+Figure~\ref{fig:color}(a), adapted from this prior work, demonstrates a color palette invoked using Graphite.
 When the user presses the \li{Enter} key, the Java expression \li{new Color(173, 173, 173, 85)} is inserted at the cursor (not shown) and the palette disappears.
 
 \citet{Graphite} extensively evaluated this mechanism.
