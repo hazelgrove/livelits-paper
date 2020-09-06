@@ -3,15 +3,15 @@ Let us begin by considering livelits from the client programmer's perspective by
 two domain-specific case studies:
 a course grade assignment case study in Sec.~\ref{sec:live-grading}
 and an image transformation case study in Sec.~\ref{sec:image-transformation}.
-% We also briefly mention several other examples in Sec.~\ref{sec:additional-examples}.\todo{do we?}{}
-These case studies have been implemented
+We also briefly mention several other examples in Sec.~\ref{sec:additional-examples}.
+These case studies and examples have been implemented\todo{make this not a lie}{}
 in Hazel, a browser-based live programming environment for a pure typed functional language in the
-ML family. We assume basic familiarity with ML.
+ML family. We assume basic familiarity with ML.\todo{cite Elm tutorial for readers who are not familiar?}{}
 
 \subsection{Case Study: Grading with Livelits}\label{sec:live-grading}
 \begin{figure}
     \includegraphics[width=30pc]{grade-cutoff-livelit.png}
-\caption{Grading with Livelits}
+\caption{Grading Example}
 \label{fig:grading}
 \end{figure}
 
@@ -22,7 +22,7 @@ in order ultimately to assign final letter grades (\textbf{A} through \textbf{F}
 
 Perhaps the most common end-user application in this domain is the spreadsheet.
 A spreadsheet allows the instructor to record student grades using a natural tabular interface,
-visualize this data in one of a finite number of plot styles, and perform basic computations on this data,
+visualize this data in one of a finite number of styles, and perform basic computations on this data,
 with results updated live, i.e. automatically after each cell has been edited.
 However, these affordances are limited. It is difficult to package up common operations and workflows
 into reusable libraries, interact with the data using domain-specific visualizations,
@@ -31,35 +31,34 @@ and perform operations that have not been anticipated by the designers of the sp
 to the university's grading system).
 General-purpose programming languages equipped with suitable libraries for working with numeric data
 are flexible enough to handle these scenarios, but users of these languages
-sacrifice the ability to receive live feedback and directly manipulate data and visualizations thereof.
+sacrifice the ability to receive live feedback and directly manipulate the data and visualizations thereof.
 
 Livelits are able to address this tension.
-Fig.~\ref{fig:grading} shows a Hazel program where the user has:
+Fig.~\ref{fig:grading} shows a Hazel program where the user has:\todo{label each of these 1-5 in figure?}{}
 \begin{enumerate}
 \item recorded numeric \li{grades} for each student using a livelit, \li{\$dataframe}, that implements a tabular user interface with support for live evaluation of the Hazel expression in each cell,
 \item programmatically computed the overall \li{averages} for each student by applying a function, \li{compute_averages}, defined in a library  (not shown) shared between multiple courses,
 \item determined reasonable \li{cutoffs} between letter grades by directly manipulating a livelit that offers a domain-specific drag-and-drop interface superimposed on a live visualization of the grade distribution
-(for the sake of space, we plot dots rather than a full histogram),
+(for the sake of space, we plot dots rather than a full histogram)\todo{should we do a histogram?}{},
 \item programmatically assigned letter grades to each student based on the \li{cutoffs} determined in step (3) by calling another shared library function, \li{assign_grades},
 \item formatted the final grade assignments in a manner suitable for submission to the university system by calling another shared library function, \li{format_for_university}.
 \end{enumerate}
 
 \subsubsection{Livelit Expansion}\label{sec:livelit-expansion}
 Livelit expressions are given dynamic meaning by expansion to core expressions, i.e. expressions that do not contain livelits.
-For example, the expansion of Fig.~\ref{fig:grading} is:
+For example, the expansion of Fig.~\ref{fig:grading} is:\todo{change code once figure is final}{}
 
 \begin{lstlisting}
 let grades = Dataframe (
   ["A1", "A2", "A3", "A4", "Midterm", "Final"],
   [
-    ("Alice", [24. +. 36. +. 33., 92., 83.5, 87.5, 95., 88.]),
-    ("Bob", [61., 64., 98., 89.5, 70., 85.]),
-    ("Carol", [75., 81., 73., 71., 82., 79.]),
-    (* ... *)
+    ("Cyrus", [0.0, 0.0, 0.0, 0.0, 0.0]),
+    ("Nick", [0.0, 0.0, 0.0, 0.0, 0.0]),
+    ("David", [0.0, 0.0, 0.0, 0.0, 0.0])
   ]) in
-let averages = compute_averages grades weights in
+let averages = compute_averages(grades) in
 let cutoffs = (.A 90.0, .B 80.0, .C 70.0, .D 60.0) in
-format_for_university (assign_grades averages cutoffs)
+format_for_university(assign_grades(averages, cutoffs))
 \end{lstlisting}
 
 The programmer can inspect this expansion in Hazel.
@@ -68,7 +67,7 @@ Ideally, however, it would not be necessary to inspect the expansion
 to reason about types and binding.
 After all, one does not need to look inside
 function bodies to reason about types and binding.
-Instead, in the words of \citet{DBLP:conf/ifip/Reynolds83},
+Instead, in the words of Reynolds\todo{cite}{},
 ``type structure is a syntactic discipline for maintaining levels of abstraction''.
 The livelits mechanism supports reasoning abstractly about types and binding by
 several means.
@@ -79,23 +78,23 @@ The declarations of the two livelits in Fig.~\ref{fig:grading},
 eliding their implementations, are:
 \begin{lstlisting}[numbers=none]
 livelit $dataframe at Dataframe { ... }
-livelit $grade_cutoffs(avgs: List(Float))
+livelit $cutoffs(avgs: List(Float))
   at (.A Float, .B Float, .C Float, .D Float) { ... }
 \end{lstlisting}
 The expansion type of \li{\$dataframe} is \li{Dataframe}
 (a type classifying tabular floating point data together with string row and column keys, consistent with the expansion above)
-and the expansion type of \li{\$grade_cutoffs} is a labeled product of grade cutoffs (Hazel notates labels \li{.label}).
-Hazel summarizes the typing information from the livelit definition when the cursor is on the livelit's name,
-just as it displays a function's type when its name is under the cursor (not shown).
+and the expansion type of \li{\$cutoffs} is a labeled product of grade cutoffs (Hazel notates labels \li{.label}).
+Hazel summarizes the typing information from the livelit definition for the programmer when the cursor is on the livelit's name,
+just as it displays a function's type when its name is under the cursor (not shown).\todo{could show if Hannah et al are finished}{}
 
 \subsubsection{Typed Hygienic Splicing and Parameterization}\label{sec:splicing-and-parameterization}
 Livelit expressions can include sub-expressions in one of two ways:
 as parameters or as splices.
 
 \paragraph{Parameters}\label{sec:parameterization} Parameters appear immediately after the name of the applied livelit.
-For example, \li{averages} is provided as a parameter to \li{\$grade_cutoffs} in Fig.~\ref{fig:grading}.
+For example, \li{averages} is provided as a parameter to \li{\$cutoffs} in Fig.~\ref{fig:grading}.
 The livelit declares a fixed number of parameters and specifies their types in its declaration.
-For example, the declaration of \li{\$grade_cutoffs} shown above specifies one parameter of type \li{List(Float)}
+For example, the declaration of \li{\$cutoffs} shown above specifies one parameter of type \li{List(Float)}
 (the grades data to be plotted, see below).
 
 Livelit abbreviations can partially apply parameters. Consider the slider livelit
@@ -160,14 +159,14 @@ maintains parameter and splice hygiene: parameters and splices are included in t
 in a capture-avoiding manner.
 Consequently, clients can reason abstractly about binding in splices: variables in splices
 always refer to bindings visible to the client, rather than bindings that are hidden inside expansions.
-% This is implemented by alpha-renaming bindings internal to the expansion as necessary.
-% (We discuss potentially relaxed variations of this hygiene discipline in Sec.~\ref{sec:discussion}.)
+This is implemented by alpha-renaming bindings internal to the expansion as necessary.
+(We discuss potentially relaxed variations of this hygiene discipline in Sec.~\ref{sec:discussion}.)
 
 \subsubsection{Live Evaluation}\label{sec:live-evaluation}
 Livelits can request the result of evaluating a splice or a parameter.
 For example, the \li{\$dataframe} livelit uses this facility to display
 the evaluation result for each cell when the cursor is not on it, like a spreadsheet.
-The \li{\$grade_cutoffs} livelit uses this facility to plot the grades list, provided
+The \li{\$cutoffs} livelit uses this facility to plot the grades list, provided
 as a parameter, on the number line.
 
 \paragraph{Closure Collection} Evaluation in Hazel is, as usual, defined only for closed expressions,
@@ -186,7 +185,7 @@ splices that use these variables, such as the cell shown selected in Fig.~\ref{f
 an evaluation result is available. (We consider the situation where more than one closure is available
 in the Sec.~\ref{sec:image-transformation}.)
 
-Similarly, the closure for the \li{\$grade_cutoffs} livelit in Fig.~\ref{fig:grading} includes a result for
+Similarly, the closure for the \li{\$cutoffs} livelit in Fig.~\ref{fig:grading} includes a result for
 the \li{grades} variable. However, this variable's result, along with the
 results for other variables that depend on \li{grades}, such as \li{averages}, ultimately depend on the
 expansion of the \li{\$dataframe} livelit. If we stop after the first phase of closure collection,
@@ -210,58 +209,36 @@ evaluation does not always result in a value \cite{HazelnutLive}.
 In particular, when a hole appears in elimination position, e.g. in function position of a function application,
  the result is instead an indeterminate expression.
 When a livelit requests an evaluation result, it must be able to handle indeterminate results.
-For example, if the parameter to \li{\$grade_cutoffs} were a hole or some other indeterminate expression,
+For example, if the parameter to \li{\$cutoffs} were a hole or some other indeterminate expression\todo{small screenshot?}{},
 then it would have degraded functionality
-(in this case, it would display the list elements that are values on the timeline, skipping indeterminate elements).
-We will return to how livelit implementations handle this situation in Sec.~\ref{sec:livelit-definitions}.
+(in this case, it would display the list elements that are values on the timeline, skipping indeterminate elements\todo{implement this}{}).
+We will return to how livelit implementations handle this situation in Sec.~\ref{sec:implementation}.
+\todo{make sure we cover this}{}
 
 \subsection{Case Study: Image Transformations}\label{sec:image-transformation}
+Show example of an image transformation pipeline going through livelits
 
-\begin{figure*}
-  \begin{center}
-    \begin{subfigure}[t]{0.5\textwidth}
-      \centering
-      \includegraphics[width=15pc]{img-filter-1.png}
-      \caption{}
-    \end{subfigure}\begin{subfigure}[t]{0.5\textwidth}
-      \centering
-      \includegraphics[width=15pc]{img-filter-2.png}
-      \caption{}
-    \end{subfigure}
-  \end{center}
-  \caption{Case Study: Image Transformation. The image shown is determined based on the selected closure.}
-  \label{fig:img-transformation}
-\end{figure*}
+This might also benefit from Parameterization
 
-Our next case study is a simple image transformation livelit, \li{\$img_filter},
-demonstrated in Fig.~\ref{fig:img-transformation}. This livelit takes 
-a URL to an image as a parameter, and contains two splices of type \li{Int},
-one to adjust the contrast, and the other to adjust the brightness.
-In this example, we have filled those splices with a \li{\$slider}, but 
-as above we could enter any expression of type \li{Int}.
-The livelit shows a live preview of the transformed image.
-The expansion generates the necessary calls to image processing functions, 
-not shown.
+Show multiple calls with different example images + closure selector UIs
 
-The novelty in this example is that the livelit appears inside a function, 
-\li{classic}, which takes an image URL as input. At the bottom 
-of the figure, \li{classic} is mapped over a list (here, containing only 
-two elements for the sake of presentation). Consequently, there are now 
-two closures associated with the application of \li{\$img_filter} in the 
-body of \li{classic}. Rather than disabling live evaluation in situations like 
-this, Hazel instead allows the programmer to select between the closures when 
-the cursor is on the livelit expression (via a simple sidebar toggle, not shown, which is shared 
-with the general closure selection UI \cite{HazelnutLive}). 
-The live feedback is based on the selected closure.
-This makes it easy to see how the image filter being designed here will affect a
-number of example images by quickly toggling between closures. The underlying expansion remains abstract, i.e. it refers to the image via the \li{url} variable.
+Go into more detail about how evaluation works + fill-and-resume mechanics (and efficiency nod)
 
-% \subsection{Additional Examples}\label{sec:additional-examples}
-% It would be nice to have a gallery-style figure and a brief overview of some other case studies
-% and how they exercise the novel features of the livelits mechanism. Maybe some statistics on how
-% many lines of code it took.
+Talk about probes?
 
-% Ideas:
-% \begin{itemize}
-%   \item derivation trees like Joomy's system (\url{https://joom.github.io/proof-tree-builder/src/})
-% \end{itemize}
+We assume that the user has selected at most one closure for each livelit in the unexpanded expression.
+The corresponding environment is applied as a substitution before attempting to evaluate the requested expression.
+To maintain the context independence principle, this request must take the form of a closed function
+of the splices.
+As discussed in Sec.~\ref{sec:live-evaluation}, evaluation can fail if the free variables in the splices
+overlap with the free variables in selected closure.
+
+\subsection{Additional Examples}\label{sec:additional-examples}
+It would be nice to have a gallery-style figure and a brief overview of some other case studies
+and how they exercise the novel features of the livelits mechanism. Maybe some statistics on how
+many lines of code it took.
+
+Ideas:
+\begin{itemize}
+  \item derivation trees like Joomy's system (\url{https://joom.github.io/proof-tree-builder/src/})
+\end{itemize}

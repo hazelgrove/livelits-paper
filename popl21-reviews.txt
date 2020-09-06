@@ -1,0 +1,353 @@
+POPL ‘21 Paper #224 Reviews and Comments
+===========================================================================
+Paper #224 Filling Typed Holes with Live GUIs
+
+
+Review #224A
+===========================================================================
+
+Overall merit
+-------------
+C. Weak Reject
+
+Reviewer expertise
+------------------
+Z. No familiarity
+
+Paper summary
+-------------
+The paper presents a system for incorporating non-textual editors for values into code.
+
+Perhaps I am not among the intended audience, but I could not cross some gaps in (my appreciation for) the paper's motivation. The conclusion states:
+
+        Documents often contain structured information, and programs are written to manipulate structured information.
+
+which makes complete sense to me. But I do not see the connection with the paper, and if anything it seems to undermine it. That is, the paper seems to be about non-textual editing or *data*, which is more at home in a *document*, rather than *code* that manipulates structured information.
+
+Weaknesses
+----------
+The complexity of the proposal is high, in terms of number of stages and fiddly details, while the paper did not convincingly show the necessity for such complexity in terms of difficult technical problems that do not admit simpler solutions.
+
+
+
+Review #224B
+===========================================================================
+
+Overall merit
+-------------
+A. Strong Accept
+
+Reviewer expertise
+------------------
+Y. Knowledgeable
+
+Paper summary
+-------------
+This paper introduces *live literals* (livelits) which I think are best thought of as "graphical macros". 
+The user of a livelits invokes it as a macro from their source code;
+this renders a GUI element inside the editor (e.g. a color picker or a spreadsheet), 
+which eventually "expands" into a piece of code.
+The GUI element does not disappear after expansion: 
+it is a "first class term" and stays in the code and continues to be used to visualize and directly manipulate the code.
+The fact that livelits are first-class and conceptually work like (hygienic) macros 
+makes them more expressive and compositional than existing direct manipulation interfaces for code:
+for example, you can "splice" arbitrary expressions from the surrounding code inside the livelit,
+which themselves can contain livelits.
+
+Another benefit is that a programmer can easily define a new livelit,
+basically by coding up a GUI element as you normally would in Elm's model-view-update-expand paradigm,
+with an extra function that expands the current model into an AST in an underlying language.
+
+The technical contributions of the paper are essentially 1) an efficient way to evaluate livelits based on the formalism of typed holes
+and 2) formalization of the "closure collection" mechanism that allows displaying livelits that appear under a binding for all closures that occur in the program.
+
+Livelits have been implemented as part of Hazel, a live programming environment that support evaluation of programs with holes.
+Livelits interact nicely with this live evaluation,
+because it allows them to keep "working" even while the rest of the code is an inconsistent state.
+
+Strengths
+---------
+- Livelits are a truly creative, elegant, and novel programming construct. They combine ideas from many disparate research directions (macros, live structured editing, and "pro-direct" manipulation) in a way that just amplifies the benefits of all three, and makes me wonder how come they weren't always used this way.
+
+- Just like macros, livelits are also extensible, and in a way that should be easy for users familiar with functional reactive programming.
+
+- The paper is very well written and has convicing case studies.
+
+- Livelits are implemented in Hazel.
+
+- The meta-theory is formalized in Agda.
+
+Weaknesses
+----------
+- If I had to nitpick, I'd say the technical contribution is a bit incremental over [25] and [23], but like I mentioned above, I think the main contribution here is conceptual.
+
+- The paper only presents two case studies. I'd like to see a library of livelits, perhaps some empirical evaluation of it, ideally a user study (although I realize that would be too much to ask of one paper). With just the two case studies it's hard to judge how "real" the Hazel implementation of livelits really is.
+
+Comments for author
+-------------------
+This is a brilliant piece of programming language/environment design work. I love how all the bits fit together in a surprising yet really elegant way, especially because some inspiration comes from the more HCI-adjacent side of PL (pro-direct manipulation) and some comes from the formal side (typed holes). I wish there were more work like this at POPL!
+
+### Suggestions and minor comments
+
+- Given your running example in Fig 2, I would expect you to draw parallels with Jupyter notebooks. I think this comparison early on in the paper would help the reader better understand the range of use cases.
+
+- Also, I think it would be helpful if you explicitly delineate two types of target users of livelits: end users and semi-programmers, who will only use pre-defined livelits, and experienced programmers, who will define custom livelits.
+
+- Figure 2 uses `$data_frame`. Other parts of the paper (eg. line 207, 240, 269) use `$dataframe`.
+
+- L 316: you mention the `weights` variable in line 1, but it's not there in the figure.
+
+- Figure 3's two screenshots look identical except for the pictures. The figure's job, as I understand, is to show the ability to select a closure to see live evaluation during a map. I would better understand what's going on if I could see the selection UI and visualize a difference between the two screenshots.
+
+- Also in 2.1.3 it's not immediately clear why you need to evaluate the program in two phases and hence how you benefit from live evaluation. In this case it seem like you could just evaluate everything linearly, unless I'm missing something (?) You might want to add a concrete example (e.g. with incomplete splices), where this capability is actually needed.
+
+- L 494: I don't understand this sentence.
+
+- L 563: "we the system"
+
+- L 615: "evalues"
+
+- Sec 5.3, layout discussion: projection boxes could be another convenient way to display multi-line livelits.
+
+- Please use author-year citation format
+
+Questions for the response period
+---------------------------------
+- Can you give more details about the state of the implementation of livelits in Hazel? How many livelits have you implemented so far? Can I play with them online?
+
+
+
+Review #224C
+===========================================================================
+
+Overall merit
+-------------
+C. Weak Reject
+
+Reviewer expertise
+------------------
+X. Expert
+
+Paper summary
+-------------
+This paper presents the design of a new language concept, Livelits, a
+mechanism for mixing graphical program elements with live programming
+in a _purely functional_ setting. The paper begins with three example
+uses for Livelits: a color picker, a grade book, and an image
+filter. Next it describes the process to create new types of Livelits,
+using the color picker as a running example. A third of the paper is
+dedicated to a calculus for Livelits, including a number of theorems
+about that calculus. The paper also sketches some of the components
+required by a Livelit system implementation. Finally, the paper
+concludes by discussing related work and possible future research.
+
+Strengths
+---------
+* The idea of enriching program text with persistent live graphical
+  elements is obviously an interesting design idea, though not
+  completely novel.
+
+* The most interesting aspect is the ability for graphical components
+  to reflect directly on the run-time of the code.
+
+* The discussion of the Livelits design space in Section 1.2 clearly
+  differentiates this work from the preceding line of research,
+  especially the idea of Livelit composition.  Splices seem like a
+  good way for Livelits to contain other types of Livelits as
+  children.
+
+Weaknesses
+----------
+ * A design paper must above all demonstrate the utility of the proposed
+  feature. However, there are only three examples of Livelits in this
+  entire paper, one of which is almost identical to the color picker
+  in "Active Code Completion"; another gets only two paragraphs and a
+  figure in the entire text. This leaves only the grading example to
+  serve as a novel demonstration of the power of livelits.
+
+  The power of livelits is actually surprisingly limited. They are
+  merely a graphical form of expression. They can't, for example, act
+  as a new kind of declaration or part of a pattern matcher, such as such as
+  in "Smalltalk" or "GameMaker".  The paper does acknowledge
+  this short-coming, but this raises the question of how much this work
+  advances the state of the art over older systems: MPS, Barista, and Boxer.
+
+* Another severe limitation is concerns the creation of Livelits using
+  Livelits. As section 2 shows, the definitions for Livelits are
+  textual, and the rules in the calculus section reinforce this. But,
+  a graphical system in which it is impossible to build graphical
+  elements with other graphical elements is not progress.  Being able
+  to make an inline UI builder (such as "Interface Builder" for making
+  a Livelit's view) is a "must have".
+
+* About a third of the paper is spent on a formalization of Livelits.
+  It essentially acts as a “blueprint” for the design and its potential implementation.
+
+  The expansion and elaboration mechanisms described does fit the
+  overall Livelits design, but it is basically a reuse of "Safely
+  Composable Type-Specific Languages" and "Live Functional Programming
+  with Typed Holes." There is no novel meta-theory.
+
+  The novel part is the theory of closure collection---but the real
+  question is whether this is even the proper approach to solve this
+  problem. It certainly won't scale beyond a pure functional setting,
+  so why spend so much energy on developing this theory?
+
+  To be useful for general PL theory, a theoretical model should come
+  with at least two distinct effects. This one has none, and can't
+  have one!
+
+  [[ For a revision, it would probably be better to reduce this theory
+  section. This would leave more room for a wide-spectrum study of the
+  utility and expressiveness of Livelits.]]
+
+* The implementation section confirms that Livelits work only in the
+  extremely confined setting of a __pure__ functional language
+  (without any effects).
+
+  There are some good uses of pure languages, but they exist in a
+  completely niche world.
+
+  The four-line speculation in the theory section on how to adapt this
+  idea to a language with effects is completely inadequate and does
+  not give the impression that it is actually feasible.
+
+* The Livelits prototype is very underwhelming. Rather than using the
+  Livelits language described in Section 3, Livelits are themselves
+  written in OCaml. The start of Section 3 admits that the example
+  uses unimplemented syntactic sugar, namely the do notation. But
+  using OCaml is not just a lack of syntactic sugar, it s an entirely
+  different language!
+
+* It is unclear how Livelits are saved to disk or would appear inside
+  of a text editor that doesn't understand Livelits---because some
+  programmers insist on using the "IDE" that they have used since the
+  dinosaurs roamed the Earth. How would collaboration between a
+  committed Livelit programmer and a committed Vim user work?
+
+* This paper is missing citations for several important projects. For example:
+  - Visual Studio Tools for Office
+  - Lively Web
+  - Smalltalk
+  - Scratch
+  - Boxer
+  - Jupiter Notebooks
+  - Mathematica
+
+Small Notes:
+
+Section 2: This section starts out with "let's .. consider livelits
+from the client perspective."  At this point the reader expects a
+short introduction to the use and utility of livelits---from the
+perspective of a client programmer. But, the section co-mingles
+implementation ideas with user features throughout; section 2.1.2 is
+the worst as it goes into details of the expansion mechanism (an
+implementation detail).
+
+563 : but we the system does not
+821 : to choose the the Hazel programming
+
+Comments for author
+-------------------
+As it stands, this paper falls short as a POPL paper.
+
+The paper presents an interesting design idea for a purely functional
+language that would presently make it a good fit for the Haskell
+Symposium, the Onward Symposium at SPLASH, or perhaps ICFP. However,
+it currently suffers from a number of short-comings for POPL: its lack
+of an evaluation of the capabilities of Livelits, lack of any vision
+of how to adapt the idea across the full spectrum of languages, the
+lack of a true prototype, and little novelty in the formalization.
+
+Questions for the response period
+---------------------------------
+The following questions are _not_ intended to affect this assessment
+but as possible guides for future revisions:
+
+What does the textual representation of a Livelit stored in a file
+look like? Section 2.1.1 shows a textual expansion, but is that what
+is stored in the file?
+
+What is the interface for showing different images for each 'closure'
+that an image is used in? Is it abstract so that it can just be
+instantiated? Or does it have to be created for each new Livelit?
+
+Are the closures like those in C++ where you must specify each
+variable to close over?  Concretely, why is the `capture` list in
+Figure 4 completely empty?
+
+
+
+Review #224D
+===========================================================================
+
+Overall merit
+-------------
+B. Weak Accept
+
+Reviewer expertise
+------------------
+X. Expert
+
+Paper summary
+-------------
+The work under consideration introduces a formalization of the idea of "live literals" (livelits). Livelits allow programmers to embed GUIs within their program, such that the GUI can be manipulated to control values during the evaluation of the program.  Livelits are designed to work in a live programming environment, where the programmer continuously receives feedback on the state of the program through continuous evaluation. The authors provide a formalization of these language constructs within the context of typed holes - a system allowing incomplete functional programs to run. The system is implemented in Hazel, a live programming environment with typed holes.
+
+Strengths
+---------
+- Clear case studies demonstrate how livelits are used
+- Example definition that clearly shows how livelits are constructed
+- A novel formalization of livelits
+
+Weaknesses
+----------
+- Not contextualized well within related work
+- Limited evaluation
+
+Comments for author
+-------------------
+The work proposes a through formalization of livelits.
+The proposed system is clearly laid out through examples in Section 2 and Section 3.
+A novel formalization of livelits is presented that gives a new clarity to the way livelits function and how we can reason about them.
+The main issue with this presentation is that it lacks a comparison to existing solutions for building live GUIs to edit values.
+In particular, the paper under submission gives strong motivation for livelits, but this is not a novel concept as a interaction modality.
+The novelty instead seems to lie in the formalization of livelits as a language construct.
+
+The most pervasive use of livelit like functionality is likely in the "ipywidets" library for jupyter notebook style interfaces. This library allows users to add GUI interfaces to variables in code (e.g. a slider with ```w = widgets.IntSlider()```). Although the most common use of ipywidgets is with their standard set of widgets, they also support custom widgets, which are - like livelits - built with a MVC design. Contextualizing the work presented here with ipywidgets would strengthen this presentation. What issues arise from the lack of a formal semantics with ipywidgets?
+
+Furthermore, since ipywidets seem to largely match the functionality described by livelits, the question arises of the role typed holes play in the formulation. Are typed holes central to the concept of livelits? Is there a formulation of livelits that works without typed holes? If so, what benefits do type holes bring us in the context of livelits?
+
+In terms of evaluation, as a user-centric language construct, it is surprising there is no report of feedback from users.
+The work of [27] reports palettes were viewed favorably, but what of livelits? Was there any feedback that palettes were insufficient?
+In a more concrete sense of evaluation, are there issues that are uniquely solved by livelits as opposed to less similar systems with less clear formal semantics?
+
+On a more technical note the presentation of the livelit calculus seems to be over one possible host language, rather than a unique/minimal language that can be used to demonstrate livelits.
+In particular, Fig 5 presents the livelit calculus with a language including a variety of constructs, but line 582 that any language expressive enough to encode its own syntax is a suitable basis.
+ What is the reasoning behind this claim?
+
+The distinction between a splice and an expression is unclear. Line 268 says a splice can be filled with a Hazel expression of any form. Are expressions made into splice expressions by virtue of their context (as a sub expression inside a livelit expression)? If not, what are we splicing from?
+
+In discussing projectional editing, it seems the work of "Projection Boxes: On-the-fly Reconfigurable Visualization for Live Programming, Lerner CHI 2020" may be related. Although this still work addresses purely textbased projections, the ideas on layout may be helpful.
+
+The top half of Fig 6 is straightforward (line 636), but the bottom half introduces a large amount of new syntax that is not explained until Sec 4.2.1.
+
+It seems the syntax (\leadsto) for "expanding" unexpanded expressions to external expressions, and "elaborating" external expressions to internal expressions is the same. Is this meant to indicate some underlying similarly between the two reductions? If not, it would help to choose distinct symbols for this (even if it can generally be determined from context).
+
+# Minor
+
+line 615 evalues -> evaluates
+
+line 655 consider -> d_{expand} is the expansion function~\ref{Sec 3.5}
+
+Line 821 extra "the"
+
+Questions for the response period
+---------------------------------
+
+Why is the ipywidgets implementation of live GUIs insufficient?
+
+Are typed holes central to the idea of livelits, or just this presentation of them?
+
+Why is any language expressive enough to encode its own syntax a necessary (and sufficient?) condition for defining livelits?
+
+How are splices distinct from expressions?

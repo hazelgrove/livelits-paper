@@ -8,18 +8,18 @@ as specified by Hazelnut Live \cite{HazelnutLive}.
 
 \subsection{Hazel}
 Hazelnut Live is the formal foundation for the Hazel programming environment, so 
-it was natural to choose the the Hazel programming environment for our primary implementation. 
+it was natural to choose the the Hazel programming environment for our primary implementation\todo{cite?}{}. 
  Hazel is a browser-based live functional programming environment 
 organized from the ground up around typed holes. Uniquely, every editor state in Hazel is 
 semantically meaningful: it has a type, it can be evaluated, and it can be transformed 
 in a type-aware manner. This implies that livelits remain fully functional at all times, 
 even when the program is incomplete or erroneous.
 
-Hazel is implemented in OCaml and compiled to JavaScript using the \li{js_of_ocaml} compiler \cite{DBLP:conf/aplas/RadanneVB16}.
-The core of Hazel is written in a pure functional style, so our implementation is able to closely 
+Hazel is implemented in OCaml and compiled to JavaScript using the \li{js_of_ocaml} compiler\todo{cite}.
+Hazel is written in a pure functional style, so our implementation is able to closely 
 follow the formalism. The Hazel language has been evolving in parallel with our work, 
 and has only recently become expressive enough for it to be feasible to implement livelits within Hazel itself.
-The examples in this paper were instead implemented in OCaml as modules satisfying the signature 
+The examples in this paper are instead implemented in OCaml as modules satisfying the signature 
 implied by Fig.~\ref{fig:color-impl}. A functor then adapts these OCaml-based livelit implementations 
 to livelit definitions suitable for inclusion in the livelit context used in the semantics.
 
@@ -33,29 +33,28 @@ the computed view. However, there are a number of non-trivial layout challenges 
 in Sec.~\ref{sec:layout} below.
 
 \subsection{Text Editor Integration}
-Before delving into layout issues, let us note that livelits do not require the use of a structure editor. 
+Before delving into these issues, let us note that livelits do not require the use of a structure editor. 
 We have also developed a 
 proof-of-concept textual program editor, based on Sketch-n-Sketch \cite{sns-pldi,sns-uist}, with support for livelits.
 This proof-of-concept is not at feature parity with 
-our main implementation, but it demonstrates that a syntax-recognizing text editor \cite{DBLP:journals/tosem/BallanceGV92,DBLP:conf/sde/HorganM84} 
-is sufficient to support livelits, albeit with some gaps in livelit UI availability when 
-there are critical errors.
+our main implementation, but it demonstrates that a text editor with support for 
+parsing out livelit applications and replacing them with interactive graphical inclusions is sufficient.
 
 \subsection{Layout}\label{sec:layout}
 Whether implemented in a structure editor or a text editor, livelits present 
-interesting layout challenges--it can be difficult to sensibly 
-interleave symbolic code with livelit views in a clean, readable manner.
+interesting layout challenges: it can be difficult to sensibly 
+interleave symbolic code with livelit views. 
 
 Hazel uses an optimizing pretty printer to determine layout, an approach 
-based on the work of \citet{DBLP:journals/pacmpl/Bernardy17}. This system relies 
+based on the work of Bernardy et al \todo{cite bernardy}. This system relies 
 fundamentally on character counts. Consequently, our implementation asks each 
 livelit to specify dimensions in terms of character counts rather than pixels.
 Livelits can be laid out in one of two ways: as inline livelits, like \li{\$slider},
 which must be exactly one character high and appear inline with the code,
 or as \emph{multi-line livelits}, which occupy up to the full width of the editor 
-and a specified number of code lines (we omitted these specifications in Fig.~\ref{fig:color-impl}). 
+and a specified number of code lines (not shown in Fig.~\ref{fig:color-impl}). 
 The pretty printer lays out multi-line livelits
-on their own line, as seen in Fig.~\ref{fig:grading}. 
+on their own line, as seen in the figures in this paper. 
 
 We are currently exploring a more flexible system whereby 
 multi-line livelits can be named and applied within a larger expression, but
@@ -98,4 +97,4 @@ would need to be taken to ensure that intervening edits do not cause synchroniza
 Many livelit-related computations can be intelligently memoized, e.g. view computations and unchanged splice evaluations,
 especially with the edit awareness that Hazel provides. 
 We leave further optimizations along these lines to future work.
-Prior work on incrementally updating UIs after code changes could be relevant to this effort \cite{burckhardt2013s}.
+Prior work on incrementally updating UIs as code changes could be relevant to this effort \cite{burckhardt2013s}.

@@ -53,15 +53,11 @@ available in modern general-purpose languages.
   \begin{center}
     \begin{subfigure}[t]{0.5\textwidth}
       \centering
-       \vspace{-3.4cm}
-       \includegraphics[width=15pc]{graphite-color-palette.png}
-      \vspace{0.1cm}
-      \caption{}
+      \vspace{-3.4cm}
+      \includegraphics[width=15pc]{graphite-color-palette.png}
     \end{subfigure}\begin{subfigure}[t]{0.5\textwidth}
       \centering
       \includegraphics[width=15pc]{slider-color-livelits.png}
-      \vspace{-11px}
-      \caption{}
     \end{subfigure}
   \end{center}
   \caption{
@@ -94,8 +90,8 @@ the programming environment offers the programmer the option, via the code compl
 to activate the palette.
 Once the interaction is finished, the palette must generate a
 Java expression to fill the hole.
-Figure~\ref{fig:color}(a), adapted from this prior work, demonstrates a color palette invoked using Graphite.
-When the user presses the \li{Enter} key, the Java expression \li{new Color(173, 173, 173, 85)} is inserted at the cursor (not shown) and the palette disappears.
+Figure~\ref{fig:color}(a)\todo{use subfigure?}{}, adapted from this prior work, demonstrates a color palette invoked using Graphite.
+When the user presses the \li{Enter} key, the Java expression \li{new Color(173, 173, 173, 94)}\todo{correct code}{} is inserted at the cursor (not shown) and the palette disappears.
 
 \citet{Graphite} extensively evaluated this mechanism.
 Most notably, a survey of approximately 450 developers found that
@@ -126,8 +122,7 @@ the utility and broad applicability of a mechanism of this class.
 \subsection{Contributions}
 
 Our focus in this paper is on addressing several non-trivial technical
-deficiencies that limit both palette providers and palette clients in Graphite
-(and other projectional editing systems).
+deficiencies that limit both palette providers and palette clients in Graphite.
 The system of \emph{live literals}, or \emph{livelits} introduced in
 this paper and demonstrated in Fig.~\ref{fig:color}(b) improves upon Graphite
 in each of the following ways.
@@ -177,7 +172,7 @@ in each of the following ways.
   livelit abbreviations. For example, it is possible to define a livelit named \li{\$percentage}
   that operates as a \li{\$slider} from \li{0} to \li{100} by scoped abbreviation:
   \begin{lstlisting}[numbers=none]
-  let $percentage = $slider 0 100 in ...
+  let livelit $percentage = $slider(0, 100) in ...
   \end{lstlisting}
   % Parameterization also underlies the hygiene mechanism, as we will discuss in Sec.~\ref{sec:livelit-definitions}.
 
@@ -188,8 +183,8 @@ in each of the following ways.
   component splices to numeric values.
   Evaluation occurs in a run-time environment (i.e. closure) determined by
   leaving the hole being filled by the livelit temporarily unfilled and then evaluating
-  using a two-phased variation on the semantics for incomplete programs developed for the \Hazel programming environment \cite{HazelnutLive}.
-  We will see more sophisticated examples later on, including a livelit
+  using a two-phased variation on the semantics for incomplete programs developed for Hazel \cite{HazelnutLive}.
+  We will see more sophisticated examples later in the paper, including a livelit
   that appears inside a function that is called multiple times, leading to multiple closures that the client can
    select between.
 \end{enumerate}
@@ -203,6 +198,7 @@ In Sec.~\ref{sec:livelit-calculus}, we provide a formal account of the livelit m
 This calculus formally specifies the essential aspects of livelit definition, representation, expansion,
 and run-time closure collection independent of the particularities of GUI framework and other implementation details.
 This calculus and the key metatheoretic properties has been mechanized in Agda.
+In Sec.~\ref{sec:extensions}, we describe some extensions of the core calculus\todo{what are the extensions?}{}.
 In Sec.~\ref{sec:implementation}, we provide a more detailed account of our implementation of livelits within Hazel,
 and discuss several implementation details that would need to be considered by other implementations.
 In Sec.~\ref{sec:related-work}, we compare livelits to related work.
