@@ -1,0 +1,104 @@
+Thank you for your reviews!
+
+## Review A
+
+### Corrections
+
+The quoted sentence was part of our discussion of _future_ work. It was not written as motivation for this paper.
+
+Livelits can generate expressions, not just values. This includes expressions that have non-trivial computational behavior. 
+For example, Fig 3 demonstrates image transformations.
+
+## Review B
+
+### Comments
+
+Although the five examples in the paper are non-trivial, we agree that additional screenshots might help readers build 
+better intuitions for the expressive power of livelits. Consequently, we would be happy to include 4-6 additional 
+screenshots of novel livelits in the form of an "example gallery" in our final revision. None of these introduce
+new technical content into the paper.
+
+Our prior work on Graphite included several empirical studies which are just as relevant to livelits.
+The present paper can be read as a technical complement to that qualitative/empirical paper [Omar et al, 2012].
+
+The Hazel livelits implementation as described in the paper was functional at the time of submission
+(in the livelits branch on Github). It will be sent for artifact evaluation and released publicly with the 
+next major Hazel release before POPL. The public will be able to play with livelits in their browser. We are 
+working on a number of ``quality of life'' improvements on an ongoing basis, but these do not change the 
+content or contributions of the paper.
+
+## Review C
+
+### Corrections 
+
+MPS and Barista (via Citrus) were discussed in detail in the paper. These systems, as well as the others that 
+the review mentions, fail to achieve multiple of the design goals from Sec. 1 (discussed on line 921). We
+will include missing citations in the final revision, thank you.
+
+Livelits could be defined using other livelits when using the definition mechanism defined in Sec. 3. It is not the case that ``the definitions for livelits are textual'' in this setting. Indeed, related work on literal macros supports using literal macros in literal macro definitions [Omar et al, 2018] and the same mechanisms could be deployed here (once Hazel has a proper module / package management system). 
+
+
+We believe pure functional programming in languages like Haskell and Elm is practical. 
+That said, it is not true that livelits are limited to the pure functional setting. 
+The issue is simply that running a program with side effects
+during editing might not be _desirable_ in some settings, but that choice is up to the programmer.
+For example, live programming in Jupyter lab notebooks often involves side effects 
+occurring in arbitrary order depending on user interactions and programmers by and large accept this. 
+Livelits could be added to Jupyter-like systems such that they always use this ambient state.
+The issue could also be avoided by using algebraic effects, so that destructive effects could be ``shimmed'' 
+during development. These considerations are not livelit specific -- they are inherited from the work 
+in [Omar et al., POPL 2019] and indeed live programming itself is fundamentally in tension with 
+side effects. We will include a more substantial discussion of this point in the final revision.
+
+We do discuss livelit persistence in Sec. 3.1. Only the model is serialized. In our case, we use a generic S-expression
+textual syntax for Hazel expressions, but this is an incidental implementation detail (Hazel programs are not
+intended to be edited using text editors). We do discuss a proof-of-concept text editor with support for 
+livelits in Sec. 5.2.
+
+### Comments
+
+Pattern livelits would be a straightforward extension of our system. The necessary theory for pattern macros
+was developed in [Omar et al, 2018].
+
+Declaration livelits can be subsumed by module livelits, which can in turn be subsumed by expression livelits
+in a language that has first class modules. This was also briefly discussed in [Omar et al, 2018].
+
+While our formalism of expansion does build on our prior macro system formalism, we see this as a strength
+of our paper. Our treatment of splices is distinct, as is our treatment of hygiene. Closure collection is entirely
+new. The purpose of the formalism was to make the mechanism precise and reduce it to its essential form.
+
+Hazel functions that use GUI libraries must ultimately execute by extraction to OCaml, so the fact that 
+we implemented our GUI code directly in OCaml was merely a matter of expediency. The Hazel language is still
+evolving (in large part due to contributors who are not involved with this paper) and there is not yet a 
+full-scale GUI widgets library. We plan to "self host" in the coming months before POPL.
+
+The interface for selecting between closures is the same as the interface demonstrated in [Omar et al, POPL 2019]. We will include a screenshot in the final revision.
+
+The capture list in Fig. 4 is empty because generated expansions do not use any libraries or definition site values
+(they are simple tuples of numbers in this case). See [Omar et al, ICFP 2018] for a discussion on explicit capture.
+
+## Review D
+
+### Corrections
+
+The ipywidgets library only allows simple non-compositional widgets (no splices inside) and these widgets do not have access to the surrounding 
+closures or state so there is no support for liveness. 
+None of the central examples in our paper could be implemented as ipywidgets. We will, however, make sure to cite this work in the final revisions.
+
+### Comments
+
+See our response to Review B regarding user studies.
+
+Typed holes are central in that they enable closure collection, which is what enables liveness.
+
+The core calculus includes sums, products, and recursive types because these are minimal type theoretic constructs sufficient to achieve
+self-hosting of syntax. Alternative encoding schemes could work just as well (e.g. Church encodings in System F) but are more unwieldy.
+Self-hosting is necessary because the expand function returns an encoding of syntax, which needs to be decoded (Sec. 4.2.1).
+
+Splices are simply expressions that appear inside (i.e. are notionally spliced into) livelit GUIs.
+
+We will cite Lerner 2020, which has related motivations, thank you.
+
+We will use a different connective for expanding and elaborating in the final version, thank you.
+
+
