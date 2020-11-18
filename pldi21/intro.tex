@@ -1,52 +1,69 @@
 \section{Introduction}\label{sec:intro}
-Textual program editors are powerful and expressive user interfaces,
-so it is perhaps little wonder that they remain dominant decades after the teletype.
-However, textual user interfaces are not the best tool for every job.
-In particular, there are many
-data types for which a non-textual
-user interface for expression construction may situationally be more appropriate.
+Text-based program editors are flexible and expressive user interfaces,
+so it is little wonder that they remain dominant decades after the teletype.
+However, textual user interfaces are not the best tool for every programming job.
+% In particular, there are countless 
+% data types for which a non-textual
+% user interface may situationally be more appropriate.
 
 As a simple example, consider a record type
-classifying colors using an RGBA encoding:
-\begin{lstlisting}[numbers=none]
-type Color = { r: Int, g: Int, b: Int, a: Int }
-\end{lstlisting}
+classifying colors using the RGBA encoding. 
 It is possible to select a particular color by entering
-an expression of this type using a text editor:
-\begin{lstlisting}[numbers=none]
-let bgcolor : Color = { r: 255, g: 178, b: 45, a: 100 }
-\end{lstlisting}
-The problem is that this user interface for color selection
-offers the user no immediate feedback
-and limited editing affordances.
-It is difficult for the programmer, or anyone subsequently reading or modifying the code, to know which color is represented
-and to interactively tweak that color.
+an expression of this type using a text editor, e.g. \li{\{ r: 255, g: 178, b: 45, a: 100 \}}. 
+The problem with this textual user interface for color selection is that 
+it offers the programmer no live feedback about which color has been selected 
+and limited editing affordances for tweaking the chosen color.
+Analagous critiques apply to strictly textual user interfaces for 
+countless other data structures,
+such as animation parameters,
+vector graphics,
+musical sequences,
+audio filters,
+game states, 
+GUI primitives,
+tabular data, 
+plots,
+geospatial data, 
+neural network diagrams, 
+biological neuron models, 
+and the list goes on.
 
-Better support for manipulating data of types like these would be particularly helpful for users engaging in
-live and exploratory programming in domains like web design, media production,
-and data analysis. Indeed, practitioners in domains like these commonly eschew general-purpose programming
-in favor of graphical end-user applications, like %
-image and video editors and music composition software,
-in part because these applications provide domain-specific forms of live feedback and
-direct manipulation affordances, e.g. color palettes, visual timelines, and interactive plots.
-The trade-off is that these applications have limited support for abstraction and composition.
+% It is difficult for the programmer, or anyone subsequently reading or modifying the code, to know which color is represented
+% and to interactively tweak that color.
+
+Practitioners in domains where manipulating data of types like these is central 
+have largely eschewed general-purpose programming languages 
+in favor of more specialized graphical end-user applications, like %
+image and video editors, music composition software, level design tools, 
+and bespoke GUIs written by technicians, 
+in large part because these applications 
+take seriously the need for domain-specific forms of live feedback, graphical representations, and
+direct manipulation affordances, 
+e.g. color palettes, visual timelines, interactive plots, and maps.
+
+The tragic trade-off is that these applications have limited support for abstraction and composition.
 It is difficult, for example, to bind a
 color to a variable for use in multiple locations,
-or to transform a sound by passing it through a series of functions,
 or to define a function that computes a vector graphic given a set
 of parameters (some of them perhaps themselves computed),
+or to transform a sound by passing it through a series of functions,
 or to organize these constructions into modules.
 Moreover, it is difficult to add new affordances or to compose
-affordances in ways that the application designer did not anticipate,
+affordances in ways that the application developer did not anticipate,
 so users cannot easily make even simple changes like replacing a numeric text box in a color chooser with a slider,
 much less more ambitious changes like a new visual interface for expressing geospatial data queries.
+
+% Better support for manipulating data of types like these would be particularly helpful for users engaging in
+% live and exploratory programming in domains like web design, media production,
+% and data analysis. Indeed, 
 
 This paper aims to resolve the apparent tension between
 programmatic and direct manipulation user interfaces by designing a programming system that
 is able to surface GUIs for the data types for which
 they are useful, while retaining full support for symbolic program manipulation
 and the abstraction and composition mechanisms
-available in modern general-purpose languages.
+available in modern general-purpose languages as the ``glue'' between these 
+GUIs.
 
 \subsection{Background}
 \begin{figure*}
