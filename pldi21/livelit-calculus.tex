@@ -1,0 +1,418 @@
+\section{A Simply Typed Livelit Calculus}\label{sec:livelit-calculus}
+
+\begin{figure}
+    \[
+    \arraycolsep=4pt\begin{array}{llcl}
+        \mathsf{Typ} & \tau & ::= &
+                                    \tnum ~\vert~
+                                    \tarr{\tau_1}{\tau_2} ~\vert~
+                                    \tprod{\tau_1}{\tau_2} ~\vert~
+                                    \tunit ~\vert~
+                                    \tsum{\tau_1}{\tau_2} ~\vert~
+                                    t ~\vert~
+                                    \trec{t}{\tau}\\
+        \mathsf{UExp} & \hat{e} & ::= & \hnum{n} ~\vert~
+                                 x ~\vert~
+                                 \hlam{x}{\hat e} ~\vert~
+                                 \hap{\hat e_1}{\hat e_2} ~\vert~
+                                 \cdots ~\vert~
+                                %  \hpair{\hat e_1}{\hat e_2} ~\vert~
+                                %  \hprl{\hat e} ~\vert~
+                                %  \hprr{\hat e} ~\vert~
+                                %  \htriv ~\vert~
+                                %  \hinL{\hat e} ~\vert~
+                                %  \hinR{\hat e} ~\vert~
+                                %  \hroll{\hat e} ~\vert~
+                                %  \hunroll{\hat e} \\
+                                 \hehole{u} ~\vert~
+                                 \haplivelit{u}{a}{\dtxt{model}}{\splices}\\
+        \mathsf{EExp} & e & ::= & \hnum{n} ~\vert~ x ~\vert~ \hlam{x}{e} ~\vert~ \hap{e_1}{e_2} ~\vert~ \cdots ~\vert~ \hehole{u}\\
+        \mathsf{IExp} & d & ::= & \hnum{n} ~\vert~ x ~\vert~ \hlam{x}{d} ~\vert~ \hap{d_1}{d_2} ~\vert~ \cdots ~\vert~ \dehole{u}{\sigma}\\
+        \mathsf{Splice} & \psi & ::= & \hsplice{\hat e}{\tau}
+    \end{array}
+    \]
+    \caption{Syntax of types, $\tau$, unexpanded expressions, $\hat{e}$, expanded expressions, $e$, and internal expressions, $d$.
+    Metavariable $x$ ranges over variables, $u$ over hole names, and $\livelitname{a}$ over livelit names.
+    We write $\splat{\psi_i}$ for a finite sequence of $n \geq 0$ splices,
+    and $\sigma$ for finite substitutions of $n \geq 0$ internal expressions for variables, $[d_1/x_1, \cdots, d_n/x_n]$.
+    We elide standard expression forms
+    related to product, sum, and recursive types.
+    }
+    \label{fig:syntax}
+    \end{figure}
+
+In order to precisely capture the semantics of livelits
+independently
+of the specifics of the Hazel programming environment and GUI
+framework, we will now specify a simply typed \emph{livelit calculus}.
+
+Fig.~\ref{fig:syntax} specifies the syntax of the livelit calculus.
+Programs are written as \emph{unexpanded expressions}, $\hat e$, which are \emph{expanded} to
+\emph{external expressions}, $e$, before being \emph{elaborated}
+to internal expressions, $d$, for evaluation. All three stages are governed
+by the same types, $\tau$. We include numbers, partial functions, products, sums, and recursive
+types, all in their standard form \cite{pfpl}, but this specific type structure is not critical.
+Any language expressive
+enough to encode its own syntax (here as values of a recursive sum type)
+would be a suitable basis. We begin with a terse
+overview of the external and internal languages,
+which are adapted straightforwardly from Hazelnut Live \cite{HazelnutLive} and therefore
+serve as background material, in Sec.~\ref{sec:external-and-internal-lang}.
+Only unexpanded expressions contain
+livelits, so they are the main focus of the remaining sections,
+which cover livelit expansion (Sec.~\ref{sec:calculus-expansion}) and 
+liveness via closure collection (Sec.~\ref{sec:calculus-closure-collection}). 
+% and parameterization (Sec.~\ref{sec:calculus-parameterization}).
+
+
+\subsection{Background: External and Internal Language}\label{sec:external-and-internal-lang}
+The external and internal languages are straightforward adaptations of the
+external and internal languages of \emph{Hazelnut Live},
+a typed lambda calculus that assigns static and dynamic meaning to programs with holes,
+notated externally $\hehole{u}$ where $u$ is a \emph{hole name} \cite{HazelnutLive}.
+We omit non-empty holes (which internalize type inconsistencies \cite{Hazelnut}) and type holes
+(which operate like the unknown type from gradual type theory \cite{Siek06a,Hazelnut})
+because these mechanisms are orthogonal to livelits.
+
+The external language is governed by a typing judgement of the standard form, $\hasType{\Gamma}{e}{\tau}$,
+where the typing context, $\Gamma$,
+is a finite set of typing assumptions of the form $x : \tau$ \cite{pfpl}.
+
+The internal language is a contextual type theory \cite{Nanevski2008}, i.e. the typing judgement is
+of the form $\hasTypeD{\Delta}{\Gamma}{d}{\tau}$ where $\Delta$ is a finite set of hole typing
+assumptions of the form $u :: \tau[\Gamma]$.
+We need this hole typing context only for the internal language because, although hole names are assumed
+unique in the external language, they can be duplicated during evaluation of internal expressions.
+Consequently, we need a context to ensure that each closure associated with hole $u$, written $\dehole{u}{\sigma}$,
+has the same type and can be filled
+with expressions valid under the same context.
+
+External expressions, $e$, are given dynamic meaning by typed elaboration to internal expressions, $d$,
+according to the typed elaboration judgement, $\elabs{\Gamma}{e}{d}{\tau}{\Delta}$.
+The main purpose of this elaboration step is to initialize the substitution $\sigma$ on each hole closure,
+which operates to capture
+the substitutions that have occurred around that hole during evaluation. The key rule is:
+\begin{mathpar}
+\inferrule[Elab-Hole]{ }{
+    \elabs{\Gamma}{\hehole{u}}{\dehole{u}{\idof{\Gamma}}}{\tau}{u :: \tau[\Gamma]}
+}
+\end{mathpar}
+The substitution is initially the identity substitution, $\idof{\Gamma}$, i.e. the
+substitution that maps each variable in $\Gamma$ to itself, because no substitutions have yet occurred. For example,
+\[ \elabs{ }{\helet{x}{\hnum{5}}{\hehole{u}} + \hnum{6}}{\helet{x}{\hnum{5}}{\dehole{u}{[x/x]} + \hnum{6}}}{\tnum}{u :: \tnum[x : \tnum]} \]
+During evaluation, $\evalsTo{d}{d'}$, the closure's substitution accumulates the substitutions that occur. For example,
+the internal expression above evalues as follows:
+\[
+  \evalsTo{\helet{x}{\hnum{5}}{\dehole{u}{[x/x]} + \hnum{6}}}{
+      \dehole{u}{[\hnum{5}/x]} + \hnum{6}
+  }
+\]
+We will use hole closures to support live programming with livelits in Sec.~\ref{sec:calculus-closure-collection}.
+
+
+All of these judgements are adapted directly from those of Hazelnut Live,
+differing only in that we use a simpler declarative formulation rather than an algorithmic (bidirectional)
+formulation for the sake of simplicity and generality. Rather than restating the rules, we will simply state the governing
+metatheorems and refer the reader to the prior work for the full detalis \cite{HazelnutLive}.
+
+First, we have that an elaboration always exists and it preserves typing.
+\begin{theorem}[Typed Elaboration]
+    If $\hasType{\Gamma}{e}{\tau}$ then $\elabs{\Gamma}{e}{d}{\tau}{\Delta}$ for some $d$ and $\Delta$ such
+    that $\hasTypeD{\Delta}{\Gamma}{d}{\tau}$.
+\end{theorem}
+
+Next, we have that evaluation of an expression with holes leads to a final (i.e. irreducible) result of the same type (this is a corollary
+of the type safety properties established in the prior work.)
+\begin{theorem}[Preservation]
+    If $\hasTypeD{\Delta}{\cdot}{d}{\tau}$ and $\evalsTo{d}{d'}$ then $\isFinal{d'}$ and $\hasTypeD{\Delta}{\cdot}{d'}{\tau}$.
+\end{theorem}
+
+\subsection{Expansion}\label{sec:calculus-expansion}
+
+The novelty of the livelit calculus lies entirely in its handling of unexpanded expressions,
+$\hat e$, which are given meaning by typed expansion to external expressions,
+$e$, according to the judgement $\expands{\Phi}{\Gamma}{\hat e}{e}{\tau}$
+defined in Fig.~\ref{fig:expansion}.
+Unexpanded expressions mirror external expressions but for the presence of livelits, discussed below.
+The rules for standard
+forms like variables, functions and function application, shown in Fig.~\ref{fig:expansion},
+are straightforward.
+
+\subsubsection{Livelit Contexts}
+
+Livelit definitions are collected in the livelit context, $\Phi$, which
+maps livelit names to livelit definitions of the following form:
+\[ \livelitCtxEntry{a}{\taut{expand}}{\taut{model}}{\dtxt{expand}} \]
+Here, $\taut{expand}$ is the expansion type, $\taut{model}$ is the model type,
+and $\dtxt{expand}$ is the expansion function, which generates an expansion given a model.
+We omit logic related to view computations and actions, which are tied to a particular 
+UI framework.
+
+For a livelit context to be well-formed, we require that each livelit definition be well-formed.
+This in turn requires that the expansion function be hole-free and have the correct type.
+\begin{definition}[Livelit Context Well-Formedness]
+    A livelit context $\Phi$ is well-formed if and only if for each livelit definition,
+    $\livelitCtxEntry{a}{\taut{expand}}{\taut{model}}{\dtxt{expand}} \in \Phi$,  we have
+    $\hasType{}{\dtxt{expand}}{\tarr{\taut{model}}{\expType}}$.
+\end{definition}
+Here, $\expType$ stands for a type whose values isomorphically encode
+external expressions. The isomorphism is mediated in one direction by
+the encoding judgement $\encodeExp{e}{d}$ and the other by the decoding judgement $\decodeExp{d}{e}$.
+Any isomorphism is sufficient, so we leave the details as a matter of implementation.
+The simplest approach would be to define $\expType$ as a recursive sum type,
+with one arm for each form of external expression (cf. \cite{TSLs} for an example).
+
+For simplicity, we assume that the livelit context is provided \emph{a priori} and therefore
+that functions like $\dtxt{expand}$ are already closed and fully elaborated.
+In practice, the livelit context would be controlled by a definition form in the language
+that allows the expansion function to itself use livelits.
+This would require a staging mechanism,
+because we need to execute expansion functions in prior definitions to be able to
+expand subsequent definitions.
+There are a number of ways to support the necessary staging in practice, e.g.
+via explicit staging primitives \cite{DBLP:conf/icfp/Flatt02},
+by requiring that these definitions appear in separately compiled packages \cite{TLMs},
+or by using live
+programming mechanisms such as those available in Hazel
+to evaluate ``up to'' each definition before proceeding \cite{HazelnutLive}.
+This choice is orthogonal to the mechanisms of interest in this section.
+
+\subsubsection{Hygienic Livelit Expansion}
+\begin{figure}
+    \begin{mathpar}
+        \inferrule[EVar]{
+            x : \tau \in \Gamma
+        }{
+            \expands{\Phi}{\Gamma}{x}{x}{\tau}
+        }
+
+        \inferrule[ELam]{
+            \expands{\Phi}{\Gamma, x : \taut{in}}{\hat e}{e}{\taut{out}}
+        }{
+            \expands{\Phi}{\Gamma}{\hlam{x}{\hat e}}{\hlam{x}{e}}{\tarr{\taut{in}}{\taut{out}}}
+        }
+
+        \inferrule[EAp]{
+            \expands{\Phi}{\Gamma}{\hat e_1}{e_1}{\tarr{\taut{in}}{\taut{out}}}\\\\
+            \expands{\Phi}{\Gamma}{\hat e_2}{e_2}{\taut{in}}
+        }{
+            \expands{\Phi}{\Gamma}{\hap{\hat e_1}{\hat e_2}}{\hap{e_1}{e_2}}{\taut{out}}
+        }
+
+        \cdots
+
+        \inferrule[EApLivelit]{
+            \livelitCtxEntry{a}{\taut{expand}}{\taut{model}}{\dtxt{expand}} \in \Phi\\\\
+            \hasType{ }{\dtxt{model}}{\taut{model}}\\
+            \evalsTo{\hap{\dtxt{expand}}{\dtxt{model}}}{\dtxt{encoded}}\\
+            \decodeExp{\dtxt{encoded}}{\etxt{pexpansion}}\\\\
+            \hasType{ }{\etxt{pexpansion}}{\tarr{\{\tau_i\}_{i < n}}{\taut{expand}}}\\
+            \{ \expands{\Phi}{\Gamma}{\hat e_i}{e_i}{\tau_i} \}_{i < n}
+        }{
+            \expands{\Phi}{\Gamma}{\haplivelit{u}{a}{\dtxt{model}}{\splat{\hsplice{\hat e_i}{\tau_i}}}}{
+                \hap{\etxt{pexpansion}}{\{e_i\}_{i < n}}
+            }{\taut{expand}}
+        }
+    \end{mathpar}
+    \caption{Expansion}
+    \label{fig:expansion}
+    \end{figure}
+Unexpanded expressions are unique in that they include livelits:
+ \[\haplivelit{u}{a}{\dtxt{model}}{\splices}\]
+Here, $\livelitname{a}$ names the livelit
+ being applied. Livelits can be understood as filling holes, so $u$ identifies the hole
+ that is, conceptually, being filled.
+The current state of the livelit is determined by the current model value, $\dtxt{model}$,
+together with a collection of splices, $\splices$. Each splice $\psi_i$
+is of the form $\hsplice{\hat e_i}{\tau_i}$, where $\hat e_i$ is the spliced expression
+itself (unexpanded, so it may contain other livelits) and $\tau_i$ is the type of that splice,
+as determined when the livelit definition first requested the splice (discussed in Sec.~\ref{sec:livelit-definitions}).
+
+Rule \rulename{EApLivelit} performs livelit expansion. Its premises, in order, operate as follows:
+\begin{enumerate}
+    \item \textbf{Lookup.} The first premise looks up the livelit name in the livelit context.
+    \item \textbf{Model Validation.} The second premise serves to ensure that the model value, $\dtxt{model}$, is of the
+    specified model type, $\taut{model}$.
+    \item \textbf{Expansion.} The third premise applies the expansion function, $\dtxt{expand}$, to the model value, $\dtxt{model}$,
+    producing the encoded expansion, $\dtxt{encoded}$, which, by the definitions given above, is of type $\mathsf{Exp}$.
+    \item \textbf{Decoding.} The fourth premise decodes $\dtxt{encoded}$, producing the external expression it encodes, $\etxt{pexpansion}$.
+    \item \textbf{Expansion Validation.} We call $\etxt{expansion}$ the \emph{parameterized expansion} because, according to the fifth premise,
+    it must be a function that returns a value of the expansion type, $\taut{expand}$, when applied (in curried fashion, though this is not critical)
+    to the splices, whose types, $\splat{\tau_i}$, are explicitly recorded in the livelit.
+    We must take care to ensure that the parameterized expansion is \emph{context independent},
+    i.e. that it cannot depend on the particular bindings available in the call site typing context, $\Gamma$.
+    Context independence is one facet of what is colloquially known as \emph{hygiene} \cite{TLMs}.
+    In this simple formulation of the system, we maintain context independence simply by
+    requiring that the parameterized expansion be
+    closed. Consequently, any necessary helper functions used in the expansion must be provided explicitly by the client
+    via a splice. In Sec.~\ref{sec:livelit-definitions}, we discussed how the use of explicit capture sets, which can be understood as 
+    immediate partial application, can lower the cognitive burden of this strict context independence discipline.
+    Parameters formally operate in the same way as splices, and partial application is a well-understood technique, so we omit these details from the calculus.
+    \item \textbf{Splice Expansion.} Finally, the sixth premise inductively expands each of the spliced expressions in the same context as the livelit
+    expression itself.
+\end{enumerate}
+The conclusion of the rule then applies the parameterized expansion to the expanded splices.
+By applying the splices as arguments, we maintain \emph{capture avoidance} -- splices cannot capture variables
+bound internally to the expansion. Capture avoidance is the other facet of \emph{hygiene} \cite{TLMs}.
+
+The typed expansion process is governed by the following metatheorem, which establishes that the expansion
+is indeed an external expression of the indicated type.
+
+
+
+\begin{theorem}[Typed Expansion]
+    If $\expands{\Phi}{\Gamma}{\hat e}{e}{\tau}$ then $\hasType{\Gamma}{e}{\tau}$.
+\end{theorem}
+\begin{proof}
+    We proceed by rule induction on the assumption.
+    The cases involving the standard forms follow by straightforward induction.
+    The only interesting case is the \rulename{EApLivelit} case.
+    In this case, we have that $e = \hap{\etxt{pexpansion}}{\splat{e_i}}$.
+    By assumption, we have $\{ \expands{\Phi}{\Gamma}{\hat e_i}{e_i}{\tau_i} \}_{i < n}$.
+    By induction, we therefore have $\{ \hasType{\Gamma}{e_i}{\tau_i} \}_{i < n}$.
+    In addition, by assumption we have that $\hasType{}{\etxt{pexpansion}}{\tarr{\splat{\tau_i}}{\taut{expand}}}$.
+    By weakening, we therefore have $\hasType{\Gamma}{\etxt{pexpansion}}{\tarr{\splat{\tau_i}}{\taut{expand}}}$.
+    Finally, by iterated application of the typing rule for function application over the splices,
+    using the judgements just established,
+    we have $\hasType{\Gamma}{\hap{\etxt{pexpansion}}{\splat{e_i}}}{\taut{expand}}$ as desired.
+\end{proof}
+
+When composed with the Typed Elaboration theorem and the Type Safety properties established for the internal
+language, we achieve end-to-end type safety for unexpanded expressions (every well-typed unexpanded
+expression expands to a well-typed external expression, which in turn expands to a well-typed internal
+expression, which in turn evaluates in a type safe manner.)
+
+\subsubsection{Agda Mechanization}
+We have mechanized the typed expansion mechanism and proven the Typed Expansion theorem
+using the Agda proof assistant, using the same techniques as were used in the Agda mechanization 
+of Hazelnut Live \cite{HazelnutLive}. This mechanization is available in the anonymous 
+supplemental material. 
+
+\subsection{Live Feedback via Closure Collection}\label{sec:calculus-closure-collection}
+In order to support live feedback, a livelit needs to be able to ask the system
+to evaluate expressions under one of the closures associated with the livelit.
+This mechanism was introduced by example in Sec.~\ref{sec:image-transformation}.
+In this section, we will formalize the process of efficiently collecting closures
+for the livelits that appear in a program.
+
+The key idea is that we generate an alternative expansion,
+called the \emph{cc-expansion},
+where each livelit expands to an empty hole applied to the splices. In other words,
+we leave a hole in place of the parameterized expansion, which we expand and record in the \emph{cc-context}, $\Omega$, on the side.
+The key rule for the cc-expansion judgement, $\ccexpands{\Phi}{\Gamma}{\hat e}{e}{\tau}{\Omega}$, is:
+\begin{mathpar}
+\inferrule[CCApLivelit]{
+    \{ \ccexpands{\Phi}{\Gamma}{\hat e_i}{e_i}{\tau_i}{\Omega_i} \}_{i < n}\\
+    \expands{\Phi}{\Gamma}{\haplivelit{u}{a}{\dtxt{model}}{\splat{\hsplice{\hat e_i}{\tau_i}}}}{
+        \hap{\etxt{pexpansion}}{\splat{e_i}}
+    }{\taut{expand}}\\
+    \elabs{ }{\etxt{pexpansion}}{\dtxt{pexpansion}}{\tarr{\splat{\tau_i}}{\taut{expand}}}{\Delta}
+}{
+    \ccexpands{\Phi}{\Gamma}{\haplivelit{u}{a}{\dtxt{model}}{\splat{\hsplice{\hat e_i}{\tau_i}}}}{\hap{\hehole{u}}{\splat{e_i}}}{\taut{expand}}
+    {\cup_{i<n} \Omega_i \cup \{\Omegaitem{u}{\dtxt{pexpansion}}\}}
+}
+\end{mathpar}
+
+We then elaborate and evaluate the cc-expansion
+following Hazelnut Live's dynamic semantics for programs with holes, which were summarized
+in Sec.~\ref{sec:external-and-internal-lang}. The result will contain some number of hole closures
+for each livelit hole. We call these the proto-closures and their associated environments the proto-environments for that livelit hole, formally defined as follows.
+\begin{definition}[Proto-Environment Collection]
+If $\ccexpands{\Phi}{\cdot}{\hat e}{e}{\tau}{\Omega}$ and $\elabs{}{e}{d}{\tau}{\Delta}$
+and $\evalsTo{d}{d'}$ and $u \in \domof{\Omega}$ then $\protoEnvsOf{\Phi}{\hat e}{u} = \{ \sigma \mid \dehole{u}{\sigma} \in d' \}$.
+    % protoclosures(\hat e, u) = { sigma | hole^u_sigma in d' } where \hat e cc-expands to e and e elaborates to d and d evaluates to d'
+\end{definition}
+A proto-environment for a livelit hole might itself contain a proto-closure for another livelit hole.
+For example, in Fig.~\ref{fig:color}, the proto-environment for the \li{\$color} livelit contained the
+proto-closure for the \li{\$slider} livelit, via the \li{gray\_level} variable.
+If we use proto-environments for live evaluation, then the actual value of that variable
+would not be available (here, the color could not be displayed).
+
+Consequently, the second step of closure selection is to fill any livelit holes that appear in the proto-environments for other livelit holes.
+We do so by filling them using the parameterized expansions gathered in $\Omega$ and then resuming
+evaluation where appropriate.
+Formally, this involves the hole filling operation $\instantiate{d_1}{u}{d_2}$ for Hazelnut Live
+(which derives from the metavariable instantation operation of contextual modal type theory \cite{HazelnutLive,Nanevski2008}).
+This operation
+fills every closure for hole $u$ in $d_2$ with $d_1$.
+Unlike substitution, hole filling is
+not capture-avoiding. Instead, the environment on each of these closures is applied to $d_1$
+as a substitution, i.e. the delayed substitutions captured in the environment are realized.
+In this case, however, the parameterized expansion is guaranteed to be closed due to
+the context independence discipline we maintain in Rule \rulename{EApLivelit},
+so hole filling acts simply as a syntactic replacement.
+
+Formally, we begin by defining an operation $\fillof{\Omega}{\sigma}$ which acts on proto-environments
+to fill any livelit holes that appear.
+\begin{definition}[Livelit Hole Filling] ~
+    \begin{enumerate}
+        \item $\fillof{\Omega}{[d_1/x_1, \ldots, d_n/x_n]} = [\fillof{\Omega}{d_1}/x_1, \ldots, \fillof{\Omega}{d_n}/x_n]$
+        \item $\fillof{\Omega}{d} = \instantiateB{\dtxt{pexpansion}}{u}_{\Omegaitem{u}{\dtxt{pexpansion}} \in \Omega}{d}$
+    \end{enumerate}
+\end{definition}
+
+This first step may cause certain expressions to become non-final, because the filled hole is no longer
+blocking evaluation. We therefore define an operation $\resumeof{\sigma}$ that resumes evalution for all closed expressions in $\sigma$.
+(Open expressions can remain because some closures appear under binders in the final result, so a substitution has not yet been recorded
+for the bound variables.)
+\begin{definition}[Environment Resumption] ~
+    \begin{enumerate}
+        \item $\resumeof{[d_1/x_1, \ldots, d_n/x_n]} = [\resumeof{d_1}/x_1, \ldots, \resumeof{d_n}/x_n]$
+        \item $\resumeof{d} = d'$ if $\fvof{d} = \emptyset$ and $\evalsTo{d}{d'}$
+        \item $\resumeof{d} = d$ if $\fvof{d} \neq \emptyset$
+    \end{enumerate}
+\end{definition}
+
+Finally, we can produce the final set of environments by filling and resuming the proto-environments.
+\begin{definition}[Environment Collection]
+    If $\ccexpands{\Phi}{\cdot}{\hat e}{e}{\tau}{\Omega}$
+    % and $\elabs{}{e}{d}{\tau}{\Delta}$
+    % and $\evalsTo{d}{d'}$ and $u \in \domof{\Omega}$
+    then \[\envsOf{\Phi}{\hat e}{u} = \{\resumeof{\fillof{\Omega}{\sigma}} \mid \sigma \in \protoEnvsOf{\Phi}{\hat e}{u}\}\]
+\end{definition}
+
+This same fill and resume operation can be used to avoid recomputation when evaluating the fully expanded version of the user's program.
+If the editor has already performed environment collection, then it can simply continue from where it left off
+by filling and resuming
+the remaining top-level livelit holes (those that do not appear in a proto-environment).
+
+The correctness of the mechanisms described in this section rest on the fact that evaluation commutes with hole filling.
+This only holds when the language is pure: evaluation order does not matter
+so the system is free to evaluate around holes initially,
+and then return to finish the job once they have been filled.
+
+\begin{theorem}[Post-Collection Resumption]
+    If $\ccexpands{\Phi}{\cdot}{\hat e}{\etxt{cc}}{\tau}{\Omega}$ and $\elabs{}{\etxt{cc}}{\dtxt{cc}}{\tau}{\Delta}$
+    and $\evalsTo{\dtxt{cc}}{\dtxt{cc}'}$ and $\resumeof{\fillof{\Omega}{\dtxt{cc}'}} = d_1$
+    and $\expands{\Phi}{\cdot}{\hat e}{\etxt{full}}{\tau}$
+    and $\elabs{}{\etxt{full}}{\dtxt{full}}{\tau}{\Delta}$
+    and $\evalsTo{\dtxt{full}}{d_2}$ then $d_1 = d_2$.
+\end{theorem}
+\begin{proof}
+    The key observation is that filling the livelit holes in the cc-expansion gives the full expansion,
+    i.e. $\fillof{\Omega}{\dtxt{cc}} = \dtxt{full}$. Resumption is simply evaluation for closed expressions.
+    By commutativity of hole filling, established in the prior work \cite{HazelnutLive},
+    we can delay hole filling until $\dtxt{cc}$ has first been evaluated to
+    $\dtxt{cc}'$.
+\end{proof}
+
+In a language with side effects, one would instead need to modify evaluation of
+cc-expansions such that the full expansion of each livelit application is evaluated at the same time as the
+temporary expansion,
+with the result stored for subsequent hole filling. This would ensure that
+side effects happen in the same order and only once. The full details are beyond the scope of this work.
+
+% \subsection{Parameterization}
+
+% Add livelit expressions, livelit abbreviations,
+% partial application support. Talk about how to work around the strict context
+% independence discipline we have imposed.
+
+% \subsection{Edit Action Semantics}
+% So far, we have considered only the semantics of an individual editor state.
+% However, livelits are useful because they evolve as the user interacts
+% with them. In particular, the livelit's model, $\dtxt{model}$ can evolve
+% due to livelit-specific user interactions. Furthermore, a livelit can also
+% create and delete splices when a user interaction demands it (unlike functions, which have a fixed
+% number of arguments).
+

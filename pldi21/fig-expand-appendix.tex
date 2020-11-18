@@ -1,0 +1,72 @@
+% !TEX root = hazelnut-dynamics.tex
+
+% \begin{figure}[p]
+% \judgbox
+%   {\pexpandSyn{\hGamma}{\pPhi}{\pexp}{\hexp}{\htyp}}
+%   {$\pexp$ expands to $\hexp$ which synthesizes type $\htyp$}
+% \begin{mathpar}
+% \inferrule[SPEConst]{ }{
+%   \pexpandSyn{\hGamma}{\pPhi}{c}{c}{b}
+% }
+% \and
+% \inferrule[SPEAsc]{
+%   \pexpandAna{\hGamma}{\pPhi}{\pexp}{\hexp}{\htyp}
+% }{
+%   \pexpandSyn{\hGamma}{\pPhi}{\pexp : \htyp}{\hexp : \htyp}{\htyp}
+% }
+% \and
+% \inferrule[SPEVar]{
+%   x : \htyp \in \hGamma
+% }{
+%   \pexpandSyn{\hGamma}{\pPhi}{x}{x}{\htyp}
+% }
+% \and
+% \inferrule[SPELam]{
+%   \pexpandSyn{\hGamma, x : \htyp_1}{\pPhi}{\pexp}{\hexp}{\htyp_2}
+% }{
+%   \pexpandSyn{\hGamma}{\pPhi}{\halam{x}{\htyp_1}{\pexp}}{\halam{x}{\htyp_1}{\hexp}}{\tarr{\htyp_1}{\htyp_2}}
+% }
+% \and
+% \inferrule[SPEAp]{
+%   \pexpandSyn{\hGamma}{\pPhi}{\pexp_1}{\hexp_1}{\htyp_1} \\
+%   \arrmatch{\htyp_1}{\tarr{\htyp_2}{\htyp}} \\\\
+%   \pexpandAna{\hGamma}{\pPhi}{\pexp_2}{\hexp_2}{\htyp_2}
+% }{
+%   \pexpandSyn{\hGamma}{\pPhi}{\hap{\pexp_1}{\pexp_2}}{\hap{\hexp_1}{\hexp_2}}{\htyp}
+% }
+% \and
+% \inferrule[SPEHole]{ }{
+%   \pexpandSyn{\hGamma}{\pPhi}{\hehole{\mvar}}{\hehole{\mvar}}{\tehole}
+% }
+% \and
+% \inferrule[SPNEHole]{
+%   \pexpandSyn{\hGamma}{\pPhi}{\pexp}{\hexp}{\htyp}
+% }{
+%   \pexpandSyn{\hGamma}{\pPhi}{\hhole{\pexp}{\mvar}}{\hhole{\hexp}{\mvar}}{\tehole}
+% }
+% \end{mathpar}
+
+% \vsepRule
+
+% \judgbox
+%   {\pexpandAna{\hGamma}{\pPhi}{\pexp}{\hexp}{\htyp}}
+%   {$\pexp$ expands to $\hexp$ which must analyze against type $\htyp$}
+% \begin{mathpar}
+% \inferrule[APELam]{
+%   \arrmatch{\htyp}{\tarr{\htyp_1}{\htyp_2}} \\
+%   \pexpandAna{\hGamma, x : \htyp_1}{\pPhi}{\pexp}{\hexp}{\htyp_2}
+% }{
+%   \pexpandAna{\hGamma}{\pPhi}{\hlam{x}{\pexp}}{\hlam{x}{\hexp}}{\htyp}
+% }
+% \and
+% \inferrule[APESubsume]{
+%   \pexpandSyn{\hGamma}{\pPhi}{\pexp}{\hexp}{\htyp'} \\
+%   \tconsistent{\htyp}{\htyp'}
+% }{
+%   \pexpandAna{\hGamma}{\pPhi}{\pexp}{\hexp}{\htyp}
+% }
+% \end{mathpar}
+% \CaptionLabel{Palette Expansion, remaining rules}{fig:palexpapndx}
+% \label{fig:expandSyn}
+% \label{fig:expandAna}
+% \end{figure}

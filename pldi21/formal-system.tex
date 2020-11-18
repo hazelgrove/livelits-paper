@@ -1,0 +1,294 @@
+\section{Formal System}
+
+\subsection{Background: \Hazelnut}
+
+\begin{itemize}
+
+\item typed expressions with holes
+
+\end{itemize}
+
+\parahead{Static Semantics}
+
+\begin{itemize}
+
+\item \cite{Hazelnut}
+
+\end{itemize}
+
+\parahead{Dynamic Semantics}
+
+\begin{itemize}
+
+\item \cite{HazelnutLive}
+
+\end{itemize}
+
+\subsection{Palette Expressions}
+
+\parahead{Palette Macros}
+
+\begin{itemize}
+
+\item macros / analytic
+
+\item macros / synthetic
+
+\item synthetic requires type splices
+
+\item can there be an ``untyped'' version that is like synthetic but relies on casts rather than type splices?
+
+\end{itemize}
+
+\parahead{Palette Functions}
+
+\begin{itemize}
+
+\item functions / analytic
+
+\end{itemize}
+
+\subsection{Edit Actions}
+
+\parahead{Palette Initialization}
+
+\begin{itemize}
+
+\item init 
+
+\end{itemize}
+
+\parahead{Palette-Specific Actions}
+
+\begin{itemize}
+
+\item defined and registered with the editor, can be used for the ``normal''
+action tool box
+
+\item like other actions, can be recorded in action history and, in the future,
+scripted in edit action macros
+
+\end{itemize}
+
+\subsection{Live Palettes}
+
+\begin{itemize}
+
+\item for view function
+
+\item hole for palette application, run, collect hole closures, pass to view
+
+\end{itemize}
+
+\subsection{Extensions}
+
+\begin{itemize}
+
+\item parameterized palettes (value arguments)
+
+\item polymorphic analytic palettes (type arguments)
+
+\end{itemize}
+
+
+
+\newcommand{\dexpand}{\dexp_{\mathsf{expand}}}
+\newcommand{\tmodel}{\htyp_{\mathsf{model}}}
+\newcommand{\texpansion}{\htyp_{\mathsf{expansion}}}
+\newcommand{\dmodel}{\dexp_{\mathsf{model}}}
+\newcommand{\denc}{d_{\mathsf{enc}}}
+\newcommand{\eexpanded}{\hexp_{\mathsf{expanded}}}
+\newcommand{\tsplice}{\htyp_{\mathsf{splice}}}
+\newcommand{\psplice}{\pexp_{\mathsf{splice}}}
+\newcommand{\esplice}{\hexp_{\mathsf{splice}}}
+
+\newcommand{\eexpand}{\hexp_{\mathsf{expand}}}
+\newcommand{\emodel}{\hexp_{\mathsf{model}}}
+
+\begin{figure*}
+        \newcommand{\absgrammar}[2]{c\,|\,$x$\,|\,\hap{#1}{#1}\,|\,\halam{$x$}{#2}{#1}}
+        \newcommand{\absgrammargen}[2]{\absgrammar{#1}{#2}\,|\,\hlam{$x$}{#1}\,|\,#1 : #2\,|\,\hehole{\mvar}\,|\,\hhole{#1}{\mvar}}
+\begin{grammar}
+ Palette definitions
+ & $\pDef$
+   & $\bnfas$ &
+     $\pDefRecord{\dexp}{\htyp}{\htyp}$
+%
+\\[1ex]
+ Basic HTyps
+ & $\htyp$
+   & $\bnfas$ &
+     b\,|\,$\tehole$\,|\,$\tarr{\htyp}{\htyp}$
+%
+\\[1ex]
+ HExps
+ & $\hexp$
+   & $\bnfas$ &
+     $\absgrammargen{\hexp}{\htyp}$
+%
+\\[1ex]
+ IHExps
+ & $\dexp$
+   & $\bnfas$ &
+     $\absgrammar{\dexp}{\htyp}\,|\,\dehole{\mvar}{\subst}{}\,|\,\dhole{\dexp}{\mvar}{\subst}{}$
+ \\ &&& $\bnfaltbrk \dcasttwo{\dexp}{\htyp}{\htyp}$
+ \\ &&& $\bnfaltbrk \dcastfail{\dexp}{\htyp}{\htyp}$
+%
+\\[1ex]
+ Palette HExps
+ & $\pexp$
+   & $\bnfas$ &
+     $\absgrammargen{\pexp}{\htyp}$
+ \\ &&& $\bnfaltbrk \pexpPalLet{\rho}{\pDef}{\pexp}$ & Palette definition $\pDef$ as $\rho$ in $\pexp$
+ \\ &&& $\bnfaltbrk \pexpPalAp{\rho}{\dexp}{\htyp}{\pexp}$
+                                                & Palette definition $\rho$ expands model $\dexp$ into a function
+ \\ &&&                                         & that takes $\pexp$ of type $\htyp$ and returns the resultant HExp
+%
+\end{grammar}
+\hfill \\ \hfill \\ \hfill \\ \hfill \\ TODO where do we define the meanings of $\encExp$, $\downArrowsTo{}{}$, and $\decode{}{}$?
+\begin{mathpar}
+\\\\
+\inferrule[SPELetPal]{
+    \pi = \pDefRecord{\dexpand}{\tmodel}{\texpansion} \\\\
+    \hasType{\EmptyDelta}{\EmptyhGamma}{\dexpand}{\tarr{\tmodel}{\encExp}} \\ \\
+    \pexpandSyn{\hGamma}{\pPhi, \rho : \pi}{\pexp}{\hexp}{\tau}
+  }{
+    \pexpandSyn{\hGamma}{\pPhi}{\pexpPalLet{\rho}{\pi}{\pexp}}{\hexp}{\tau}
+  }
+\\\\
+\inferrule[SPEApPal]{
+    \rho:\pDefRecord{\dexpand}{\tmodel}{\texpansion} \in \pPhi \\\\
+    \pexpandAna{\hGamma}{\pPhi}{\psplice}{\esplice}{\tsplice} \\\\
+    \hasType{\EmptyDelta}{\EmptyhGamma}{\dmodel}{\tmodel} \\ \\
+    \downArrowsTo{\dap{\dexpand}{\dmodel}}{\denc} \\\\
+    \decode{\denc}{\eexpanded} \\ \\
+    \hana{\EmptyhGamma}{\eexpanded}{\tarr{\tsplice}{\texpansion}}
+  }{
+    \pexpandSyn{\hGamma}{\pPhi}{\pexpPalAp{\rho}{\dmodel}{\tsplice}{\psplice}}{\hap{\left( \eexpanded : \tarr{\tsplice}{\texpansion} \right)}{\esplice}}{\texpansion}
+  }
+\\\\
+\inferrule[APELetPal]{
+    \pi = \pDefRecord{\dexpand}{\tmodel}{\texpansion} \\\\
+    \hasType{\EmptyDelta}{\EmptyhGamma}{\dexpand}{\tarr{\tmodel}{\encExp}} \\ \\
+    \pexpandAna{\hGamma}{\pPhi, \rho : \pi}{\pexp}{\hexp}{\tau}
+  }{
+    \pexpandAna{\hGamma}{\pPhi}{\pexpPalLet{\rho}{\pi}{\pexp}}{\hexp}{\tau}
+  }
+\\
+\end{mathpar}
+\end{figure*}
+
+\begin{figure*}
+\begin{mathpar}
+  \text{Typed palette expansion theorems:}
+  \\
+  \text{If} \, \pexpandSyn{\hGamma}{\pPhi}{\pexp}{\hexp}{\htyp} \, \text{then}\,
+     \hsyn{\hGamma}{\hexp}{\htyp}.
+  \\
+  \text{If} \, \pexpandAna{\hGamma}{\pPhi}{\pexp}{\hexp}{\htyp} \, \text{then}\,
+     \hana{\hGamma}{\hexp}{\htyp}.
+\end{mathpar}
+\end{figure*}
+
+\begin{figure*}
+\vskip 2cm
+Function-style palettes
+\vskip 0.5cm
+
+\judgbox
+  {\pPhiWF{\pPhi}}
+  {The definitions in $\pPhi$ are type-correct}
+%  {For all $\rho : \pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion} \in \pPhi$,
+%   $\hana{\EmptyhGamma}{\eexpand}{\tarr{\tmodel}{\tarr{\tsplice}{\texpansion}}}$}
+\begin{mathpar}
+\inferrule[PhiWFEmpty]{
+}{
+  \pPhiWF{\EmptyhGamma}
+}
+\and
+\inferrule[PhiWFInductive]{
+  \pPhiWF{\pPhi} \\ \\
+  \hana{\EmptyhGamma}{\eexpand}{\tarr{\tmodel}{\tarr{\tsplice}{\texpansion}}}
+}{
+  \pPhiWF{\pPhi, \rho : \pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion}}
+}
+\end{mathpar}
+
+\begin{mathpar}
+\\\\
+\inferrule[SPELetFPal]{
+    \pi = \pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion} \\\\
+    \pPhiWF{\pPhi} \\ \\
+    \pexpandSyn{\hGamma}{\pPhi, \rho : \pi}{\pexp}{\hexp}{\tau} \\\\
+    \hana{\EmptyhGamma}{\eexpand}{\tarr{\tmodel}{\tarr{\tsplice}{\texpansion}}}
+  }{
+    \pexpandSyn{\hGamma}{\pPhi}{\pexpPalLet{\rho}{\pi}{\pexp}}{\hexp}{\tau}
+  }
+\\\\
+\inferrule[SPEApFPal]{
+    \rho:\pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion} \in \pPhi \\\\
+    \pPhiWF{\pPhi} \\ \\
+    \pexpandAna{\hGamma}{\pPhi}{\psplice}{\esplice}{\tsplice} \\\\
+    \hana{\EmptyhGamma}{\emodel}{\tmodel}
+  }{
+    \pexpandSyn{\hGamma}{\pPhi}{\pexpPalApF{\rho}{\emodel}{\psplice}}{\hap{\hap{\left( \eexpand : \tarr{\tmodel}{\tarr{\tsplice}{\texpansion}} \right)}{\emodel}}{\esplice}}{\texpansion}
+  }
+\\\\
+\inferrule[APELetFPal]{
+    \pi = \pDefRecordF{\eexpand}{\tmodel}{\tsplice}{\texpansion} \\\\
+    \pPhiWF{\pPhi} \\ \\
+    \pexpandAna{\hGamma}{\pPhi, \rho : \pi}{\pexp}{\hexp}{\tau} \\\\
+    \hana{\EmptyhGamma}{\eexpand}{\tarr{\tmodel}{\tarr{\tsplice}{\texpansion}}}
+  }{
+    \pexpandAna{\hGamma}{\pPhi}{\pexpPalLet{\rho}{\pi}{\pexp}}{\hexp}{\tau}
+  }
+\\
+\end{mathpar}
+\end{figure*}
+
+\begin{figure*}
+  \vskip 1cm
+  For all $\hGamma$, $\pPhi$, $\rho$, $\dmodel$, $\psplice$, $\tsplice$, $\hexp$, and $\htyp$,
+  \\
+  if $\pexpandSyn{\hGamma}{\pPhi}{\pexpPalAp{\rho}{\dmodel}{\tsplice}{\psplice}}{\hexp}{\htyp}$
+  \\
+  then $\rho$ must be defined (i.e. $\rho : \pDefRecord{\dexpand}{\tmodel}{\texpansion} \in \pPhi$)
+  \\
+  and there must exist $\eexpanded$ and $\esplice$ such that the following hold:
+  \vskip 0.5cm
+  \begin{enumerate}
+    \item
+      \textbf{Expanded Application Form}: The expansion result has a specific form; particularly that of a function application,
+      where the function part is ascripted with an arrow type from the splice type (specified by the original expression) to the
+      expansion result type.
+      \\
+      \hskip 2em $e = \hap{\left( \eexpanded : \tarr{\tsplice}{\htyp} \right)}{\esplice}$
+      \\
+      This form satisfies the \textbf{Capture Avoidance} principle described in (TODO - cite the TLM paper),
+      as it renders incorrect capturing structurally impossible.
+      \vskip 0.3cm
+    \item
+      \textbf{Expansion Typing}: The expanded expression synthesizes the result type (a consequence of the "Typed Palette Expansion"
+      theorem), and the result type is the same as the expansion type specified in the palette definition.
+      \\
+      \hskip 2em $\hsyn{\hGamma}{\hexp}{\htyp}$ and $\htyp = \texpansion$
+      \vskip 0.3cm
+    \item
+      \textbf{Responsibility}: The palette definition's $\mathsf{expand}$ function is responsible for expanding the model -
+      the result of this expansion is evaluated to a value, then that value is decoded into an hexp.
+      \\
+      \hskip 2em $\downArrowsTo{\dap{\dexpand}{\dmodel}}{\denc}$ and $\decode{\denc}{\eexpanded}$
+      \vskip 0.3cm
+    \item
+      \textbf{Splice Typing}: The splice expression expands into the argument part of the expanded form,
+      which can be analyzed against the type specified by the original expression.
+      \\
+      \hskip 2em $\pexpandAna{\hGamma}{\pPhi}{\psplice}{\esplice}{\tsplice}$ and therefore $\hana{\hGamma}{\esplice}{\tsplice}$
+      \vskip 0.3cm
+    \item
+      \textbf{Context Independence}: The function part of the expanded form has no free variables, guaranteeing that it does not
+      rely on any bindings in the application site context.
+      \\
+      \hskip 2em $\mathsf{free\_vars} \left( \eexpanded : \tarr{\tsplice}{\htyp} \right) = \emptyset$
+  \end{enumerate}
+\end{figure*}
