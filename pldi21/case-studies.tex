@@ -9,11 +9,6 @@ in Hazel, a browser-based live programming environment for a pure typed function
 ML family. We assume basic familiarity with ML.
 
 \subsection{Case Study: Grading with Livelits}\label{sec:live-grading}
-\begin{figure*}
-    \includegraphics[width=30pc]{grade-cutoff-livelit.png}
-\caption{Grading with Livelits}
-\label{fig:grading}
-\end{figure*}
 
 Consider this familiar scenario: an instructor needs
 (1) to record numeric grades for various assignments and exams, and
@@ -34,7 +29,7 @@ are flexible enough to handle these scenarios, but users of these languages
 sacrifice the ability to receive live feedback and directly manipulate data and visualizations thereof.
 
 Livelits are able to address this tension.
-Fig.~\ref{fig:grading} shows a Hazel program where the user has:
+Fig.~\ref{fig:grading} shows a Hazel program where the user transitions between programmatic and direct manipulation several times:
 \begin{enumerate}
 \item recorded numeric \li{grades} for each student using a livelit, \li{\$dataframe}, that implements a tabular user interface with support for live evaluation of the Hazel expression in each cell,
 \item programmatically computed the overall \li{averages} for each student by applying a function, \li{compute_averages}, defined in a library  (not shown) shared between multiple courses,
