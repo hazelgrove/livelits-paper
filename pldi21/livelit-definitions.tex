@@ -242,7 +242,7 @@ i.e. a standard symbolic expression of the expansion type, here \li{Color}.
 The \li{expand} function, shown in Fig.~\ref{fig:color-impl}, is responsible for generating 
 an expansion given the current model.
 
-The expansion can include splices, but we the system does not make the contents of a splice 
+The expansion can include splices, but the system does not make the contents of a splice 
 available directly. Instead, the \li{expand} must return a pair consisting of an encoded expression, of type 
 \li{Exp}, with a list of \li{SpliceRef}s that the expansion depends on. 
 We call the \li{Exp} the \emph{parameterized expansion}

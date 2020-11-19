@@ -5,8 +5,8 @@
 %% \cite{popl-paper}
 
 \begin{abstract}
-    Although textual program manipulation is powerful, 
-    some types of expressions are better represented and manipulated
+    Although text editing is powerful, 
+    some types of expressions are more naturally represented and manipulated
     graphically.
     % Examples include expressions that compute 
     % colors,
@@ -17,26 +17,26 @@
     % GUI widgets, 
     % and various other domain-specific data structures.
     This paper introduces \emph{live literals}, or \emph{livelits}, 
-    a mechanism that allows
-    client programmers to fill holes of types like these 
+    which allow
+    clients to fill holes of these types  
     by directly manipulating a     
-    provider-specified GUI embedded persistently into otherwise 
+    provider-defined GUI embedded persistently into otherwise 
     symbolic code. 
     Uniquely, livelits are compositional: the GUI can itself contain
-    spliced expressions, which can in turn contain other livelits. 
+    spliced expressions, which have full editor support and can in turn contain other livelits. 
     Splices are typed and the system 
-    ensures that the livelit treats each splice hygienically. 
+    ensures that livelits treat splices hygienically. 
     Livelits are also uniquely live: 
     they can offer {immediate feedback} about the run-time implications 
-    of the programmer's choices 
-    even when the spliced expressions mention bound variables, 
-    because the system gathers closures associated with the 
+    of the client's choices 
+    even when splices mention bound variables, 
+    because the system continuously gathers closures associated with the 
     hole that the livelit is tasked with filling.
     This paper introduces livelits with case studies that exercise these novel capabilities. 
     We implement livelits in Hazel, 
     a live programming environment able to 
     typecheck and run programs with holes. 
-    We then define a typed lambda calculus that captures the essence of livelits, which
-    operate as live, graphical macros.     
+    We then define a typed lambda calculus that captures the essence of livelits as 
+    live graphical macros.     
     The macro expansion process has been mechanized in Agda.
 \end{abstract}
