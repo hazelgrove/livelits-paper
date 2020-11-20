@@ -138,6 +138,7 @@ to focus on two key mechanisms exposed by \li{ViewMonad}: live evaluation
 and splice rendering.
 
 \subsubsection{Live Evaluation}
+\label{sec:live-evaluation-def}
 In order to provide the client with live feedback about the dynamic implications 
 of the programmer's choices, 
 the view function can ask the system to evaluate a splice, or an encoded function of 
@@ -237,6 +238,7 @@ which closure the user has selected. Of course, the \li{view} might emit
 result-dependent actions when appropriate.
 
 \subsection{Expansion}
+\label{sec:expansion}
 The ultimate purpose of a livelit is to fill the hole where it appears by generating an expansion,
 i.e. a standard symbolic expression of the expansion type, here \li{Color}.
 The \li{expand} function, shown in Fig.~\ref{fig:color-impl}, is responsible for generating 

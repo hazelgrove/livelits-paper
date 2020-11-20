@@ -158,14 +158,14 @@ the value of this class of mechanisms for integrating GUIs with code.
 
 \subsection{Contributions}
 
-We turn our attention in this paper to fundamental technical
+We turn our attention in this paper to several fundamental technical
 deficiencies that limit GUI providers and clients using these prior systems.
 To address these, 
 we introduce a system of \emph{live literals}, or \emph{livelits}, 
 demonstrated in Fig.~\ref{fig:color}(b). 
-This system is unique in achieving all of the following properties.
-(We describe the subset of these properties 
-achieved by prior systems,
+Livelits are unique in achieving all of the following properties.
+(We describe which subset of these properties 
+are achieved by prior systems,
 including those just mentioned, 
 in Sec.~\ref{sec:related-work}.)
 
@@ -234,7 +234,7 @@ in Sec.~\ref{sec:related-work}.)
   For example, \li{\$slider} in Fig.~\ref{fig:color}(b) is parameterized by the slider's bounds.
   Parameters operate like splices, differing only in that they can be partially applied in
   livelit abbreviations. For example, Fig.~\ref{fig:color}(b)\todo{add slider}{} 
-  partially applies \li{\$slider} to \li{0} to \li{100} to define a \li{\$percentage} slider.
+  partially applies \li{\$slider} to \li{0} and \li{100} to define a \li{\$percentage} slider\todo{todo}{}.
   % \begin{lstlisting}[numbers=none]
   % let $percentage = $slider 0 100 in ...
   % \end{lstlisting}
@@ -246,27 +246,29 @@ so livelits are compatible with type-driven methodologies and tools.
 Together with the hygiene discipline, this allow clients to reason abstractly about expansions, i.e.  
 without inspecting the expansions or livelit implementations directly.
 
-\llproperty{Liveness} Uniquely, livelits can evaluate splices
-  and so provide feedback related to the run-time behavior of the expression being generated.
+\llproperty{Liveness} Uniquely, livelits can evaluate splices 
+  throughout the editing process 
+  (i.e. in a \emph{live} manner \cite{DBLP:conf/icse/Tanimoto13}) 
+  to provide feedback related to run-time behavior.
   For example, in Fig.~\ref{fig:color}(b), 
-  the color that is displayed is determined by evaluating the RGBA
+  the selected color can be displayed by evaluating the RGBA
   component splices to numeric values.
   Evaluation occurs in a run-time environment (i.e. closure) determined by
   leaving the hole being filled by the livelit temporarily unfilled and then evaluating
-  using a two-phased variation on the semantics for 
+  using a two-phased variant of the semantics for 
   live programming with typed holes developed by \citet{HazelnutLive}.
   We support live evaluation even for livelits 
-  that appears inside a function that is called multiple times: this leads 
+  that appear inside a function. Multiple function calls lead 
   to multiple closures that the client 
-   selects between.
+   can select between.
 
 \paragraph{Outline.} We begin in Sec.~\ref{sec:case-studies} by introducing
 livelits from the perspective of client programmers. 
 Our examples are organized into case studies 
-and are chosen to specifically demonstrate the novel contributions of this paper.
+and are chosen to demonstrate the novel contributions of this paper.
 In Sec.~\ref{sec:livelit-definitions}, 
-we consider the livelit provider's perspective by detailing the livelit
-definition mechanism with an example.
+we consider the livelit provider's perspective by introducing livelit
+definitions with a detailed example.
 In Sec.~\ref{sec:livelit-calculus}, we define the \emph{typed livelit calculus}. 
 We have mechanically specified the central mechanism, livelit expansion, and proven the associated metatheorems in Agda.
 This calculus 
@@ -276,10 +278,10 @@ and other orthogonal design details,
 because we believe livelits can be integrated into a wide variety of programming systems. 
 In Sec.~\ref{sec:implementation}, we provide a more detailed account of our two implementations of livelits.
 Our primary implementation, used in the screenshots in the paper,
-is within Hazel, a live programming environment designed 
+is integrated into Hazel, a live programming environment designed 
 around hole-driven development. 
 We have also prototyped livelits within a standard text editor. 
-We also discuss factors to consider when adding livelits to languages with side effects.
+Additionally, we discuss factors that must be considered when integrating livelits into languages with side effects.
 In Sec.~\ref{sec:related-work}, we compare livelits to related work using the design properties outlined above 
 as a rubric.
-Finally, we conclude in Sec.~\ref{sec:discussion} after a discussion of some present limitations and future work.
+Finally, we conclude in Sec.~\ref{sec:discussion} after a discussion of present limitations and future work.
