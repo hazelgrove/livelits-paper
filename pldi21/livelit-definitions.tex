@@ -1,61 +1,68 @@
 \section{Livelit Definitions}\label{sec:livelit-definitions}
 
 \begin{figure}
-\begin{lstlisting}
-  type Color = (.r Int, .g Int, .b Int, .a Int)
+\begin{lstlisting}[xleftmargin=0.2cm,morekeywords={expansions,require}]
+type Color = (.r Int, .g Int, .b Int, .a Int)
 
-  livelit $color at Color {
-    capture { }
+livelit $color at Color {
+  type Model = (.r SpliceRef, .g SpliceRef, 
+                .b SpliceRef, .a SpliceRef)
 
-    type Model = (.r SpliceRef, .g SpliceRef, .b SpliceRef, .a SpliceRef)
-    let init : UpdateMonad(Model) = do 
-      r <- new_splice(`Int`, Some(`0`))
-      g <- new_splice(`Int`, Some(`0`))
-      b <- new_splice(`Int`, Some(`0`))
-      a <- new_splice(`Int`, Some(`100`))
-      return (r, g, b, a)
+  let init : UpdateMonad(Model) = do 
+    r <- new_splice(`Int`, Some(`0`))
+    g <- new_splice(`Int`, Some(`0`))
+    b <- new_splice(`Int`, Some(`0`))
+    a <- new_splice(`Int`, Some(`100`))
+    return (r, g, b, a)
 
-    type Action = 
-    | ClickOnColor(Color)
-  
-    let view : Model -> ViewMonad(Html(Action)) = 
-      fun model -> do 
-        (* determine a color to display to the client, if possible *)
-        r_res <- eval_splice(model.r)
-        g_res <- eval_splice(model.g)
-        b_res <- eval_splice(model.b)
-        a_res <- eval_splice(model.a)
-        let cur_color : Color = 
-          case (r_res, g_res, b_res, a_res) 
-          | (Some(Val(IntLit(r))), 
-             Some(Val(IntLit(g))), 
-             Some(Val(IntLit(b))), 
-             Some(Val(IntLit(a)))) -> 
-            Some((r, g, b, a))
-          | _ -> None
-        in 
-        
-        r_editor <- editor(model.r, FixedWidth(20))
-        g_editor <- editor(model.g, FixedWidth(20))
-        b_editor <- editor(model.b, FixedWidth(20))
-        a_editor <- editor(model.a, FixedWidth(20))
-        
-        (* ...render the UI using these splice editors... *)
+  type Action = 
+  | ClickOn(Color)
+
+  let view : Model -> ViewMonad(Html(Action)) = 
+    fun model -> do 
+      (* determine a color to display *)
+      r_res <- eval_splice(model.r)
+      g_res <- eval_splice(model.g)
+      b_res <- eval_splice(model.b)
+      a_res <- eval_splice(model.a)
+      let cur_color : Color = 
+        case (r_res, g_res, b_res, a_res) 
+        | (Some(Val(IntLit(r))), 
+            Some(Val(IntLit(g))), 
+            Some(Val(IntLit(b))), 
+            Some(Val(IntLit(a)))) -> 
+          Some((r, g, b, a))
+        | _ -> 
+          (* indetermine color shown as X *)
+          None 
+      in 
       
-    let update : Model -> Action -> UpdateMonad(Model) =
-      fun model (ClickOnColor(r, g, b, a)) -> do 
-        set_splice(model.r, IntLit(r))
-        set_splice(model.g, IntLit(g))
-        set_splice(model.b, IntLit(b))
-        set_splice(model.a, IntLit(a))
-        return (r, g, b, a)
+      (* generate splice editors *)
+      let size = FixedWidth(20) in 
+      r_editor <- editor(model.r, size)
+      g_editor <- editor(model.g, size)
+      b_editor <- editor(model.b, size)
+      a_editor <- editor(model.a, size)
+      
+      (* ... now we can render the UI ... *)
     
-    let expand : Model -> (Exp, List(SpliceRef)) = 
-      fun model -> 
-        (`fun r g b a -> (r, g, b, a)`, [model.r, model.g, model.b, model.a])
-  }
+  let update : 
+      Model -> Action -> UpdateMonad(Model) =
+    fun model (ClickOn c) -> do 
+      set_splice(model.r, IntLit(c.r))
+      set_splice(model.g, IntLit(c.g))
+      set_splice(model.b, IntLit(c.b))
+      set_splice(model.a, IntLit(c.a))
+      return model
+  
+  expansions require { }
+  let expand : Model -> (Exp, List(SpliceRef)) = 
+    fun model -> (`fun r g b a -> (r, g, b, a)`, 
+      [model.r, model.g, model.b, model.a])
+}
 \end{lstlisting}
-\caption{Livelit Implementation: \li{\$color} (simplified for presentation)}
+\vspace{-8px}
+\caption{Livelit Implementation}
 \label{fig:color-impl}
 \end{figure}
 
