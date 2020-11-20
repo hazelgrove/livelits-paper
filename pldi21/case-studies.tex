@@ -1,60 +1,86 @@
-\section{Case Studies}\label{sec:case-studies}
-Let us begin by considering livelits from the client programmer's perspective by way of
+\section{Livelits by Example}\label{sec:case-studies}
+
+
+In this section, we will detail the livelits mechanism by way of  
 two domain-specific case studies:
 a course grade assignment case study in Sec.~\ref{sec:live-grading}
 and an image transformation case study in Sec.~\ref{sec:image-transformation}.
 % We also briefly mention several other examples in Sec.~\ref{sec:additional-examples}.\todo{do we?}{}
 These case studies have been implemented
-in Hazel, a browser-based live programming environment for a pure typed functional language in the
-ML family. We assume basic familiarity with ML.
+in Hazel, a browser-based live programming environment for a dialect of Elm. 
+Elm is an industrial pure typed functional language in the
+ML family used for client-side web development. 
+We assume basic familiarity with ML.
 
 \subsection{Case Study: Grading with Livelits}\label{sec:live-grading}
-
 Consider this familiar scenario: an instructor needs
 (1) to record numeric grades for various assignments and exams, and
 (2) to visualize and perform various computations with these numeric grades
-in order ultimately to assign final letter grades (\textbf{A} through \textbf{F}) to the students in the course.
+in order ultimately to assign final letter grades.
+(In fact, this case study is not contrived: one author is using Hazel to compute grades this semester.)
 
-Perhaps the most common end-user application in this domain is the spreadsheet.
-A spreadsheet allows the instructor to record student grades using a natural tabular interface,
-visualize this data in one of a finite number of plot styles, and perform basic computations on this data,
-with results updated live, i.e. automatically after each cell has been edited.
-However, these affordances are limited. It is difficult to package up common operations and workflows
+The most common end-user application for this task is the spreadsheet, because 
+it allows the instructor to record grades using a natural tabular interface,
+visualize this data in one of a finite number of plot styles, 
+and perform basic computations,
+with results updated live.
+However, these affordances are limited. 
+It is difficult to package up common operations 
 into reusable libraries, interact with the data using domain-specific visualizations,
-and perform operations that have not been anticipated by the designers of the spreadsheet system
-(e.g. operations that prepare the data in an idiosyncratic format suitable for automated submission
-to the university's grading system).
-General-purpose programming languages equipped with suitable libraries for working with numeric data
-are flexible enough to handle these scenarios, but users of these languages
-sacrifice the ability to receive live feedback and directly manipulate data and visualizations thereof.
+and perform complex, unanticipated operations 
+(e.g. preparing the data in an idiosyncratic format demanded by the university's grading system).
+
+General-purpose programming languages 
+can handle these scenarios, but users 
+lose the ability to receive live feedback and  
+directly manipulate data and visualizations in the editor.
 
 Livelits are able to address this tension.
-Fig.~\ref{fig:grading} shows a Hazel program where the user transitions between programmatic and direct manipulation several times:
-\begin{enumerate}
-\item recorded numeric \li{grades} for each student using a livelit, \li{\$dataframe}, that implements a tabular user interface with support for live evaluation of the Hazel expression in each cell,
-\item programmatically computed the overall \li{averages} for each student by applying a function, \li{compute_averages}, defined in a library  (not shown) shared between multiple courses,
-\item determined reasonable \li{cutoffs} between letter grades by directly manipulating a livelit that offers a domain-specific drag-and-drop interface superimposed on a live visualization of the grade distribution
-(for the sake of space, we plot dots rather than a full histogram),
-\item programmatically assigned letter grades to each student based on the \li{cutoffs} determined in step (3) by calling another shared library function, \li{assign_grades},
-\item formatted the final grade assignments in a manner suitable for submission to the university system by calling another shared library function, \li{format_for_university}.
-\end{enumerate}
+Fig.~\ref{fig:grading}(c)\todo{sublabels} shows a Hazel program where 
+the instructor alternates between programmatic and direct manipulation in several situations.
+
+First, the instructor defines a value \li{grades} 
+that records the grades for each student using a livelit, \li{\$dataframe}, 
+that implements a tabular user interface. The formula bar 
+allows the selected cell to be filled with an arbitrary Hazel expression, 
+with all of Hazel's editor services available. 
+For the sake of demonstration, we show a cell that has been filled using another livelit, 
+\li{\$slider}, in combination with symbolic manipulation.\todo{do this?}{}
+The table itself displays not the expression itself but rather its value, just as in a spreadsheet.
+
+Next, the instructor programmatically computes the overall \li{averages} 
+for each student by applying \li{compute_averages}, a helper function 
+defined in the usual way in a library  (not shown) shared between multiple courses.
+
+Next, the instructor wants to ``eyeball'' reasonable \li{cutoffs} between letter grades 
+by directly manipulating a highly domain-specific livelit, \li{\$cutoffs}, that provides draggable ``paddles'' 
+superimposed on a live visualization of the distribution of the \li{averages} value provided as a parameter 
+(for the sake of space, we plot dots rather than a histogram).
+% The value of \li{cutoffs} is a labeled 4-tuple containing each cut-off. 
+
+Finally, 
+the instructor programmatically assigns letter grades to each student 
+based on the selected \li{cutoffs} 
+by calling \li{assign_grades} 
+and formats these for submission with \li{format_for_university},
+again shared functions.
 
 \subsubsection{Livelit Expansion}\label{sec:livelit-expansion}
-Livelit expressions are given dynamic meaning by expansion to core expressions, i.e. expressions that do not contain livelits.
+Livelit expressions are given dynamic meaning by expansion to core expressions, which do not contain livelits.
 For example, the expansion of Fig.~\ref{fig:grading} is:
 
-\begin{lstlisting}
+\begin{lstlisting}[xleftmargin=0.2cm]
 let grades = Dataframe (
-  ["A1", "A2", "A3", "A4", "Midterm", "Final"],
-  [
-    ("Alice", [24. +. 36. +. 33., 92., 83.5, 87.5, 95., 88.]),
-    ("Bob", [61., 64., 98., 89.5, 70., 85.]),
-    ("Carol", [75., 81., 73., 71., 82., 79.]),
-    (* ... *)
-  ]) in
+  ["A1", "A2", "A3", "Midterm", "Final"],
+  [("Alice", [24. +. 36. +. 33., 
+               92., 83.5, 95., 88.]),
+   ("Bob", [61., 64., 98., 70., 85.]),
+   ("Ciri", [75., 81., 73., 82., 79.]),
+   (* ... *) ]) in
 let averages = compute_averages grades weights in
-let cutoffs = (.A 90.0, .B 80.0, .C 70.0, .D 60.0) in
-format_for_university (assign_grades averages cutoffs)
+let cutoffs = (.A 90., .B 80., .C 70., .D 60.) in
+format_for_university 
+  (assign_grades averages cutoffs)
 \end{lstlisting}
 
 The programmer can inspect this expansion in Hazel.
@@ -106,6 +132,24 @@ Only livelits with no remaining parameters can be used to fill a hole.
 So writing \li{\$nnslider} in expression position will not display the slider GUI. Instead, it will display as a ``missing livelit parameter'' error.%
 \footnote{\label{footnote:typing}In Hazel, erroneous expressions are automatically placed inside holes so that they do not prevent other parts of the program from executing
 \cite{HazelnutLive}.}
+
+
+\begin{figure*}
+  \begin{center}
+    \begin{subfigure}[t]{0.5\textwidth}
+      \centering
+      \includegraphics[width=15pc]{img-filter-1.png}
+      \caption{}
+    \end{subfigure}\begin{subfigure}[t]{0.5\textwidth}
+      \centering
+      \includegraphics[width=15pc]{img-filter-2.png}
+      \caption{}
+    \end{subfigure}
+  \end{center}
+  \caption{Case Study: Image Transformation. The image shown is determined based on the selected closure.}
+  \label{fig:img-transformation}
+\end{figure*}
+
 
 \paragraph{Splices}\label{sec:splices}
 Spliced expressions (or \emph{splices}) appear directly inside the livelit GUI.
@@ -210,23 +254,9 @@ then it would have degraded functionality
 (in this case, it would display the list elements that are values on the timeline, skipping indeterminate elements).
 We will return to how livelit implementations handle this situation in Sec.~\ref{sec:livelit-definitions}.
 
-\subsection{Case Study: Image Transformations}\label{sec:image-transformation}
 
-\begin{figure*}
-  \begin{center}
-    \begin{subfigure}[t]{0.5\textwidth}
-      \centering
-      \includegraphics[width=15pc]{img-filter-1.png}
-      \caption{}
-    \end{subfigure}\begin{subfigure}[t]{0.5\textwidth}
-      \centering
-      \includegraphics[width=15pc]{img-filter-2.png}
-      \caption{}
-    \end{subfigure}
-  \end{center}
-  \caption{Case Study: Image Transformation. The image shown is determined based on the selected closure.}
-  \label{fig:img-transformation}
-\end{figure*}
+
+\subsection{Case Study: Image Transformations}\label{sec:image-transformation}
 
 Our next case study is a simple image transformation livelit, \li{\$img_filter},
 demonstrated in Fig.~\ref{fig:img-transformation}. This livelit takes 

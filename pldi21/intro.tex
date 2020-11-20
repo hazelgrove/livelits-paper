@@ -246,31 +246,40 @@ so livelits are compatible with type-driven methodologies and tools.
 Together with the hygiene discipline, this allow clients to reason abstractly about expansions, i.e.  
 without inspecting the expansions or livelit implementations directly.
 
-\llproperty{Liveness} Graphite's palettes do not have
-  access to the run-time environment. By contrast, livelits can evaluate splices
-  and therefore provide feedback related to the run-time behavior of the expression being generated.
-  For example, in Fig.~\ref{fig:color}(b), the color that is displayed is determined by evaluating the RGBA
+\llproperty{Liveness} Uniquely, livelits can evaluate splices
+  and so provide feedback related to the run-time behavior of the expression being generated.
+  For example, in Fig.~\ref{fig:color}(b), 
+  the color that is displayed is determined by evaluating the RGBA
   component splices to numeric values.
   Evaluation occurs in a run-time environment (i.e. closure) determined by
   leaving the hole being filled by the livelit temporarily unfilled and then evaluating
-  using a two-phased variation on the semantics for incomplete programs developed for the \Hazel programming environment \cite{HazelnutLive}.
-  We will see more sophisticated examples later on, including a livelit
-  that appears inside a function that is called multiple times, leading to multiple closures that the client can
-   select between.
+  using a two-phased variation on the semantics for 
+  live programming with typed holes developed by \citet{HazelnutLive}.
+  We support live evaluation even for livelits 
+  that appears inside a function that is called multiple times: this leads 
+  to multiple closures that the client 
+   selects between.
 
-\paragraph{Outline.} We begin in Sec.~\ref{sec:case-studies} from the livelit client perspective 
-with case studies involving several non-trivial livelits chosen to demonstrate the novel contributions of this paper.
-In Sec.~\ref{sec:livelit-definitions}, we consider the livelit provider's perspective by detailing the livelit
-definition mechanism by example.
-In Sec.~\ref{sec:livelit-calculus}, we provide a formal account of the livelit mechanism, including structural representation, expansion, and live closure collection, as a typed lambda calculus. 
+\paragraph{Outline.} We begin in Sec.~\ref{sec:case-studies} by introducing
+livelits from the perspective of client programmers. 
+Our examples are organized into case studies 
+and are chosen to specifically demonstrate the novel contributions of this paper.
+In Sec.~\ref{sec:livelit-definitions}, 
+we consider the livelit provider's perspective by detailing the livelit
+definition mechanism with an example.
+In Sec.~\ref{sec:livelit-calculus}, we define the \emph{typed livelit calculus}. 
 We have mechanically specified the central mechanism, livelit expansion, and proven the associated metatheorems in Agda.
-The livelit calculus 
-serves to capture the essential nature of the mechanism independent of the particularities of syntax, a GUI framework, and other irrelevant design and implementation details,
+This calculus 
+serves to capture the essential nature of livelits 
+independent of the particularities of syntax, GUI frameworks, 
+and other orthogonal design details,
 because we believe livelits can be integrated into a wide variety of programming systems. 
 In Sec.~\ref{sec:implementation}, we provide a more detailed account of our two implementations of livelits.
-Our primary implementation is integrated into Hazel, a live programming environment designed from the ground up 
-around live hole-driven development. 
-We have also prototyped livelits within a more conventional text editor 
-and discuss several considerations unique to this setting.
-In Sec.~\ref{sec:related-work}, we compare livelits to related work using the design criteria outlined above.
-Finally, we conclude in Sec.~\ref{sec:discussion} with a discussion of some present limitations and future work.
+Our primary implementation, used in the screenshots in the paper,
+is within Hazel, a live programming environment designed 
+around hole-driven development. 
+We have also prototyped livelits within a standard text editor. 
+We also discuss factors to consider when adding livelits to languages with side effects.
+In Sec.~\ref{sec:related-work}, we compare livelits to related work using the design properties outlined above 
+as a rubric.
+Finally, we conclude in Sec.~\ref{sec:discussion} after a discussion of some present limitations and future work.
