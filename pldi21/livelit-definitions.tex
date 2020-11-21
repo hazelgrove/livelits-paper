@@ -88,7 +88,7 @@ architecture popularized by the Elm language, upon which Hazel is based \cite{El
 expansion generation. In addition, we add a simple monadic framework (\emph{a la} Haskell\todo{citation}{}) to provide the necessary  
 interface between the livelit and the programming environment, while retaining
 a pure functional programming model. (We discuss imperative languages in Sec.~\ref{sec:imperative-langs}.)
-
+Livelit implementations can themselves invoke other livelits (see Sec.~\ref{sec:livelit-contexts}).
 
 \subsubsection{Model}\label{sec:model}
 The state of a livelit invocation is encoded in its model value. 
