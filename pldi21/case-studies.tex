@@ -52,9 +52,8 @@ for each student by applying \li{compute_averages}, a helper function
 defined in a library  (not shown) shared between multiple courses.
 
 Next, the instructor wants to ``eyeball'' reasonable \li{cutoffs} between letter grades 
-by directly manipulating a highly domain-specific livelit, \li{\$grade_cutoffs}, that provides draggable ``paddles'' 
-superimposed on a live visualization of the distribution of the \li{averages} value provided as a parameter 
-(for the sake of space, we plot dots rather than a histogram).
+by directly manipulating a domain-specific livelit, \li{\$grade_cutoffs}, that provides draggable ``paddles'' 
+superimposed on a live visualization of the distribution of \li{averages}, which is provided as a livelit parameter.
 % The value of \li{cutoffs} is a labeled 4-tuple containing each cut-off. 
 
 Finally, 
@@ -99,12 +98,13 @@ several means, described next in Sec.~\ref{sec:expansion-typing}-\ref{sec:hygien
 \label{sec:expansion-typing}
 To support abstract reasoning about the type of the expansion,
 livelit definitions declare an \emph{expansion type}.
-The declarations of the two livelits in Fig.~\ref{fig:grading},
+The declarations of the livelits in Fig.~\ref{fig:grading},
 eliding their implementations, are:
 \begin{lstlisting}[numbers=none,xleftmargin=0cm]
 livelit $dataframe at Dataframe {...}
 livelit $grade_cutoffs(averages: List(Float)) at 
   (.A Float, .B Float, .C Float, .D Float) {...}
+livelit $slider (min: Int) (max: Int) at Int {...}
 \end{lstlisting}
 The expansion type of \li{\$dataframe} is \li{Dataframe},
 which classifies tabular floating point data together with string row and column names (see the expansion above).
@@ -127,17 +127,13 @@ as seen in Fig.~\ref{fig:grading}(c) or
 using the pipelining (i.e. reverse function application) operators, \li{<|} and \li{|>}, 
 which allow multiple livelits to form dataflows (not shown).
 
-Livelit abbreviations can partially apply parameters. For example, consider the slider livelit
-from Fig.~\ref{fig:color}\todo{where?}{}\todo{int or float?}:
+Livelit abbreviations can partially apply parameters. For example, 
+we can partially apply the first parameter of \li{\$slider} to define a parameterized unsigned slider livelit:
 \begin{lstlisting}[numbers=none,xleftmargin=0cm]
-livelit $slider (min: Int) (max: Int) at Int {...}
-\end{lstlisting}
-We can partially apply the first parameter to define a parameterized non-negative slider livelit:
-\begin{lstlisting}[numbers=none,xleftmargin=0cm]
-let $nnslider = $slider 0 in ...
+let $uslider = $slider 0 in ...
 \end{lstlisting}
 Only livelits with no remaining parameters can be invoked, 
-so writing \li{\$nnslider} in expression position will display as a ``missing livelit parameter'' error.%
+so writing \li{\$uslider} in expression position will display as a ``missing livelit parameter'' error.%
 \footnote{\label{footnote:typing}In Hazel, erroneous expressions 
 are automatically placed inside holes so that they do not prevent other parts of the program from evaluating
 \cite{HazelnutLive}.}
@@ -192,10 +188,10 @@ Ensuring that clients can reason about binding while leaving expansions
  requires a hygiene discipline that enforces \emph{capture avoidance}
 and \emph{context independence} \cite{TLMs}\todo{cite michael hygiene paper}.
 
-\paragraph{Capture Avoidance}
+\textbf{Capture Avoidance.}
 Splices and parameters can appear anywhere in the expansion. 
-This becomes potentially problematic when
-the expansion places the parameter or splice under a binder, e.g. in the body of a function or \li{let} binding.
+This becomes problematic when
+they appear under a binder, e.g. in the body of a function or \li{let} binding.
 Na\"ively, this could cause inadvertent capture of the bound variable by a free variable
 in the parameter or splice. For example, consider a livelit that generates an expansion
 of the following seemingly innocuous form:
@@ -219,7 +215,7 @@ We discuss how this is implemented in Sec.~\ref{sec:expansion}.
 % This is implemented by alpha-renaming bindings internal to the expansion as necessary.
 % (We discuss potentially relaxed variations of this hygiene discipline in Sec.~\ref{sec:discussion}.)
 
-\paragraph{Context Independence}
+\textbf{Context Independence.}
 The example expansion above used a library function, \li{strlen}.
 Na\"ively, this expansion would break if placed 
 in client contexts where \li{strlen} is not bound, or bound to 
@@ -237,80 +233,126 @@ the evaluation result for each cell, like a spreadsheet.
 The \li{\$grade_cutoffs} livelit uses this facility to plot the grades, which were 
 passed in as a parameter, on the number line.
 
-\subsubsection{Closure Collection} The subtlety here is that 
-evaluation in Hazel is defined for closed expressions as is typical,
-but parameters and splices can be open, i.e. refer to variables in the surrounding
-context. In order to provide a suitable run-time environment that binds these variables, 
+\subsubsection{Closure Collection} The subtlety is that 
+evaluation in Hazel is defined for closed expressions as usual,
+but parameters and splices can be open, i.e. refer to surrounding variables. 
+To provide a environment that binds these variables, 
 Hazel performs \textbf{closure collection} in two phases.
 
 In the first phase, \emph{proto-closure collection}, 
 Hazel replaces each livelit with a uniquely numbered hole and then evaluates the program 
 using the semantics for evaluating programs with holes developed by \citet{HazelnutLive}.
-Evaluation proceeds around these holes, producing a result with hole closures, i.e. holes with environments.
+Evaluation proceeds around these holes, producing a result containing 
+corresponding hole closures, i.e. holes with environments.
 
 For example, there is one closure for \li{\$dataframe} in Fig.~\ref{fig:grading}.
-It contains the value of the \li{q1max}\todo{what?}{} variable from Line 1 and any other variables in the context
-around that livelit. 
+It contains the value of \li{q1max}\todo{what?}{} and the other variables in scope. 
 These values can be used to evaluate 
 splices that use the corresponding variables, such as the cell selected in Fig.~\ref{fig:grading}(c). 
 
-Similarly, the closure for \li{\$grade_cutoffs} in Fig.~\ref{fig:grading} includes a result for
-the \li{grades} variable. However, there is a problem: this variable's result depends on the
-expansion of the \li{\$dataframe} livelit. If we stop after the first phase of closure collection,
-where livelits have not yet been expanded,
-then no useful value for the \li{grades} variable will be available after proto-closure collection:
-it will just be a \li{\$dataframe} livelit hole closure.
+Similarly, the closure for \li{\$grade_cutoffs} in Fig.~\ref{fig:grading} includes 
+the necessary \li{averages} variable, but 
+its value depends on \li{grades}, which is determined by \li{\$dataframe}. 
+If we stop after proto-closure collection,
+then no useful value will be available:
+the result will be \emph{indeterminate}, because \li{\$dataframe} has been replaced with a hole \cite{HazelnutLive}.
 For this reason, there is a second phase of closure collection, called \emph{closure resumption}, 
 where any livelit holes that appear
 in the collected livelit closures are \emph{resumed}, i.e. the expansion is generated
-(in this case, for the \li{\$dataframe} livelit), the hole is filled, 
-and evaluation resumes.
-Livelit expansions do not contain livelits, so no subsequent resumption phases are necessary.
+(in this case, for the \li{\$dataframe} livelit) and evaluation resumes.
+% Livelit expansions do not contain livelits, so no subsequent expansion / resumption phases are necessary.
 
-Hazel does not need to evaluate the program multiple times in order to support live closure collection
-as well as the usual live evaluation services it offers, because the final evaluation result 
-can also be determined by resumption.
-(We discuss how to address subtleties that arise 
-in the presence of non-commutative side effects in Sec.~\ref{sec:calculus-closure-collection}.)
+% Hazel does not need to evaluate the program multiple times in order to support live closure collection
+% as well as the usual live evaluation services it offers, because the final evaluation result 
+% can also be determined by resumption.
+% (We discuss how to address subtleties that arise 
+% in the presence of non-commutative side effects in Sec.~\ref{sec:calculus-closure-collection}.)
 
 \subsubsection{Indeterminate Results}
-We used the phrase \emph{evaluation result} rather than \emph{value} above purposefully:
-splices and parameters can be incomplete, i.e. they can contain holes, so
-evaluation does not always result in a value \cite{HazelnutLive}.
-In particular, when a hole appears in elimination position, e.g. in function position of a function application,
- the result is instead an indeterminate expression.
-When a livelit requests an evaluation result, it must be able to handle indeterminate results.
-For example, if the parameter to \li{\$grade_cutoffs} were a hole or some other indeterminate expression,
-then it would have degraded functionality
-(in this case, it would display the list elements that are values on the timeline, skipping indeterminate elements).
-We will return to how livelit implementations handle this situation in Sec.~\ref{sec:live-evaluation-def}.
+Even after resumption, some elements of the closure may remain indeterminate, e.g. due to holes that 
+are not filled with livelits. 
+When a livelit requests an evaluation result, it must be able to handle these indeterminate results.
+For example, if there were missing grades,
+then \li{\$grade_cutoffs} would have degraded functionality: 
+it would display only the list elements that are values on the timeline, skipping indeterminate elements.
+We will return to how this occurs in Sec.~\ref{sec:live-evaluation-def}.
 
 
 
-\subsubsection{Case Study: Live Image Transformations}\label{sec:image-transformation}
+\subsubsection{Case Study: Live Photo Filters}\label{sec:image-transformation}
 \todo{revise this once we have final figure}{}
-Our next case study is a simple image transformation livelit, \li{\$img_filter},
-demonstrated in Fig.~\ref{fig:img-transformation}. This livelit takes 
+Closure collection can produce multiple closures when, for example, 
+a livelit appears inside a function applied multiple times. 
+Our next case study, in the photography domain,
+demonstrates how Hazel handle this situation, and 
+the workflow it enables. 
+
+We interviewed a photographer 
+who described a typical workflow: 
+they use the Lightroom application to 
+apply a set of adjustments and filters 
+across all photos in a collection before making 
+individual adjustments. 
+Many photographers do this one photo at a time,
+though this photographer had recently learned how to
+use Lightroom's saved presets to 
+apply adjustments to multiple photos at once.
+However, they remained dissatisfied by the workflow.
+They wanted to be able to see how the shared settings affected 
+multiple photos as they tweaked them, without having to 
+save and apply the preset repeatedly.
+They also wanted to be able to change the shared settings
+even after making certain individual adjustments.
+They also expressed interest in defining parameterized 
+presets, and in automating the process of 
+posting sets to a website and social media. 
+
+% For our next case study, we 
+% developed a library of 
+% image transformation livelits, 
+% motivated by a desire to automate 
+
+
+
+% The livelits we have considered so far generate simple values.
+
+Motivated by this interview, 
+we prototyped a collection of image transformation livelits.
+One of these, \li{\$something} is demonstrated in Fig.~\ref{fig:img-transformation},
+within a function, \li{classic_look}, that serveas as a ``preset'' that is 
+mapped over a list of images (loaded by URL) at the bottom of the figure. 
+% We show two for space reasons.
+
+...\todo{finalize?}{}
+This livelit takes 
 a URL to an image as a parameter, and contains two splices of type \li{Int},
 one to adjust the contrast, and the other to adjust the brightness.
 In this example, we have filled those splices with a \li{\$slider}, but 
-as above we could enter any expression of type \li{Int}.
+as above we could enter any expression of type \li{Int}, e.g. 
+an arithmetic expression or a variable. 
 The livelit shows a live preview of the transformed image.
-The expansion generates the necessary calls to image processing functions, 
+The expansion generates the necessary calls to an image processing library, 
 not shown.
 
-The novelty in this example is that the livelit appears inside a function, 
-\li{classic}, which takes an image URL as input. At the bottom 
-of the figure, \li{classic} is mapped over a list (here, containing only 
-two elements for the sake of presentation). Consequently, there are now 
-two closures associated with the application of \li{\$img_filter} in the 
-body of \li{classic}. Rather than disabling live evaluation in situations like 
+Because the livelit appears inside a function applied (by \li{map}) twice, 
+there are now two closures associated with the livelit. 
+Rather than disabling live evaluation in situations like 
 this, Hazel instead allows the programmer to select between the closures when 
-the cursor is on the livelit expression (via a simple sidebar toggle, not shown, which is shared 
-with the general closure selection UI \cite{HazelnutLive}). 
+the cursor is on the livelit expression via a simple sidebar toggle. 
+This causes the view to change as shown in ...\todo{todo}{}
 The live feedback is based on the selected closure.
 This makes it easy to see how the image filter being designed here will affect a
-number of example images by quickly toggling between closures. The underlying expansion remains abstract, i.e. it refers to the image via the \li{url} variable.
+number of example images by quickly toggling between closures. 
+The underlying expansion remains abstract, i.e. it refers to the image via the \li{url} variable.
+
+We showed this and similar examples to the photographer we had interviewed. 
+They expressed substantial interest in this approach despite having only 
+limited programming experience (with Python). They made the fair point that it 
+would take substantial effort to match Lightroom's breadth of filters and effects, 
+but with sustained effort, they agreed that this approach could be more powerful than 
+Lightroom's point-and-click interface while retaining many of its benefits (specifically
+mentioning the graphical sliders). Although this was only a single interview,
+it is consistent with the body of evidence summarized in Sec.~\ref{sec:background}.
 
 % \subsection{Additional Examples}\label{sec:additional-examples}
 % It would be nice to have a gallery-style figure and a brief overview of some other case studies
