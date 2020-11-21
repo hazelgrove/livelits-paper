@@ -318,24 +318,12 @@ presets, and in automating parts of the post-production process.
 
 Motivated by this interview,
 we prototyped a collection of photo filter livelits.
-<<<<<<< HEAD
 One of these, \li{\$basic_adjustments}, is demonstrated in Fig.~\ref{fig:img-transformation}. 
 This livelit contains two splices of type \li{Int},
-=======
-One of these, \li{\$something} is demonstrated in Fig.~\ref{fig:img-transformation},
-within a function, \li{classic_look}, that serveas as a ``preset'' that is
-mapped over a list of images (loaded by URL) at the bottom of the figure.
-% We show two for space reasons.
-
-...\todo{finalize?}{}
-This livelit takes
-a URL to an image as a parameter, and contains two splices of type \li{Int},
->>>>>>> 12aca2b7ab7ab05686851d603433bdf2a2653b9e
 one to adjust the contrast, and the other to adjust the brightness.
 In this example, we have filled those splices with a \li{\$slider}, but
 as above we could enter any expression of type \li{Int}, e.g. a variable.
 The livelit shows a live preview of the transformed image.
-<<<<<<< HEAD
 The expansion generates calls to a browser image processing framework, 
 not shown.
 
@@ -351,18 +339,6 @@ this, Hazel instead allows the programmer to select between the closures when
 the cursor is on the livelit expression via a simple sidebar toggle,
 shown in the middle of Fig.~\ref{fig:img-transformation}.
 This causes the view to change as shown. 
-=======
-The expansion generates calls to a browser image processing library,
-not shown.
-
-Because the livelit appears inside a function applied (by \li{map}) twice,
-there are now two closures associated with the livelit.
-Rather than disabling live evaluation in situations like
-this, Hazel instead allows the programmer to select between the closures when
-the cursor is on the livelit expression via a simple sidebar toggle.
-This causes the view to change as shown in ...\todo{todo}{}
-The live feedback is based on the selected closure.
->>>>>>> 12aca2b7ab7ab05686851d603433bdf2a2653b9e
 This makes it easy to see how the image filter being designed here will affect a
 number of example images by quickly toggling between closures.
 The underlying expansion remains abstract, i.e. it refers to the image via the \li{url} variable.
