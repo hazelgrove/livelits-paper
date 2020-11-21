@@ -72,41 +72,55 @@ and the abstraction and composition mechanisms
 available in modern general-purpose programming languages.
 
 \subsection{Background}\label{sec:background}
-\begin{figure*}
-  \includegraphics[width=29pc]{grade-cutoff-livelit.png}
-\caption{Grading with Livelits}
-\label{fig:grading}
-\label{fig:color}
-\end{figure*}
+\definecolor{mygray}{rgb}{0.93, 0.93, 0.93}
+\definecolor{shadecolor}{named}{mygray}
 
-% \begin{figure*}
-%   \begin{center}
-%     \begin{subfigure}[t]{0.5\textwidth}
-%       \centering
-%        \vspace{-3.4cm}
-%        \includegraphics[width=15pc]{graphite-color-palette.png}
-%       \vspace{0.1cm}
-%       \caption{}
-%     \end{subfigure}\begin{subfigure}[t]{0.5\textwidth}
-%       \centering
-%       \includegraphics[width=15pc]{slider-color-livelits.png}
-%       \vspace{-11px}
-%       \caption{}
-%     \end{subfigure}
-%   \end{center}
-%   \caption{
-%   (a) This figure, adapted from the prior work of \citet{Graphite},
-%   shows a Graphite palette associated with the \texttt{Color} class.
-%   The client can specify the RGBA components only using literal numbers.
-%   (b) A similar Hazel livelit for colors uses live splices for the RGBA components,
-%   so the client can enter any Hazel expression.
-%   In this case, the client has entered a variable, itself defined using a slider livelit, into the RGB
-%   splices. The A splice is filled directly with a slider livelit.
-%   The color livelit evaluates splices under its closure to display the
-%   computed color.
-%   The value of \li{default\_color} is determined by the livelit via a macro expansion step.}
-%   \label{fig:color}
-% \end{figure*}
+\begin{figure*}
+  \begin{minipage}[t]{0.38\textwidth}
+    \begin{subfigure}[t]{\linewidth}
+    \begin{snugshade}
+      \vspace*{-2mm}
+      \caption{\textbf{Prior Work:} Graphite}
+      \vspace*{1mm}
+     \end{snugshade}
+      \vspace*{1.5mm}
+      \includegraphics[width=\linewidth]{graphite-color-palette.png}
+      \vspace*{2mm}
+    \end{subfigure}
+    
+    \begin{subfigure}[t]{\linewidth}
+     \begin{snugshade}
+      \vspace*{-2mm}
+      \caption{\textbf{This Paper:} Livelits are live and compositional}
+      \vspace*{1mm}
+     \end{snugshade}
+      \vspace*{1.5mm}
+      \includegraphics[width=\linewidth]{slider-color-livelits.png}
+    \end{subfigure}
+  \end{minipage}
+  \hspace{3mm}
+  \begin{subfigure}[t]{0.585\textwidth}
+  \begin{snugshade}
+   \vspace*{-2mm}
+    \caption{\textbf{Case Study}: Grading with Livelits}
+    \vspace*{1mm}
+     \end{snugshade}
+    \vspace*{1.5mm}
+    \includegraphics[width=\linewidth]{grade-cutoff-livelit.png}
+  \end{subfigure}
+   \caption{
+   (a) This figure, adapted from the prior work of \citet{Graphite},
+   shows a Graphite palette associated with the \texttt{Color} class.
+   The client can specify the RGBA components only using literal numbers.
+   (b) A similar Hazel livelit for colors uses live splices for the RGBA components,
+   so the client can enter any Hazel expression.
+   In this case, the client has entered a variable, itself defined using a slider livelit, into the RGB
+   splices. The A splice is filled directly with a slider livelit.
+   The color livelit evaluates splices under its closure to display the
+   computed color.
+   The value of \li{default\_color} is determined by the livelit via a macro expansion step.}
+   \label{fig:color}
+\end{figure*}
 
 Of course, we are not the first to integrate direct manipulation interfaces
 into symbolic programming environments.
