@@ -1,68 +1,76 @@
 \section{Implementation}\label{sec:implementation}
 Implementing livelits requires tight integration between a rich editor, 
-a type checker, and a live evaluator. The evaluator is used
-both for running the model-view-update-expand system that controls 
-each livelit and for evaluating splices. Consequently, 
-the evaluator must be capable of evaluating incomplete programs and gathering hole closures
-as specified by Hazelnut Live \cite{HazelnutLive}.
+a type checker, and a live evaluator 
+capable of evaluating incomplete programs and gathering hole closures.
 
 \subsection{Hazel}
-Hazelnut Live is the formal foundation for the Hazel programming environment, so 
-it was natural to choose the the Hazel programming environment for our primary implementation. 
- Hazel is a browser-based live functional programming environment 
-organized from the ground up around typed holes. Uniquely, every editor state in Hazel is 
+Hazelnut Live is the foundation of the Hazel programming environment, 
+and Hazel has support for all of the necessary mechanisms, so 
+it was natural to choose Hazel for our primary implementation.
+Hazel is implemented in OCaml and compiled to JavaScript using the \li{js_of_ocaml} compiler \cite{DBLP:conf/aplas/RadanneVB16}.
+% The core of Hazel is written in a pure functional style, so our implementation closely 
+% follows the formalism.  
+%  Hazel is a browser-based live functional programming environment 
+% organized from the ground up around typed holes, with full . 
+
+The livelit definition mechanism described in Sec.~\ref{sec:livelit-definitions}
+is implemented in Hazel, albeit without some of the syntactic sugar in Fig.~\ref{fig:color-impl}.
+This, together with the fact that Hazel lacks a mature GUI widget libraries as of this writing, 
+makes complex examples tedious to implement within Hazel, so we also 
+added the ability to define livelits using JavaScript or OCaml. These are loaded when 
+Hazel is compiled. As Hazel evolves, we expect to need to define such ``primitive'' livelits less 
+frequently, using them mainly for livelits that would benefit from access to established JavaScript 
+or OCaml libraries.
+
+Uniquely, every editor state in Hazel is 
 semantically meaningful: it has a type, it can be evaluated, and it can be transformed 
 in a type-aware manner. This implies that livelits remain fully functional at all times, 
-even when the program is incomplete or erroneous.
-
-Hazel is implemented in OCaml and compiled to JavaScript using the \li{js_of_ocaml} compiler \cite{DBLP:conf/aplas/RadanneVB16}.
-The core of Hazel is written in a pure functional style, so our implementation is able to closely 
-follow the formalism. The Hazel language has been evolving in parallel with our work, 
-and has only recently become expressive enough for it to be feasible to implement livelits within Hazel itself.
-The examples in this paper were instead implemented in OCaml as modules satisfying the signature 
-implied by Fig.~\ref{fig:color-impl}. A functor then adapts these OCaml-based livelit implementations 
-to livelit definitions suitable for inclusion in the livelit context used in the semantics.
-
-Hazel achieves its ``gap-free'' liveness guarantee by automatically inserting explicit holes as necessary 
+even when the program is incomplete or erroneous. Hazel achieves this ``gap-free'' liveness guarantee by automatically inserting explicit holes as necessary 
 while the user edits 
 the program. Formally, Hazel is a type-aware structure editor \cite{Hazelnut}, rather than a text editor, 
-although the developers are aiming to maintain a text-like programming experience when editing 
-symbolic code (this effort is orthogonal to our own). 
-This means that it is conceptually straightforward to hide the model and splice data and instead display 
-the computed view. However, there are a number of non-trivial layout challenges that come up, which we discuss
-in Sec.~\ref{sec:layout} below.
+although the developers are aiming to maintain a text-like experience (this effort is orthogonal to our own). 
+
+% The examples in this paper were instead implemented in OCaml as modules satisfying the signature 
+% implied by Fig.~\ref{fig:color-impl}. A functor then adapts these OCaml-based livelit implementations 
+% to livelit definitions suitable for inclusion in the livelit context used in the semantics.
+
+
+% This means that it is conceptually straightforward to hide the model and splice data and instead display 
+% the computed view. However, there are a number of non-trivial layout challenges that come up, which we discuss
+% in Sec.~\ref{sec:layout} below.
 
 \subsection{Text Editor Integration}
-Before delving into layout issues, let us note that livelits do not require the use of a structure editor. 
+Livelits do not require the use of a structure editor. 
 We have also developed a 
-proof-of-concept textual program editor, based on Sketch-n-Sketch \cite{sns-pldi,sns-uist}, with support for livelits.
+proof-of-concept implementation of livelits in a textual program editor, Sketch-n-Sketch \cite{sns-pldi,sns-uist},
+which recently added support for the necessary mechanisms \cite{DBLP:journals/pacmpl/LubinCOC20}.
+Livelit interaction causes the serialized model in the text buffer to be changed, which updates the view.
 This proof-of-concept is not at feature parity with 
-our main implementation, but it demonstrates that a syntax-recognizing text editor \cite{DBLP:journals/tosem/BallanceGV92,DBLP:conf/sde/HorganM84} 
+our main implementation, but it demonstrates that a syntax-recognizing text editor \cite{DBLP:journals/tosem/BallanceGV92,DBLP:conf/sde/HorganM84,interactive-visual-notation} 
 is sufficient to support livelits, albeit with some gaps in livelit UI availability when 
-there are critical errors.
+there are syntax errors.
 
 \subsection{Layout}\label{sec:layout}
 Whether implemented in a structure editor or a text editor, livelits present 
-interesting layout challenges--it can be difficult to sensibly 
-interleave symbolic code with livelit views in a clean, readable manner.
-
-Hazel uses an optimizing pretty printer to determine layout, an approach 
-based on the work of \citet{DBLP:journals/pacmpl/Bernardy17}. This system relies 
+interesting layout challenges. 
+Hazel uses an optimizing pretty printer based on the work of \citet{DBLP:journals/pacmpl/Bernardy17} to determine layout. This system relies 
 fundamentally on character counts. Consequently, our implementation asks each 
 livelit to specify dimensions in terms of character counts rather than pixels.
-Livelits can be laid out in one of two ways: as inline livelits, like \li{\$slider},
-which must be exactly one character high and appear inline with the code,
-or as \emph{multi-line livelits}, which occupy up to the full width of the editor 
-and a specified number of code lines (we omitted these specifications in Fig.~\ref{fig:color-impl}). 
-The pretty printer lays out multi-line livelits
-on their own line, as seen in Fig.~\ref{fig:grading}. 
+Livelits can be laid out either as inline livelits, like \li{\$slider},
+which are one character high and appear inline with the code,
+or as \emph{multi-line livelits}, which occupy up to the full width 
+and a specified number of lines. % We omitted these specifications in Fig.~\ref{fig:color-impl}. 
+% The pretty printer lays out multi-line livelits
+% on their own line, as seen in Fig.~\ref{fig:grading}. 
 
-We are currently exploring a more flexible system whereby 
-multi-line livelits can be named and applied within a larger expression, but
-the GUI is not displayed until the next line, even if there are intervening characters.
-This is inspired by the \verb|~| placeholder for large textual literals in the 
-Wyvern programming language \cite{TSLs}. We are also considering a number of other layout 
-options, e.g. pop-up livelits, livelits pinned to sidebars, and livelits that are rendered  
+% We are currently exploring a more flexible system whereby 
+% multi-line livelits can be named and applied within a larger expression, but
+% the GUI is not displayed until the next line, even if there are intervening characters.
+% This is inspired by the \verb|~| placeholder for large textual literals in the 
+% Wyvern programming language \cite{TSLs}. 
+
+One might also considering a number of other layout 
+options, e.g. inline-block literals \emph{a la} Wyvern \cite{TSLs}, pop-up livelits, livelits pinned to sidebars, and livelits that are rendered  
 on a separate canvas or document while still formally being located within an underlying functional program. 
 
 This latter option 
@@ -71,42 +79,54 @@ programming experience
 could interact with a collection of livelits laid out separately in the popular ``dashboard'' style, 
 without necessarily
 even being aware that their interactions are actually edits to an underlying typed
-functional program. More experienced users on the team could then make programmatic use of the entered
-data and parameters in a seamless manner. We are also excited about the possibility of end users
-getting curious enough to ``View Source'' in this setting, and in so doing 
-being exposed to typed functional programming concepts gradually.
+functional program. 
+% More experienced users on the team could then make programmatic use of the entered
+% data and parameters in a seamless manner. We are also excited about the possibility of end users
+% getting curious enough to ``View Source'' in this setting, and in so doing 
+% being exposed to typed functional programming concepts gradually.
 
-The layout of splices within livelits is also an interesting problem, and our current approach, where 
-the provider must specify a fixed size for each splice, is not particularly flexible. 
-A more principled system for GUI layout that integrates with program pretty 
-printing could be of substantial use in some settings. Formula bars, like the one in the \li{\$dataframe}
-livelit, are a useful design pattern to avoid splice layout issues, and it may be possible to provide 
-a generalized formula bar in the editor user interface that multiple livelits could share.
-While splices can in principle contain other livelits, it is difficult for small splice editors to 
-visually accomodate large livelit views in practice. 
-Fortunately, variables can be used to support composition via substitution 
-rather than nesting. A linter might suggest a refactoring to a variable in these scenarios.
+% The layout of splices within livelits is also an interesting problem, and our current approach, where 
+% the provider must specify a fixed size for each splice, is not particularly flexible. 
+% A more principled system for GUI layout that integrates with program pretty 
+% printing could be of substantial use in some settings. Formula bars, like the one in the \li{\$dataframe}
+% livelit, are a useful design pattern to avoid splice layout issues, and it may be possible to provide 
+% a generalized formula bar in the editor user interface that multiple livelits could share.
+% While splices can in principle contain other livelits, it is difficult for small splice editors to 
+% visually accomodate large livelit views in practice. 
+% Fortunately, variables can be used to support composition via substitution 
+% rather than nesting. A linter might suggest a refactoring to a variable in these scenarios.
 
-The Hazel pretty printer uses memoization and incremental diffs to maintain reasonable performance,
-and adding livelits to the system did not substantially interfere with the existing approach.
-For the relatively simple livelits that we have developed, performance has been adequate.
-However, more complex  livelits or livelits that update quickly 
-could easily cause problems with editor responsiveness.
-This could perhaps be resolved by performing livelit-related computations asynchronously. Care 
-would need to be taken to ensure that intervening edits do not cause synchronization issues.
+% The Hazel pretty printer uses memoization and incremental diffs to maintain reasonable performance,
+% and adding livelits to the system did not substantially interfere with the existing approach.
+% For the relatively simple livelits that we have developed, performance has been adequate.
+% However, more complex  livelits or livelits that update quickly 
+% could easily cause problems with editor responsiveness.
+% This could perhaps be resolved by performing livelit-related computations asynchronously. Care 
+% would need to be taken to ensure that intervening edits do not cause synchronization issues.
 
-Many livelit-related computations can be intelligently memoized, e.g. view computations and unchanged splice evaluations,
-especially with the edit awareness that Hazel provides. 
-We leave further optimizations along these lines to future work.
-Prior work on incrementally updating UIs after code changes could be relevant to this effort \cite{burckhardt2013s}.
+% Many livelit-related computations can be intelligently memoized, e.g. view computations and unchanged splice evaluations,
+% especially with the edit awareness that Hazel provides. 
+% We leave further optimizations along these lines to future work.
+% Prior work on incrementally updating UIs after code changes could be relevant to this effort \cite{burckhardt2013s}.
 
-\subsection{Integration into Imperative Languages}\todo{write me}{}
+\subsection{Integration into Imperative Languages}
 \label{sec:imperative-langs}
-The Elm architecture has proven practical for sophisticated user interfaces, 
-e.g. the Sketch-n-Sketch system \cite{sns-uist}, 
-and its purity addresses means there are no issues 
-related to initialization, maintenance, and persistence of mutable state
-by the editor.
-Imperative languages can express the same architecture (indeed, a close cousin 
-is at the heart of the popular React framework for Javascript).
-The system would only need to specify that any transient mutable state will be reset between updates.
+Our focus in this paper was on pure languages.
+Side effects pose a challenge on two fronts.
+If they occur in a livelit implementation,
+then the state exists at edit-time. 
+The most viable approach would be to retain the model-view-update
+architecture and specify that any transient mutable state will be reset between updates.
+If side effects occur in livelit expansions, 
+then the closure collection mechanism requires more 
+care to avoid unsoundness, as described in Sec.~\ref{sec:calculus-closure-collection}.
+However, these problems are surmountable, and we look forward to 
+efforts to integrate livelits into imperative languages. 
+
+% The Elm architecture has proven practical for sophisticated user interfaces, 
+% e.g. the Sketch-n-Sketch system \cite{sns-uist}, 
+% and its purity addresses means there are no issues 
+% related to initialization, maintenance, and persistence of mutable state
+% by the editor.
+% Imperative languages can express the same architecture (indeed, a close cousin 
+% is at the heart of the popular React framework for Javascript).

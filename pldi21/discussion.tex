@@ -12,49 +12,62 @@
   \hfill{}--- David Hilbert~\cite{hilbert1902mathematical}
   \end{quote}
 
+  \noindent
   Diagrams have played a pivotal role in mathematical thought since antiquity,
-  indeed long predating symbolic mathematics \cite{cajori1993history}. 
+  indeed predating symbolic mathematics \cite{cajori1993history}. 
   Popular computing and creative tooling, too, has embraced visual representation and direct manipulation 
   interfaces for decades.
   Programming, however, has remained stubbornly mired in textual user interfaces. 
-  Certainly, one must acknowledge that textual and symbolic notation
-  is an indispensable tool for abstract thought. 
-  Indeed, it is now widely recognized that variables and functions are at the 
-  very foundation of computing. 
+  % Certainly, one must acknowledge that textual and symbolic notation
+  % is an indispensable tool for abstract thought. 
+  % Indeed, it is now widely recognized that variables and functions are at the 
+  % very foundation of computing. 
   Our hope with this paper is to demonstrate that principled, mathematically structured
   programming is not only compatible with live graphical user interfaces, but that the 
-  combination of these two holds tremendous promise for the future of programming.
+  combination of these two holds promise for the future of programming.
 
-  There remain a number of avenues for future work. First, we have only just started
-  to apply the livelits mechanism in various application domains. As the implementation
+  This paper's contributions are 
+  in advancing the expressive power of the mechanism in several directions, 
+  most notably in terms of compositionality and liveness. These 
+  technical contributions are a complement to the empirical findings by \citet{Graphite} and others.
+  That said, the two case studies we considered in this paper were motivated by 
+  real world problems. 
+  As the implementation
   matures, we plan to introduce enthusiasts in a wide variety of problem domains
-  to livelits and continue the empirical evaluations started by \citet{Graphite}.
+  to livelits and continue these empirical evaluations.
 
-  In particular, we would like to better understand the conceptual and practical 
-  difficulties that livelit providers face, with the aim of making livelit 
-  implementation an extremely low cost activity. Livelits could themselves be 
-  useful for this task, if we develop a GUI widget library with support for livelits.
-In addition, recent approaches to deriving type-specific structure editors automatically from pretty printing logic \cite{hempeltiny} could perhaps 
-be adapted to generate livelit implementations. Mechanisms for deriving simple 
-livelit definitions from type definitions, perhaps similar to Haskell's \li{deriving} directive, 
-may also prove helpful \cite{magalhaes2010generic}. The GEC toolkit has also explored  
-the automatic generation of simple user interfaces from type definitions \cite{DBLP:conf/afp/AchtenEPW04}.
+  % There remain a number of avenues for future work. First, we have only just started
+  % to apply the livelits mechanism in various application domains.  
+  % started . 
+
+%   In particular, we would like to better understand the conceptual and practical 
+%   difficulties that livelit providers face, with the aim of making livelit 
+%   implementation an extremely low cost activity. Livelits could themselves be 
+%   useful for this task, if we develop a GUI widget library with support for livelits.
+% In addition, recent approaches to deriving type-specific structure editors automatically from pretty printing logic \cite{hempeltiny} could perhaps 
+% be adapted to generate livelit implementations. 
+
+Mechanisms for deriving simple 
+livelit definitions from type definitions, perhaps similar to Haskell's \li{deriving} directive
+or the GEC toolkit \cite{DBLP:conf/afp/AchtenEPW04}, or from \li{to_string} functions \cite{DBLP:conf/vl/HempelC20}, 
+may prove fruitful in the future.
 
   The livelits mechanism as described in this paper operates only on expressions,
-  but livelits might be useful for generating other sorts of terms, such as types
-  and entire modules. Support for type and module splices, too, would likely be useful.
-  With these, better support for reflecting on the provided type might allow for 
-  the development of more general livelits, e.g. a variant of \li{\$datatype} 
-  with individually typed columns, rather than only floating point data.
+  but livelits might be useful for generating other sorts of terms, such as types,
+  patterns, and entire modules. Prior work on literal macros has explored this \cite{TLMs}.
+  % Support for type and module splices, too, would likely be useful.
+  % With these, better support for reflecting on the provided type might allow for 
+  % the development of more general livelits, e.g. a variant of \li{\$datatype} 
+  % with individually typed columns, rather than only floating point data.
 
-  The strict hygiene discipline that we maintain has, we believe, substantial 
-  benefits---programmers will inevitably encounter unfamiliar livelits, and 
-  the reasoning principles that we enforce are likely to help them ``reason around''
-  the situation. However, it may be useful in certain circumstances to carefully
-  relax these restrictions. For example, some livelits might benefit from the 
-  ability to introduce bindings into splices, which is currently prevented by 
-  the capture avoidance discipline. Perhaps this could be done in an 
-  editor capable of highlighting the unusual situation.
+  % The strict hygiene discipline that we maintain has, we believe, substantial 
+  % benefits---programmers will inevitably encounter unfamiliar livelits, and 
+  % the reasoning principles that we enforce are likely to help them ``reason around''
+  % the situation. However, it may be useful in certain circumstances to carefully
+  % relax these restrictions. For example, some livelits might benefit from the 
+  % ability to introduce bindings into splices, which is currently prevented by 
+  % the capture avoidance discipline. Perhaps the 
+  % editor could highlight the unusual situation.
 
   Another direction for future work has to do with pushing edits from computed results
   back into livelits. For example, a slider expands to a number, which may 
@@ -65,12 +78,15 @@ the automatic generation of simple user interfaces from type definitions \cite{D
   Programming and authoring have much in common. Documents often contain structured
   information, and programs are written to manipulate structured information.
   Another future direction for livelits is as the basis for a programmable authoring 
-  system, where each element on a page is actually an expression in a programming language
-  being rendered by a livelit. Taking this further, a networked collection of these
-  documents could form a powerful computational wiki. This would 
-  require addressing the difficult problem of supporting collaborative interactions 
-  involving edits to arbitrary user interfaces. 
-  We believe that these problems are surmountable.
+  system, where the non-symbolic elements on the page are revealed to be code after all,
+  albeit code generated by a livelit invocation that presents a more natural editing experience. 
+  Taking this further, a networked collection of these
+  documents could form a powerful computational wiki.
+  We present this paper as a foundation for such exploration.
+  %  This would 
+  % require addressing the difficult problem of supporting collaborative interactions 
+  % involving edits to arbitrary user interfaces. 
+  % We believe that these problems are surmountable.
 
 
 % \begin{itemize}
