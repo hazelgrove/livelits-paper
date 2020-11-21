@@ -99,3 +99,14 @@ Many livelit-related computations can be intelligently memoized, e.g. view compu
 especially with the edit awareness that Hazel provides. 
 We leave further optimizations along these lines to future work.
 Prior work on incrementally updating UIs after code changes could be relevant to this effort \cite{burckhardt2013s}.
+
+\subsection{Integration into Imperative Languages}\todo{write me}{}
+\label{sec:imperative-langs}
+The Elm architecture has proven practical for sophisticated user interfaces, 
+e.g. the Sketch-n-Sketch system \cite{sns-uist}, 
+and its purity addresses means there are no issues 
+related to initialization, maintenance, and persistence of mutable state
+by the editor.
+Imperative languages can express the same architecture (indeed, a close cousin 
+is at the heart of the popular React framework for Javascript).
+The system would only need to specify that any transient mutable state will be reset between updates.

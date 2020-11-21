@@ -35,7 +35,7 @@
     Metavariable $x$ ranges over variables, $u$ over hole names, and $\livelitname{a}$ over livelit names.
     We write $\splat{\psi_i}$ for a finite sequence of $n \geq 0$ splices,
     and $\sigma$ for finite substitutions of $n \geq 0$ internal expressions for variables, $[d_1/x_1, \cdots, d_n/x_n]$.
-    We elide standard expression forms
+    We elide standard forms
     related to product, sum, and recursive types.
     }
     \label{fig:syntax}
@@ -192,12 +192,12 @@ This choice is orthogonal to the mechanisms of interest in this section.
             \expands{\Phi}{\Gamma}{\hlam{x}{\hat e}}{\hlam{x}{e}}{\tarr{\taut{in}}{\taut{out}}}
         }
 
-        \inferrule[EAp]{
-            \expands{\Phi}{\Gamma}{\hat e_1}{e_1}{\tarr{\taut{in}}{\taut{out}}}\\\\
-            \expands{\Phi}{\Gamma}{\hat e_2}{e_2}{\taut{in}}
-        }{
-            \expands{\Phi}{\Gamma}{\hap{\hat e_1}{\hat e_2}}{\hap{e_1}{e_2}}{\taut{out}}
-        }
+        % \inferrule[EAp]{
+        %     \expands{\Phi}{\Gamma}{\hat e_1}{e_1}{\tarr{\taut{in}}{\taut{out}}}\\\\
+        %     \expands{\Phi}{\Gamma}{\hat e_2}{e_2}{\taut{in}}
+        % }{
+        %     \expands{\Phi}{\Gamma}{\hap{\hat e_1}{\hat e_2}}{\hap{e_1}{e_2}}{\taut{out}}
+        % }
 
         \cdots
 
@@ -306,10 +306,11 @@ The key rule for the cc-expansion judgement, $\ccexpands{\Phi}{\Gamma}{\hat e}{e
     \expands{\Phi}{\Gamma}{\haplivelit{u}{a}{\dtxt{model}}{\splat{\hsplice{\hat e_i}{\tau_i}}}}{
         \hap{\etxt{pexpansion}}{\splat{e_i}}
     }{\taut{expand}}\\
-    \elabs{ }{\etxt{pexpansion}}{\dtxt{pexpansion}}{\tarr{\splat{\tau_i}}{\taut{expand}}}{\Delta}
+    \elabs{ }{\etxt{pexpansion}}{\dtxt{pexpansion}}{\tarr{\splat{\tau_i}}{\taut{expand}}}{\Delta}\\
+    \Omega = \cup_{i<n} \Omega_i \cup \{\Omegaitem{u}{\dtxt{pexpansion}}
 }{
     \ccexpands{\Phi}{\Gamma}{\haplivelit{u}{a}{\dtxt{model}}{\splat{\hsplice{\hat e_i}{\tau_i}}}}{\hap{\hehole{u}}{\splat{e_i}}}{\taut{expand}}
-    {\cup_{i<n} \Omega_i \cup \{\Omegaitem{u}{\dtxt{pexpansion}}\}}
+    {\Omega}
 }
 \end{mathpar}
 
