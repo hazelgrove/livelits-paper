@@ -46,8 +46,8 @@ proof-of-concept implementation of livelits in a textual program editor, Sketch-
 which recently added support for the necessary mechanisms \cite{DBLP:journals/pacmpl/LubinCOC20}.
 Livelit interaction causes the serialized model in the text buffer to be changed, which updates the view.
 This proof-of-concept is not at feature parity with 
-our main implementation, but it demonstrates that a syntax-recognizing text editor \cite{DBLP:journals/tosem/BallanceGV92,DBLP:conf/sde/HorganM84,interactive-visual-notation} 
-is sufficient to support livelits, albeit with some gaps in livelit UI availability when 
+our main implementation, but it demonstrates that a syntax-recognizing text editor \cite{DBLP:journals/tosem/BallanceGV92,DBLP:conf/sde/HorganM84,interactive-visual-syntax} 
+is sufficient to support livelits, albeit with some gaps in availability when 
 there are syntax errors.
 
 \subsection{Layout}\label{sec:layout}
@@ -120,8 +120,8 @@ architecture and specify that any transient mutable state will be reset between 
 If side effects occur in livelit expansions, 
 then the closure collection mechanism requires more 
 care to avoid unsoundness, as described in Sec.~\ref{sec:calculus-closure-collection}.
-However, these problems are surmountable, and we look forward to 
-efforts to integrate livelits into imperative languages. 
+% However, these problems are surmountable, and we look forward to 
+% efforts to integrate livelits into imperative languages. 
 
 % The Elm architecture has proven practical for sophisticated user interfaces, 
 % e.g. the Sketch-n-Sketch system \cite{sns-uist}, 

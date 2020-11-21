@@ -67,15 +67,15 @@ livelit $color at Color {
 \end{figure}
 
 \noindent
-We now take the perspective of a livelit provider.\todo{line num pass}{}
+We now take the perspective of a livelit provider.
 Fig.~\ref{fig:color-impl}
-defines \li{\$color} from Fig.~\ref{fig:color}(b). We omit certain 
+defines \li{\$color} from Fig.~\ref{fig:color}. We omit certain 
 incidental details and use unimplemented syntactic sugar, including
 Haskell-style \li{do} notation and quasiquotation, for presentation.
 
 Livelit definitions are scoped and packaged like 
 any other definition. They consist of a declaration and an implementation. 
-Line 3 of Fig.~\ref{fig:color-impl} is \li{\$color}'s declaration,
+Line 2 of Fig.~\ref{fig:color-impl} is \li{\$color}'s declaration,
 which defines its name and its {expansion type}. 
 Livelit parameters would also appear here. 
 The declaration is part of the client interface, 
@@ -85,21 +85,21 @@ as discussed in Sec.~\ref{sec:expansion-typing}-\ref{sec:parameterization}.
 The curly braces delimit the livelit's implementation. 
 Livelits are implemented using a variation on the functional model-view-update
 architecture popularized by the Elm language, upon which Hazel is based \cite{ElmArchitecture}. We add a fourth component,
-expansion generation. In addition, we add a simple monadic framework (\emph{a la} Haskell\todo{citation}{}) to provide the necessary  
+expansion generation. In addition, we add a simple monadic framework (\emph{a la} Haskell \cite{marlow2010haskell}) to provide the necessary  
 interface between the livelit and the programming environment, while retaining
 a pure functional programming model. (We discuss imperative languages in Sec.~\ref{sec:imperative-langs}.)
 Livelit implementations can themselves invoke other livelits (see Sec.~\ref{sec:livelit-contexts}).
 
 \subsubsection{Model}\label{sec:model}
 The state of a livelit invocation is encoded in its model value. 
-Line 4 of Fig.~\ref{fig:color-impl} specifies the livelit's \emph{model type},
+Line 3 of Fig.~\ref{fig:color-impl} specifies the livelit's \emph{model type},
 here a labeled 4-tuple of \emph{splice references}, one for each of the four splices
 that appear in the GUI in Fig.~\ref{fig:color}.
 The model is how the livelit state is persisted in the syntax tree, so 
  the system requires that the model type supports automatic serialization
  (so, no functions in models).
 
-The \li{init} value on Line 9 determines the value of the model
+The \li{init} value on Line 8 determines the value of the model
 when the livelit is first invoked in the editor.
 It is a command in the \li{UpdateMonad}, discussed below, that returns the 
 initial model value after generating four new splices 
@@ -119,7 +119,7 @@ These two arguments are expressed here using quasiquotes, e.g. \li{`0`} \cite{ba
 % an empty hole.
 
 The system checks that the splice type and initial content are valid 
-assuming only the parameters and explicitly specified set of captured bindings on Line 7.
+assuming only the parameters and explicitly specified set of captured bindings on Line 6.
 Here, the capture set is empty because \li{Int} is a built in type
 and the initial content is closed. 
 This serves to ensure \emph{context independence}: the livelit needs to make no 
@@ -132,9 +132,9 @@ leaked to clients as detailed by \citet{TLMs}.
 % immediately partially applied.
 
 \subsubsection{Action}
-Line 14 defines the \li{Action} type for the \li{\$color} livelit, which 
+Line 15 defines the \li{Action} type for the \li{\$color} livelit, which 
 specifies a single user-initiated action: clicking on a color using
-the right side of Fig.~\ref{fig:color}(b). Actions are emitted
+the right side of Fig.~\ref{fig:color}. Actions are emitted
 from event handlers (e.g. click handlers) defined in the computed \li{view}, 
 and actions are consumed by the \li{update} function, causing a change to the model. 
 Let us discuss each of these functions in turn in Sec.~\ref{sec:def-view}-\ref{sec:def-update}.
@@ -184,10 +184,10 @@ The \li{Val} case arises when evaluation produces a value, whereas the
 i.e. an expression that cannot be fully evaluated due to holes 
 in critical positions \cite{HazelnutLive}.
 
-Lines X-Y determine a color to display in the color preview 
+Lines 26-34 determine a color to display in the color preview 
 if all four splices evaluate to integers. Otherwise, there is not 
 enough information to determine a color. The livelit 
-communicates this indeterminacy with an ``X'' over the preview.
+indicates this indeterminacy with an ``X'' over the preview.
 
 Livelits can attempt to offer feedback even when the result is indeterminate,
 because indeterminate expressions might nevertheless contain useful information.

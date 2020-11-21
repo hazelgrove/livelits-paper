@@ -81,6 +81,7 @@ available in modern general-purpose programming languages.
     \begin{snugshade}
       \vspace*{-2mm}
       \caption{\textbf{Prior Work:} Graphite \cite{Graphite}}
+       \label{fig:graphite}
       \vspace*{1mm}
      \end{snugshade}
       \vspace*{-1mm}
@@ -92,26 +93,27 @@ available in modern general-purpose programming languages.
      \begin{snugshade}
       \vspace*{-2mm}
       \caption{\textbf{This Paper:} Livelits are live and compositional}
+    \label{fig:color}
       \vspace*{1mm}
      \end{snugshade}
       \vspace*{-1mm}
       \includegraphics[width=\linewidth]{slider-color-livelits.png}
     \end{subfigure}
   \end{minipage}
-  \hspace{3mm}
+  \hspace{10.5mm}
   \begin{subfigure}[t]{0.50\textwidth}
   \begin{snugshade}
    \vspace*{-2mm}
     \caption{\textbf{Case Study}: Grading with Livelits}
+    \label{fig:grading}
     \vspace*{1mm}
      \end{snugshade}
     \vspace*{-1mm}
     \includegraphics[width=\linewidth]{grade-cutoff-livelit.png}
   \end{subfigure}
-   \vspace*{-7mm}
-   \caption{}
-   \vspace*{-2mm}
-   \label{fig:color}
+  \vspace{-4mm}
+   \caption{Introductory Examples}
+%   \vspace*{-2mm}
 \end{figure*}
 
 Of course, we are not the first to integrate direct manipulation interfaces
@@ -123,7 +125,7 @@ into symbolic programming environments.
 % using specialized GUIs integrated into a program editor.
 % We detail prior work in Sec.~\ref{sec:related-work}, but 
 The prior work most relevant to this paper is the {Graphite} system for Eclipse for Java,
-demonstrated in Fig.~\ref{fig:color}(a) \cite{Graphite}.
+demonstrated in Fig.~\ref{fig:graphite} \cite{Graphite}.
 Graphite allows a library provider to associate a GUI, called a \emph{palette}, with a type 
 (via a Java class annotation).
 Wherever an expression of this type is needed,
@@ -133,15 +135,15 @@ the environment offers the client the option, via the code completion menu,
 to interact with the palette.
 Once the interaction is finished, the palette generates a
 Java expression to fill the hole.
-Figure~\ref{fig:color}(a), adapted from this prior work, demonstrates a color palette invoked using Graphite.
+Figure~\ref{fig:graphite}, adapted from this prior work, demonstrates a color palette invoked using Graphite.
 When the user presses the \li{Enter} key, the Java expression \li{new Color(173, 173, 173, 85)} is inserted at the cursor and the palette disappears.
 Several related systems, such as the  
 \textbf{mage} system for the Jupyter notebook environment \cite{DBLP:conf/uist/KeryRHMWP20}
-and the interactive visual syntax system for Racket \cite{interactive-visual-syntax}, behave fundamentally similarly.
-asdfasdfa
-fasdfasdf
-asdfasd\todo{placeholder for future text that might be added}
+behave fundamentally similarly.
+Projectional editing, the visual macro system in Racket \cite{interactive-visual-syntax}, and a number of other designs
+also confront this general problem of integrating GUIs and code.
 
+\newpage
 \citet{Graphite} evaluated Graphite by surveying 473 developers 
 and \citet{DBLP:conf/uist/KeryRHMWP20} evaluated \textbf{mage} by interviewing 9 developers.
 Both studies found that
@@ -156,20 +158,20 @@ would use a suitable GUI some or all of the time.
 % The mechanisms being considered are suitable both for general-purpose languages
 % and typed domain-specific languages like typed stylesheets, which can often be embedded into modern
 % general-purpose languages.}
-This and other prior work also collectively showcase a wide variety of use cases \cite{Graphite,DBLP:conf/uist/KeryRHMWP20,interactive-visual-syntax}\todo{more cites}, 
+This and other prior work also collectively showcase a wide variety of use cases \cite{Graphite,DBLP:conf/uist/KeryRHMWP20,interactive-visual-syntax}, 
 and the Graphite survey solicited dozens of additional use cases from participants,
 which the authors systematically taxonomize \cite{Graphite}. 
 We take these extensive empirical findings   
 as evidence for, and a showcase of, 
 the value of this class of mechanisms for integrating GUIs into code.
-
+\vspace{-1mm}
 \subsection{Contributions}
 \label{sec:contributions}
 We turn our attention in this paper to several fundamental technical
 deficiencies that limit GUI providers and clients using these prior systems.
 To address these, 
 we introduce a system of \emph{live literals}, or \emph{livelits}, 
-demonstrated in Fig.~\ref{fig:color}(b). 
+demonstrated in Fig.~\ref{fig:color}. 
 Livelits are unique in achieving all of the following properties.
 (We describe which subset of these properties 
 are achieved by prior systems,
@@ -221,9 +223,9 @@ in Sec.~\ref{sec:related-work}.)
 %
   Livelits support sub-expressions directly in the GUI, which we call \emph{splices} (after
    \citet{TLMs}).
-  Fig.~\ref{fig:color}(b) demonstrates splicing: the RGBA components  
+  Fig.~\ref{fig:color} demonstrates splicing: the RGBA components  
   are splice editors, so the client can define a variable, \li{baseline},
-  to relate the color components\todo{tweak figure}{} 
+  to relate the color components 
   and use a slider livelit inline to specify the alpha component.
   % Similarly, Fig.~\ref{fig:grading}(b)\todo{subfigure labels}{} demonstrates a 
   %  data table livelit where each entry is a splice.
@@ -236,10 +238,10 @@ in Sec.~\ref{sec:related-work}.)
   can be invoked in any program context.%without pre-condition or conflict.
 
 \llproperty{Parameterization} Livelits can form parameterized families.
-  For example, \li{\$slider} in Fig.~\ref{fig:color}(b) is parameterized by the slider's bounds.
+  For example, \li{\$slider} in Fig.~\ref{fig:color} is parameterized by the slider's bounds.
   Parameters operate like splices, differing in that they can be partially applied in
-  livelit abbreviations. For example, Fig.~\ref{fig:color}(b)\todo{add slider}{} 
-  partially applies \li{\$slider} to \li{0} and \li{100} to define a \li{\$percentage} slider\todo{todo}{}.
+  livelit abbreviations. For example, Fig.~\ref{fig:color}
+  partially applies \li{\$slider} to \li{0} and \li{100} to define a \li{\$percent} slider.
   % \begin{lstlisting}[numbers=none]
   % let $percentage = $slider 0 100 in ...
   % \end{lstlisting}
@@ -255,7 +257,7 @@ without inspecting the expansions or livelit implementations directly.
   throughout the editing process 
   (i.e. in a \emph{live} manner \cite{DBLP:conf/icse/Tanimoto13}) 
   to provide feedback related to run-time behavior.
-  For example, in Fig.~\ref{fig:color}(b), 
+  For example, in Fig.~\ref{fig:color}, 
   displaying the selected color requires evaluating the RGBA
   component splices to numeric values.
   Evaluation occurs in a run-time environment (i.e. closure) determined by

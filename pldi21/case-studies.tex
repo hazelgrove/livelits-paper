@@ -36,7 +36,7 @@ lose the ability to receive live feedback and
 directly manipulate data and visualizations in the editor.
 
 Livelits are able to address this tension.
-Fig.~\ref{fig:grading}(c)\todo{sublabels} shows a Hazel program where
+Fig.~\ref{fig:grading} shows a Hazel program where
 the instructor alternates between programmatic and direct manipulation in several situations.
 
 First, the instructor defines a value \li{grades}
@@ -44,7 +44,7 @@ that records the grades for each student using a livelit, \li{\$dataframe},
 that implements a tabular user interface. The formula bar
 allows the selected cell to be filled with an arbitrary Hazel expression.
 For the sake of demonstration, we show a cell that has been filled using another livelit,
-\li{\$slider}, in combination with symbolic manipulation.\todo{do this?}{}
+\li{\$slider}, in combination with symbolic manipulation.
 The table itself displays not the expression itself but rather its value, just as in a spreadsheet.
 
 Next, the instructor computes \li{averages}
@@ -66,7 +66,7 @@ again shared functions.
 \subsection{Livelit Expansion}\label{sec:livelit-expansion}
 Livelit invocations
 expand to expressions.
-For example, the expansion of Fig.~\ref{fig:grading}(c) is:
+For example, the expansion of Fig.~\ref{fig:grading} is:
 
 \begin{lstlisting}[xleftmargin=0.2cm]
 let grades = Dataframe (
@@ -111,7 +111,7 @@ which classifies tabular floating point data together with string row and column
 The expansion type of \li{\$grade_cutoffs} is a labeled product of grade cutoffs (field labels are written \li{.label}
 rather than \li{label:} in Hazel).
 Hazel displays the information in the livelit declaration when the cursor is on the livelit's name,
-just as it displays typing information in other situations (not shown).\todo{cite HATRA}{}
+just as it displays typing information in other situations (not shown) \cite{hazeltutor}.
 
 \subsection{Compositionality}\label{sec:splicing-and-parameterization}
 Livelits are compositional: they can work with sub-expressions
@@ -123,7 +123,7 @@ For example, \li{\$grade_cutoffs} above declares one parameter,
 the averages to be plotted, of type \li{List(Float)}.
 Parameters are applied
 using function application notation
-as seen in Fig.~\ref{fig:grading}(c) or
+as seen in Fig.~\ref{fig:grading} or
 using the pipelining (i.e. reverse function application) operators, \li{<|} and \li{|>},
 which allow multiple livelits to form dataflows (not shown).
 
@@ -153,7 +153,7 @@ are automatically placed inside holes and do not prevent other parts of the prog
     %   \caption{}
     % \end{subfigure}
   \end{center}
-  \caption{Case Study II: Image Transformation. The image shown is determined based on the selected closure.}
+  \caption{Case Study: Image Transformation. The image shown is determined based on the selected closure.}
   \label{fig:img-transformation}
 \end{figure*}
 
@@ -172,9 +172,9 @@ as the user interacts with the livelit, e.g. when changing the number of rows or
 % (we return to live evaluation in Sec.~\ref{sec:live-evaluation} below.
 
 The livelit provides an expected type for each splice when it is created.
-For example, the splices for the row and column keys in Fig.~\ref{fig:grading}(c)\todo{go through subfigures}{} have expected type \li{String},
+For example, the splices for the row and column keys in Fig.~\ref{fig:grading} have expected type \li{String},
 and the remaining cells have expected type \li{Float}.
-Hazel surfaces and uses the expected type when the cursor is in the splice.\todo{cite HATRA paper}{}
+Hazel surfaces and uses the expected type when the cursor is in the splice \cite{hazeltutor}.
 % If an expression of invalid type is entered, it will display in an error hole as usual,
 % and in Hazel this will not prevent evaluation of other expressions (see Footnote \ref{footnote:typing}).
 
@@ -188,7 +188,7 @@ Hazel surfaces and uses the expected type when the cursor is in the splice.\todo
 Ensuring that clients can reason about binding while leaving expansions
  invisible
  requires a hygiene discipline that enforces \emph{capture avoidance}
-and \emph{context independence} \cite{TLMs}\todo{cite michael hygiene paper}.
+and \emph{context independence} \cite{TLMs,adamsHygiene}.
 
 \textbf{Capture Avoidance.}
 Splices and parameters can appear anywhere in the expansion.
@@ -248,9 +248,9 @@ Evaluation proceeds around these holes, producing a result containing
 corresponding hole closures, i.e. holes with environments.
 
 For example, there is one closure for \li{\$dataframe} in Fig.~\ref{fig:grading}.
-It contains the value of \li{q1max}\todo{what?}{} and the other variables in scope.
+It contains the value of \li{q1\_max} and the other variables in scope.
 These values can be used to evaluate
-splices that use the corresponding variables, such as the cell selected in Fig.~\ref{fig:grading}(c).
+splices that use the corresponding variables, such as the cell selected in Fig.~\ref{fig:grading}.
 
 Similarly, the closure for \li{\$grade_cutoffs} in Fig.~\ref{fig:grading} includes
 the necessary \li{averages} variable, but
@@ -281,8 +281,7 @@ We will return to how this occurs in Sec.~\ref{sec:live-evaluation-def}.
 
 
 
-\subsubsection{Case Study: Live Photo Filters}\label{sec:image-transformation}
-\todo{revise this once we have final figure}{}
+\subsubsection{Case Study: Live Image Filters}\label{sec:image-transformation}
 Our next case study
 considers the situation where multiple closures are collected, and
 the workflows it enables.
@@ -321,7 +320,7 @@ we prototyped a collection of photo filter livelits.
 One of these, \li{\$basic_adjustments}, is demonstrated in Fig.~\ref{fig:img-transformation}. 
 This livelit contains two splices of type \li{Int},
 one to adjust the contrast, and the other to adjust the brightness.
-In this example, we have filled those splices with a \li{\$slider}, but
+In this example, we have filled those splices with \li{\$percent}, but
 as above we could enter any expression of type \li{Int}, e.g. a variable.
 The livelit shows a live preview of the transformed image.
 The expansion generates calls to a browser image processing framework, 
@@ -334,12 +333,10 @@ The provided URL is passed into to livelit as a parameter.
 
 Because the livelit appears inside a function applied (by \li{map}) twice, 
 there are now two closures associated with the livelit. 
-Rather than disabling live evaluation in situations like 
-this, Hazel instead allows the programmer to select between the closures when 
-the cursor is on the livelit expression via a simple sidebar toggle,
+Hazel allows the programmer to select between the closures when 
+the cursor is on the livelit expression via the sidebar toggle,
 shown in the middle of Fig.~\ref{fig:img-transformation}.
-This causes the view to change as shown. 
-This makes it easy to see how the image filter being designed here will affect a
+This allows the client to see how the filter being designed will affect a
 number of example images by quickly toggling between closures.
 The underlying expansion remains abstract, i.e. it refers to the image via the \li{url} variable.
 
