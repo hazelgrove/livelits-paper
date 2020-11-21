@@ -67,22 +67,29 @@ livelit $color at Color {
 \end{figure}
 
 \noindent
-Let us now look in more detail at a livelit definition. Fig.~\ref{fig:color-impl}
-outlines the \li{\$color} livelit from Fig.~\ref{fig:color}. (We omit certain 
-incidental implementation details and use unimplemented syntactic sugar, including
-Haskell-style \li{do} notation and simplified quasiquotation, for the sake of presentation.
-We say more about the implementation in Sec.~\ref{sec:implementation}.)
+We now take the perspective of a livelit provider.
+Fig.~\ref{fig:color-impl}
+defines \li{\$color} from Fig.~\ref{fig:color}(b). We omit certain 
+incidental details and use unimplemented syntactic sugar, including
+Haskell-style \li{do} notation and quasiquotation, for presentation.
 
-Line 3 of Fig.~\ref{fig:color-impl} specifies the livelit's name, \li{\$color}, and its \emph{expansion type},
-\li{Color}, which was discussed in Sec.~\ref{sec:livelit-expansion}.
-The remainder of the definition is the livelit's implementation.
+Livelit definitions are scoped and packaged like 
+any other definition. They consist of a declaration and an implementation. 
+Line 3 of Fig.~\ref{fig:color-impl} is \li{\$color}'s declaration,
+which defines its name and its \emph{expansion type}. 
+Livelit parameters would also appear here. 
+The declaration is part of the client interface, 
+as discussed in Sec.~\ref{sec:expansion-typing}-\ref{sec:parameterization}. 
+
+\subsection{Livelit Implementations}
+The curly braces delimit the livelit's implementation. 
 Livelits are implemented using a variation on the functional model-view-update
 framework popularized by the Elm programming language \cite{ElmArchitecture}. We add a fourth component,
 expansion generation. In addition, we add a simple monadic framework to provide the necessary  
 interface between the livelit and the programming environment, discussed below, while retaining
-a pure functional programming style.
+a pure functional programming model.
 
-\subsection{Model}\label{sec:model}
+\subsubsection{Model}\label{sec:model}
 Line 6 of Fig.~\ref{fig:color-impl} specifies the livelit's \emph{model type},
 here a labeled 4-tuple of \emph{splice references}, one for each of the four splices
 that appear in the GUI in Fig.~\ref{fig:color}.
@@ -125,7 +132,7 @@ module export and determining paths to the captured bindings at use sites \cite{
 Formally, captured variables can be understood as parameters that have been 
 immediately partially applied.
 
-\subsection{Action}
+\subsubsection{Action}
 Line 14 defines the \li{Action} type for the \li{\$color} livelit, which 
 specifies a single user-initiated action: clicking on a color using the user 
 interface on the right side of Fig.~\ref{fig:color}. Actions are emitted
@@ -133,7 +140,7 @@ from event handlers (e.g. click handlers) defined in the computed \li{view},
 and actions are consumed by the \li{update} function, causing a change in the model. 
 Let us discuss each of these functions in turn.
 
-\subsection{View}
+\subsubsection{View}
 The \li{view} function computes the view given a model and access to the commands in 
 the \li{ViewMonad}. The computed view is a value of type \li{Html(Action)}.  
 The type family \li{Html(a)} provides a simple immutable
@@ -144,7 +151,7 @@ We elide the details of the particular user interface in Fig.~\ref{fig:color}
 to focus on two key mechanisms exposed by \li{ViewMonad}: live evaluation 
 and splice rendering.
 
-\subsubsection{Live Evaluation}
+\paragraph{Live Evaluation}
 \label{sec:live-evaluation-def}
 In order to provide the client with live feedback about the dynamic implications 
 of the programmer's choices, 
@@ -190,7 +197,7 @@ simply playing silence or some other default sound when it encounters them.
 This behavior is highly domain-specific, so each livelit provider must decide 
 whether and how indeterminate results are supported.
 
-\subsubsection{Splice Rendering}
+\paragraph{Splice Rendering}
 The remainder of the \li{view} function is responsible for computing the view.
 This is straightforward but for the question of splices. In Fig.~\ref{fig:color},
 we want the splices to render as expression editors, with all of Hazel's editor 
@@ -216,7 +223,7 @@ result_view_fun    : (Exp, List(SpliceRef), Dimensions) -> ViewMonad(Html(a))
 \end{lstlisting}
 
 
-\subsection{Update}
+\subsubsection{Update}
 When the user triggers an event in a livelit view, it emits an \li{Action}.
 The system responds by calling the \li{update} function to determine how 
 this action should affect the model and the splices. 
@@ -244,7 +251,7 @@ have the ability to request evaluation, because the model should not depend dire
 which closure the user has selected. Of course, the \li{view} might emit 
 result-dependent actions when appropriate.
 
-\subsection{Expansion}
+\subsubsection{Expansion}
 \label{sec:expansion}
 The ultimate purpose of a livelit is to fill the hole where it appears by generating an expansion,
 i.e. a standard symbolic expression of the expansion type, here \li{Color}.

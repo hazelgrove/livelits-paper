@@ -2,20 +2,20 @@
 
 \begin{figure}
     \[
-    \arraycolsep=4pt\begin{array}{llcl}
+    \arraycolsep=3pt\begin{array}{rlcl}
         \mathsf{Typ} & \tau & ::= &
-                                    \tnum ~\vert~
+                                    % \tnum ~\vert~
                                     \tarr{\tau_1}{\tau_2} ~\vert~
                                     \tprod{\tau_1}{\tau_2} ~\vert~
                                     \tunit ~\vert~
                                     \tsum{\tau_1}{\tau_2} ~\vert~
                                     t ~\vert~
                                     \trec{t}{\tau}\\
-        \mathsf{UExp} & \hat{e} & ::= & \hnum{n} ~\vert~
+        \mathsf{UExp} & \hat{e} & ::= & 
                                  x ~\vert~
                                  \hlam{x}{\hat e} ~\vert~
                                  \hap{\hat e_1}{\hat e_2} ~\vert~
-                                 \cdots ~\vert~
+                                 ... ~\vert~
                                 %  \hpair{\hat e_1}{\hat e_2} ~\vert~
                                 %  \hprl{\hat e} ~\vert~
                                 %  \hprr{\hat e} ~\vert~
@@ -26,8 +26,8 @@
                                 %  \hunroll{\hat e} \\
                                  \hehole{u} ~\vert~
                                  \haplivelit{u}{a}{\dtxt{model}}{\splices}\\
-        \mathsf{EExp} & e & ::= & \hnum{n} ~\vert~ x ~\vert~ \hlam{x}{e} ~\vert~ \hap{e_1}{e_2} ~\vert~ \cdots ~\vert~ \hehole{u}\\
-        \mathsf{IExp} & d & ::= & \hnum{n} ~\vert~ x ~\vert~ \hlam{x}{d} ~\vert~ \hap{d_1}{d_2} ~\vert~ \cdots ~\vert~ \dehole{u}{\sigma}\\
+        \mathsf{EExp} & e & ::= & x ~\vert~ \hlam{x}{e} ~\vert~ \hap{e_1}{e_2} ~\vert~ ... ~\vert~ \hehole{u}\\
+        \mathsf{IExp} & d & ::= & x ~\vert~ \hlam{x}{d} ~\vert~ \hap{d_1}{d_2} ~\vert~ ... ~\vert~ \dehole{u}{\sigma}\\
         \mathsf{Splice} & \psi & ::= & \hsplice{\hat e}{\tau}
     \end{array}
     \]

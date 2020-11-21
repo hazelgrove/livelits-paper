@@ -133,10 +133,11 @@ we can partially apply the first parameter of \li{\$slider} to define a paramete
 let $uslider = $slider 0 in ...
 \end{lstlisting}
 Only livelits with no remaining parameters can be invoked, 
-so writing \li{\$uslider} in expression position will display as a ``missing livelit parameter'' error.%
-\footnote{\label{footnote:typing}In Hazel, erroneous expressions 
-are automatically placed inside holes so that they do not prevent other parts of the program from evaluating
-\cite{HazelnutLive}.}
+so writing \li{\$uslider} in expression position will display as a ``missing livelit parameter'' error. 
+(In Hazel, erroneous expressions 
+are automatically placed inside holes and do not prevent other parts of the program from evaluating
+\cite{HazelnutLive}.)
+% \footnote{\label{footnote:typing}}
 
 
 \begin{figure*}
@@ -254,12 +255,12 @@ Similarly, the closure for \li{\$grade_cutoffs} in Fig.~\ref{fig:grading} includ
 the necessary \li{averages} variable, but 
 its value depends on \li{grades}, which is determined by \li{\$dataframe}. 
 If we stop after proto-closure collection,
-then no useful value will be available:
-the result will be \emph{indeterminate}, because \li{\$dataframe} has been replaced with a hole \cite{HazelnutLive}.
-For this reason, there is a second phase of closure collection, called \emph{closure resumption}, 
-where any livelit holes that appear
-in the collected livelit closures are \emph{resumed}, i.e. the expansion is generated
-(in this case, for the \li{\$dataframe} livelit) and evaluation resumes.
+no useful value will be available:
+\li{averages} will be \emph{indeterminate}, because \li{\$dataframe} has been replaced with a hole \cite{HazelnutLive}.
+For this reason, there is a second phase of closure collection, \emph{closure resumption}, 
+where any livelit holes 
+in the collected livelit closures are \emph{resumed}, i.e. the hole is filled with the expansion 
+ and evaluation resumes.
 % Livelit expansions do not contain livelits, so no subsequent expansion / resumption phases are necessary.
 
 % Hazel does not need to evaluate the program multiple times in order to support live closure collection
@@ -269,7 +270,7 @@ in the collected livelit closures are \emph{resumed}, i.e. the expansion is gene
 % in the presence of non-commutative side effects in Sec.~\ref{sec:calculus-closure-collection}.)
 
 \subsubsection{Indeterminate Results}
-Even after resumption, some elements of the closure may remain indeterminate, e.g. due to holes that 
+Even after closure resumption, some elements of the closure may remain indeterminate, e.g. due to holes that 
 are not filled with livelits. 
 When a livelit requests an evaluation result, it must be able to handle these indeterminate results.
 For example, if there were missing grades,
@@ -281,16 +282,14 @@ We will return to how this occurs in Sec.~\ref{sec:live-evaluation-def}.
 
 \subsubsection{Case Study: Live Photo Filters}\label{sec:image-transformation}
 \todo{revise this once we have final figure}{}
-Closure collection can produce multiple closures when, for example, 
-a livelit appears inside a function applied multiple times. 
-Our next case study, in the photography domain,
-demonstrates how Hazel handle this situation, and 
-the workflow it enables. 
+Our next case study 
+considers the situation where multiple closures are collected, and 
+the workflows it enables. 
 
 We interviewed a photographer 
 who described a typical workflow: 
 they use the Lightroom application to 
-apply a set of adjustments and filters 
+apply a set of adjustments 
 across all photos in a collection before making 
 individual adjustments. 
 Many photographers do this one photo at a time,
@@ -300,12 +299,12 @@ apply adjustments to multiple photos at once.
 However, they remained dissatisfied by the workflow.
 They wanted to be able to see how the shared settings affected 
 multiple photos as they tweaked them, without having to 
-save and apply the preset repeatedly.
-They also wanted to be able to change the shared settings
-even after making certain individual adjustments.
-They also expressed interest in defining parameterized 
-presets, and in automating the process of 
-posting sets to a website and social media. 
+save and reapply the preset.
+They also wanted to be able to change the applied preset
+even after making individual adjustments.
+Finally, they 
+expressed interest in parameterizing  
+presets, and in automating parts of the post-production process. 
 
 % For our next case study, we 
 % developed a library of 
@@ -317,7 +316,7 @@ posting sets to a website and social media.
 % The livelits we have considered so far generate simple values.
 
 Motivated by this interview, 
-we prototyped a collection of image transformation livelits.
+we prototyped a collection of photo filter livelits.
 One of these, \li{\$something} is demonstrated in Fig.~\ref{fig:img-transformation},
 within a function, \li{classic_look}, that serveas as a ``preset'' that is 
 mapped over a list of images (loaded by URL) at the bottom of the figure. 
@@ -328,10 +327,9 @@ This livelit takes
 a URL to an image as a parameter, and contains two splices of type \li{Int},
 one to adjust the contrast, and the other to adjust the brightness.
 In this example, we have filled those splices with a \li{\$slider}, but 
-as above we could enter any expression of type \li{Int}, e.g. 
-an arithmetic expression or a variable. 
+as above we could enter any expression of type \li{Int}, e.g. a variable. 
 The livelit shows a live preview of the transformed image.
-The expansion generates the necessary calls to an image processing library, 
+The expansion generates calls to a browser image processing library, 
 not shown.
 
 Because the livelit appears inside a function applied (by \li{map}) twice, 
@@ -346,12 +344,12 @@ number of example images by quickly toggling between closures.
 The underlying expansion remains abstract, i.e. it refers to the image via the \li{url} variable.
 
 We showed this and similar examples to the photographer we had interviewed. 
-They expressed substantial interest in this approach despite having only 
+They expressed enthusiasm for this approach despite having only 
 limited programming experience (with Python). They made the fair point that it 
-would take substantial effort to match Lightroom's breadth of filters and effects, 
-but with sustained effort, they agreed that this approach could be more powerful than 
+would take substantial effort to match Lightroom's breadth of filters, 
+but stated that this approach could be more powerful than 
 Lightroom's point-and-click interface while retaining many of its benefits (specifically
-mentioning the graphical sliders). Although this was only a single interview,
+mentioning sliders). Although this was only a single interview,
 it is consistent with the body of evidence summarized in Sec.~\ref{sec:background}.
 
 % \subsection{Additional Examples}\label{sec:additional-examples}

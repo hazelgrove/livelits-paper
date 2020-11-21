@@ -155,7 +155,7 @@ and the Graphite survey solicited dozens of additional use cases from participan
 which the authors systematically taxonomize \cite{Graphite}. 
 We take these extensive empirical findings   
 as evidence for, and a showcase of, 
-the value of this class of mechanisms for integrating GUIs with code.
+the value of this class of mechanisms for integrating GUIs into code.
 
 \subsection{Contributions}
 
@@ -174,7 +174,7 @@ in Sec.~\ref{sec:related-work}.)
 
 \llproperty{Decentralized Extensibility}
     Providers define livelits in libraries, and 
-    clients invoke livelits by name. Livelit names, e.g. \li{\$color} and \li{\$slider} in Fig.~\ref{fig:color}(b),  are prefixed by \li{\$},    
+    clients invoke livelits by name. Livelit names, e.g. \li{\$color},  are prefixed by \li{\$},    
     to distinguish them from variables.
     % We call this \emph{decentralized extensibility}.
     % Both mage and Racket's visual syntax system are similarly extensible, 
@@ -209,31 +209,29 @@ in Sec.~\ref{sec:related-work}.)
   % operate as graphical literals.
 
 \llproperty{Hygienic Composition}
-  Prior systems have limited or no support for {entering sub-expressions within the GUI}, 
-  so they are useful mainly for generating expressions composed of constants,
-  e.g. color constants in Fig.~\ref{fig:color}(a).
-
-  Livelits have first-class support for sub-expressions, which we call \emph{splices} (after
+% Prior systems have limited or no support for {entering sub-expressions within the GUI}, 
+% so they are useful mainly for generating expressions composed of constants,
+% e.g. color constants in Fig.~\ref{fig:color}(a).
+%
+  Livelits support sub-expressions directly in the GUI, which we call \emph{splices} (after
    \citet{TLMs}).
-  Fig.~\ref{fig:color}(b) demonstrates splicing: the RGBA entry boxes in the GUI 
-  are splices, so the client can define a variable, \li{baseline},
-  to create a relationship between the red, green, and blue components.\todo{tweak figure}{}
-  The client can also use a slider to specify the alpha (A) component, 
-  without the provider of the \li{\$color} slider 
-  needing to anticipate this composition. 
-  Similarly, Fig.~\ref{fig:grading}(b)\todo{subfigure labels}{} demonstrates a 
-  compositional data table livelit where each entry is a splice.
+  Fig.~\ref{fig:color}(b) demonstrates splicing: the RGBA components  
+  are splice editors, so the client can define a variable, \li{baseline},
+  to relate the color components\todo{tweak figure}{} 
+  and use a slider livelit inline to specify the alpha component.
+  % Similarly, Fig.~\ref{fig:grading}(b)\todo{subfigure labels}{} demonstrates a 
+  %  data table livelit where each entry is a splice.
   
   Crucially, composition is strictly 
   governed by a hygiene discipline that ensures
   (1) \textbf{capture avoidance}, i.e. that variables that the client uses in splices 
   will not capture expansion-internal bindings; and 
   (2) \textbf{context independence}, i.e. that the livelit 
-  can be invoked in any program context without pre-condition or conflict.
+  can be invoked in any program context.%without pre-condition or conflict.
 
-\llproperty{Parameterization} It is possible to define parameterized families of livelits.
+\llproperty{Parameterization} Livelits can form parameterized families.
   For example, \li{\$slider} in Fig.~\ref{fig:color}(b) is parameterized by the slider's bounds.
-  Parameters operate like splices, differing only in that they can be partially applied in
+  Parameters operate like splices, differing in that they can be partially applied in
   livelit abbreviations. For example, Fig.~\ref{fig:color}(b)\todo{add slider}{} 
   partially applies \li{\$slider} to \li{0} and \li{100} to define a \li{\$percentage} slider\todo{todo}{}.
   % \begin{lstlisting}[numbers=none]
@@ -252,7 +250,7 @@ without inspecting the expansions or livelit implementations directly.
   (i.e. in a \emph{live} manner \cite{DBLP:conf/icse/Tanimoto13}) 
   to provide feedback related to run-time behavior.
   For example, in Fig.~\ref{fig:color}(b), 
-  the selected color can be displayed by evaluating the RGBA
+  displaying the selected color requires evaluating the RGBA
   component splices to numeric values.
   Evaluation occurs in a run-time environment (i.e. closure) determined by
   leaving the hole being filled by the livelit temporarily unfilled and then evaluating
