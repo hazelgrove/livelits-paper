@@ -26,26 +26,30 @@ Although our more sophisticated examples do avail themselves of OCaml's more est
 
 D
 
-We would be happy to cite Andersen et al. [3] in Sec 7 as suggested. That paper disclaims support for visual notation in splices and does not describe live evaluation of splices (evaluation occurs in the edit-time environment). There may be as-yet-unreported methods possible given the highly dynamic nature of (Dr. )Racket. We are in correspondence with the authors to make sure we are accurately characterizing that paper.
+2. The expansion is not arbitrary Exp-typed code -- Exp is just the type of expression encodings. The corresponding decoding is validated (Line 948) against the expansion type specified by the livelit, which is analogous to the return type of a function. (See point 3 for more.)
 
-1. Livelits can handle all use cases presented in closely related systems that (1) generate expressions (Graphite and sage can generate arbitrary text, [3] can generate non-expressions), and (2) that do not violate the type and binding discipline. This includes examples across the taxonomy developed in [32]. New binding constructs are not possible (except via splices of arrow type). A future design might support them with a mechanism for explicitly introducing variables into splices, with editor support to alert clients of the situation.
+_Regarding points 3 and 4, identified by the reviewer as points that if resolved would make them excited about the paper, we do not believe that these require removal of the (already terse) theory section nor any other major changes -- the details are already in the paper and we can highlight them better:_
 
-2. The expansion is not arbitrary Exp-typed code -- Exp is the type of expression encodings. The corresponding decoding is validated (Line 948) against the expansion type specified by the livelit, which is analogous to the return type of a function. (See point 3 for more.)
+3. All livelit definitions have exactly the components shown in Fig. 3. Hazel immediately creates this “skeleton” as soon as you type “livelit “. Each hole in this skeleton has the type shown in Fig. 3, and this code is regular Hazel code so all of Hazel’s editor services are available. 
 
-- A Progress theorem for expansion could indeed be stated as a corollary of Progress for the internal language. It would only rule out failure from undefined behavior during evaluation of d_{expand} d_{model}. Decoding of d_{encoded} cannot fail due to Preservation + well-typedness of the livelit definition + the isomorphism between values of Exp type and expanded expressions. Our implementation in Hazel handles all other failure cases (e.g. validation failure + certain situations where the view is malformed) using non-empty holes [31], which we omitted from the formalism for simplicity and because other implementations might handle errors differently.
+- The “Exp” type does not include the type of the encoded expression, so expansion validation (Line 948) is needed. Typed quotation systems could remove this need ([28] demonstrated the use of MetaOCaml for this purpose).
 
-3. Yes, all livelit definitions have exactly the components shown in Fig. 3. Hazel immediately creates this “skeleton” as soon as you type “livelit “. Each hole in this skeleton has the type shown in Fig. 3, and this code is regular Hazel code so all of Hazel’s editor services are available. 
-
-- The “Exp” type does not include the type of the encoded expression, so expansion validation is needed. Typed quotation systems could remove this need ([28] demonstrated the use of MetaOCaml for this purpose).
-
-- Livelit parameters operate like splices (Sec 2.3.1), so they have SpliceRef type within the definition.
+- Livelit parameters operate like splices (Sec 2.3.1), so they also simply have SpliceRef type within the definition. We will clarify this with one additional sentence.
 
 4. In our Sketch-n-Sketch prototype, the text buffer contains the persistent representation of the livelit i.e. its model and splice map as defined in Sec. 4. The user can press a hotkey to bring up a pop up window containing the livelit GUI. GUI actions cause edits to the underlying text buffer. Andersen et al. have also explored displaying the GUI inline in Dr. Racket, and we will also cite this as additional evidence that structure editing is not essential in Sec. 5.2.
 
 E
 
-The Agda mechanization was indeed a substantial effort. We were able to borrow a few basic judgements (e.g. typing of the internal language) from the Hazelnut Live mechanization effort, but the central typed expansion judgement and accompanying metatheory is original. Our prior work on textual literal macros at ICFP’18 stated a related expansion theorem (differing substantially in how splices are encoded and with hygiene defined and enforced quite differently due to the textual, not-yet-fully-parsed nature of that system), but there was no accompanying mechanization -- only paper proofs.
+The Agda mechanization was indeed a substantial effort. We were able to borrow the basic judgements (e.g. typing of the internal language, elaboration from external to internal languages) from the Hazelnut Live mechanization effort, but the central typed expansion judgement and accompanying metatheory is original. Our prior work on textual literal macros at ICFP’18 stated a related expansion theorem (differing substantially in how splices are encoded and with hygiene defined and enforced quite differently due to the textual, not-yet-fully-parsed nature of that system), but there was no accompanying mechanization -- only paper proofs.
 
 In addition, Sec. 4.3 is original theoretical work introducing liveness into graphical notation formally for this first time, borrowing only the basic evaluation and hole filling mechanisms from Hazelnut Live.
 
-With regard to evaluation more broadly, our aim was to build on the substantial body of empirical evidence summarized in Sec. 1, supplementing it with additional non-trivial case studies designed specifically to showcase the novel and cohesive technical mechanisms that are the design contributions of this paper (which enable liveness, compositionality, persistence, parameterization, typing, and hygiene).
+With regard to evaluation more broadly, our aim was to build on the substantial body of empirical evidence summarized in Sec. 1, supplementing it with additional realistic case studies designed specifically to showcase the novel and cohesive technical design that is the central contribution of this paper (and which is the first to support all of: liveness, compositionality, persistence, parameterization, typing, and hygiene).
+
+Additional comments for D:
+
+- We would be happy to cite Andersen et al. [3] again in Sec 7 as suggested. Note: that paper disclaims support for visual notation in splices and does not describe live evaluation of splices (evaluation occurs in the edit-time environment). There may be as-yet-unreported methods possible given the highly dynamic nature of (Dr. )Racket. We are in correspondence with the authors to make sure we are accurately characterizing that paper.
+
+1. Livelits can handle all use cases presented in closely related systems that (1) generate expressions (Graphite and sage can generate arbitrary text, [3] can generate non-expressions), and (2) that do not violate the type and binding discipline. This includes examples across the taxonomy developed in [32]. New binding constructs are not possible (except via splices of arrow type). A future design might support them with a mechanism for explicitly introducing variables into splices, with editor support to alert clients of the situation.
+
+- A Progress theorem for expansion could indeed be stated as a corollary of Progress for the internal language. It would only rule out failure from undefined behavior during evaluation of d_{expand} d_{model}. Decoding of d_{encoded} cannot fail due to Preservation + well-typedness of the livelit definition + the isomorphism between values of Exp type and expanded expressions. Our implementation in Hazel handles all other failure cases (e.g. validation failure + certain situations where the view is malformed) using non-empty holes [31], which we omitted from the formalism for simplicity and because other implementations might handle errors differently.
