@@ -1,0 +1,397 @@
+PLDI 2021 Paper #174 Reviews and Comments
+===========================================================================
+Paper #174 Filling Typed Holes with Live GUIs
+
+
+Review #174A
+===========================================================================
+
+Overall merit
+-------------
+A. I will champion accepting this paper.
+
+Reviewer expertise
+------------------
+Y. **Knowledgeable** = "I follow the literature on this paper's topic(s)
+   but may have missed some relevant developments"
+
+Paper summary
+-------------
+The paper introduces "livelits" which embed little GUIs into a text editor to graphically specify constants and even short programs. The paper's implementation of such has three major innovations: 1) livelits are composable via "splices", including livelits containing other livelits; 2) livelits are a permanent part of the programming languages instead of merely generating code like other efforts; 3) livelits integrate into a broader live programming environment and can display computed values.
+
+Comments for author
+-------------------
+This work is a great combination of a striking, ambitious design combined with tough, rigorous technical details in its formalization. It ties together a long line of work on staged type systems (including context and hygiene), the Hazel line of work on holes and partial programs, and a surprising and innovative goal of graphical programming. The paper is also a joy to read, well written with a clear justification not just of the overall vision but also the tricky technical details of the formalization and the metatheorems.
+
+Given my clear enthusiasm for the paper, the main questions in my review are about technical hangups.
+
+In Definition 4.5, it appears that closure collection will fail to collect closures for holes that don't end up influencing the program output. Is this a simplification for formalization, or does this reflect the implementation? It seems inconvenient in the second case.
+
+In Section 4.2.2, you reference the explicit capture set as allowing a livelit expansion to reference helper functions. Does the explicit capture set then go to the left of both empty turnstiles in the EApLiveLit rule?
+
+Could a livelit fail to be context-independent by containing a splice that is initialized to an expression that refers to its environment? In the paper's examples, the initial value of a splice is always closed, but the formalization does not clarify this. If this "evil livelit" also hides the actual splice (by setting "display: none", say) how could the user correct the problem? More generally, the provided calculus does not mention the mechanics of livelit instantiation and updates, and that is appropriate, but there are some subtle issues hiding here.
+
+In this paper the authors side-step issues of macro capture by relying on the capture-avoiding beta reduction. I assume this was done to avoid a more complex traditional treatment of hygienic macros? The current approach is sufficient for the livelits imagined by this paper. But consider a livelit where users could drag around the nodes of a data flow graph, and label individual nodes by functions and have it be compiled into a point-free function definition. In this case the livelit would need to analyze the types of its splices (to determine how many in edges to draw) and a more complex macro system would be necessary.
+
+There are also typos on line 858 and 314. It would also be nice to see the example on line 397-398 replaced with a more realistic example. One of the joys of reading this paper are the many and varied livelits imagined by the authors.
+
+I do hope the authors can clarify and explain these issues, but want to be clear that I am thrilled with this paper and commend the authors on writing something simultaneously ambitious and clear.
+
+
+
+Review #174B
+===========================================================================
+
+Overall merit
+-------------
+B. I support accepting this paper but will not champion it.
+
+Reviewer expertise
+------------------
+X. **Expert** = "I have written a paper on one or more of this paper's
+   topics"
+
+Paper summary
+-------------
+This paper builds on a line of work in language extension and live
+evaluation to support graphical elements. Specifically, the paper
+builds on evaluation with "holes", and it adds the ability to define
+graphical elements within the language itself. Graphical extensions
+are rendered in the program editor, they can reflect live values as
+well as "static" expression, and graphical elements can be nested like
+any other kind of expression.
+
+Comments for author
+-------------------
+As the paper notes, there have been various previous systems that mix
+textual and graphical elements. The one presented here provides a
+novel combination of extensibility and live evaluation, which is
+enabled by a solid foundation of evaluation with holes [30]. The
+extension mechanism seems straightforward, but it's integrated in a
+nice way, and some extra work is here to specify a two-phase
+resolution of a program with live values. The formal part of the
+presentation seems clear and useful.
+
+The paper mentions only late (in 5.1) that the implementation relies
+on a structured editor. Structured editing is helpful for liveness,
+because it can ensure that a program is always well-formed enough, and
+it can avoid questions of confusing encoded graphical elements with
+textual elements. Still, it's reasonable to separate the problems and
+benefits of structured editing from the other concerns tackled here. A
+comparison to MPS (from JetBrains) seems merited, since that's another
+extensible system that supports graphical elements as code.
+
+The paper could be improved by replacing "hygienic" with just
+"lexically scoped". Since livelits are always expressions (and not,
+for example, binding forms), hygiene is not much of a question. That
+is, livelit combination can can be implemented with plain old
+functions. In that context, the paper's comment on hygiene for
+graphical syntax in Racket [3] seems misleading; the Racket paper
+mentions "corner cases" with respect to a much more expressive
+extension API, and it will not suffer hygiene problems with simple
+expression extensions.
+
+
+
+Review #174C
+===========================================================================
+
+Overall merit
+-------------
+B. I support accepting this paper but will not champion it.
+
+Reviewer expertise
+------------------
+Z. **Some familiarity** = "I have a passing knowledge of the topic(s) but
+   do not follow the relevant literature"
+
+Paper summary
+-------------
+This paper presents a programming environment built on top of Hazel that streamlines the integration between code and provider-defined GUI elements based on the idea of  
+"graphical macros" which the authors call live literals. 
+
+The authors further define a lambda calculus that captures the core aspects of live literals and mechanise the macro expansion process in Agda, building on the existing Agda mechanisation 
+of Hazel.
+
+Comments for author
+-------------------
+Pros
++ Useful system that seems to fill an existing gap   
++ Formal core calculus mechanised in Agda  
+
+Cons 
+- The technical details are hard  to follow by a reader unfamiliar with Hazel 
+- The presented framework is not self-contained: it is cumbersome to implement live literals completely within the Hazel environment, as Hazel does not come with a rich system of mature GUI widget libraries. 
+
+
+This paper proposes a novel approach for the typed integration of visual programming with standard text-based programming. The idea of combining text-based programming with visual elements is not new. The novelty of this work is two-fold: 
+  
+- Better support for compositionality and abstraction than existing approaches: in particular, the proposed system allows for the streamlined interaction between the expressions used inside a livelit and those defined in the program text (interestingly, expressions used inside livelits can themselves contain other livelits);
+     
+- Support for the "live evaluation" of visual elements by taking advantage of the live evaluation facilities of the Hazel's programming environment. 
+
+The authors include various case studies that illustrate the applicability of their system. Unfortunately, the system is not entirely self-contained as Hazel comes with much fewer GUI widget libraries than well-established programming languages such as JS and OCaml, which the authors use to implement their livelits. 
+ 
+ 
+The core calculus is presented in an elegant and succinct way, albeit terse (as the authors admit). Indeed, it was not easy for me to follow the technical exposition. I think the reader unfamiliar with Hazel would benefit from more details regarding and clarification. Examples below: 
+
+- The intuitive meaning of hole typing assumptions, $u::\tau[\Gamma]$, should be explained when they are introduced.  Reading the section, I later understand that $\Gamma$ stores the types of the variables that can be used inside the "hole", but I had to search for it.   
+
+- The definition of context, $\sigma$, should be given where contexts are first introduced (line 827) instead of in the caption of Figure 4. 
+
+- I understand that the type system is not formalised algorithmically. Nevertheless, $\tau$ appears free in the rule Elab-Hole. It would be nice to have an intuitive explanation for how the types of holes are computed in practice. 
+
+- "Exp stands for a type whose values isomorphically encode external expressions" (line 901). So far, the reader has been told about: unexpanded expressions, expanded expressions, and internal expressions. We are now told about "external expressions". I suppose you mean "expanded expressions" because you use the same non-termina $e$. It would be nice to have a consistent name.  
+
+- The paragraph on the computation of the livelit context would benefit from an example to clarify how the $d_{expand}$ expressions are computed. 
+
+- cc-contexts ($\Omega$) and closures should be formally defined before the rule CCApLivelit.
+
+Typos
+
+- ln 1159: considering -> consider
+
+
+
+Review #174D
+===========================================================================
+
+Overall merit
+-------------
+C. I would not accept this paper but will not argue strongly against
+   accepting it.
+
+Reviewer expertise
+------------------
+Z. **Some familiarity** = "I have a passing knowledge of the topic(s) but
+   do not follow the relevant literature"
+
+Paper summary
+-------------
+The paper introduces compositional live literal expressions, aka livelits.
+Evaluation of a program with livelits happens in phases: first the program
+runs to discover fully-applied livelits, and then the IDE renders livelits
+as GUIs to collect "live" input before moving on. The authors have implemented
+livelits for the Hazel structure editor and the Sketch-n-Sketch textual editor.
+The paper encourages reproduction via a model of livelit evaluation/expansion.
+
+Comments for author
+-------------------
+Livelits seem like a useful feature --- both for programmers and for other
+professionals (the case study in section 2 is convincing). The paper does a
+good job explaining the livelit expansion process and the basics of how to
+implement a livelit.
+
+I have one request: acknowledge that visual syntax (Andersen et al. OOPSLA'20)
+supports more kinds of terms than livelits. Readers deserve to know that some
+of your future work is being studied in a different context.
+
+That said, I think this paper would benefit from a major rewrite to focus more
+on examples + implementation and less on the theory. I would be excited about
+this paper if it clearly explained two things to language designers:
+the API that livelit authors see, and the language tools that support this API
+in Hazel (points 3 and 4 below).
+
+1. Given the huge amount of prior work, it would be helpful to see a table
+   contrasting different approaches. Do livelits subsume Graphite, mage, TLMs,
+   and other closely-related work, or do those systems still excel in certain
+   parts of their motivating examples? Can livelits handle all the use-cases
+   identified in the Graphite survey?
+
+2. Despite the early hints about types and abstraction, the model only proves
+   that evaluation is well-defined and preserves types. These are good first
+   steps, but say little about behavior ... and I don't know what guarantee
+   livelits could hope to provide in the face of arbitrary Exp-typed code.
+   Since the model appears to be a straightforward combination of live typed
+   holes (Omar et al. POPL'19) and typed literal macros (Omar et al. ICFP'18),
+   it seems less important than details about the implementation.
+
+  * Side note: The model is missing a progress theorem to limit the ways that
+    expansion can go wrong. Theorem 4.4 describes the good case, when expansion
+    succeeds. But figure 5 suggests that livelits can fail during the evaluation
+    of the unityped livelit body (`d_{expand} d_{model}`), and/or at the cast
+    to the declared type (`d_{encoded} \uparrow e_{pexpansion}`).
+
+3. Say more about how to create a new livelit. How does a livelit with inputs
+   differ from the `$color` example? What functions and types must a livelit
+   provide --- do the 2 types, 4 `let`s, and `captures` clause in figure 3
+   exactly match a general livelit interface? In what ways does the language
+   help programmers get their types and expressions right?
+
+4. Similarly, say more about how a language can support livelits.
+   What "necessary mechanisms" did you add to Sketch-n-Sketch (sec 5.2), and
+   what else remains to be done? If you end up presenting a general livelit
+   interface, it might be easiest to explain what a language must do to support
+   each part of it (what parts call for serialization, graphics, etc).
+
+
+### Minor Comments
+
+- l.156 : What makes decentralized extensibility a research contribution? Why is it important to distinguish livelit names from other identifiers; does this mean that livelit names are not first class?
+- l.198 : Consider citing Clinger and Rees (POPL 1991), or another work that defines these "introduced binding" and "introduced reference" issues.
+- l.221 : Two similar phases can't possibly be enough; what if one livelit depends on the result of another for its input? (Give readers a hint about what's coming in secs 2.4.1 / 4.3.)
+- l.257,556,1116 : If Hazel is a dialect of Elm and/or based on Elm, then why doesn't it have access to Elm GUI libraries?
+- l.281 : What is "live" in this context? Spell it out; don't rely on the citation back on l.213.
+- l.311 : Why/how is Alice's first grade expressed as a sum?
+- l.321 : The discussion of types comes as a surprise. What are the relevant types and bindings in section 2.1?!
+- l.362 : In what way is `$slider 0` unsigned? The type system does not rule out an application `$uslider -1`.
+- l.483 : The motivating interview is nice, but why not reuse user studies from prior work?
+- l.574 : Consider outlining the parts of a livelit here.
+- l.594 : What is the difference between `0` and quasiquoted `0` ?
+- l.607 : It's a bit disappointing that the only example livelit code takes no parameters.
+- l.612 : Is `init` a key function? What other parts of figure 3 are necessary, and what parts are up to the programmer?
+- l.671 : The `Html` type looks like a parameterized type, not a family of mutually-dependent types.
+- l.725 : What is the `eval` command? Is a command different from a function?
+- l.745 : If an `update` function requests evaluation, does a compile-time error occur?
+- l.762 : How can `expand` expect 4 inputs when the type `Model` is a tuple?
+- l.857 : The sentence here seems to be missing a few words.
+- l.896 : Define `\Phi`; perhaps in figure 5.
+- l.900 : The `Exp` type comes as a surprise, and significantly limits what the model can say about livelits.
+- l.1100 : Consider discussing how Scheme and/or Racket handle hygiene and side effects.
+- l.1214 : The discussion of Andersen et al. (OOPSLA'20) needs work. It seems that visual syntax (and code) can appear in other visual syntax, and that visual syntax cooperates with a hygienic macro expander.
+- l.1296 : Andersen et al. (OOPSLA'20) support live patterns, live bindings, and more --- in addition to live literals.
+- l.1338 : remove "et al."
+
+
+
+Review #174E
+===========================================================================
+
+Overall merit
+-------------
+B. I support accepting this paper but will not champion it.
+
+Reviewer expertise
+------------------
+Y. **Knowledgeable** = "I follow the literature on this paper's topic(s)
+   but may have missed some relevant developments"
+
+Paper summary
+-------------
+This paper introduces a new concept in language design and implementation---live
+literals (livelets)---which embed interactive programming components within
+programming environments. Livelets are presented by example, demonstrating
+concepts such as expansion, parameters, splices, variable capture (avoidance),
+context independence, closure collection, and intermediate results. The
+programmer's API to livelets is demonstrated, relating to the above concepts. A
+core typed lambda calculus is presented which captures the essence of livelets,
+and core metatheory is developed, including theorems proved in Agda. The ideas
+in the paper are fully implemented in an existing prototype programming language
+type checker, interpreter and browser-based GUI.
+
+Comments for author
+-------------------
+This paper contributes:
+
+- The design of livelets, both in terms of their semantics, their interface to
+  the programmer, and their integration into a larger programming language
+  implementation.
+
+- A core language formalism for livelets, including mechanized proofs in Agda
+
+- A full-featured implementation of livelets building on prior language
+  implementation work.
+
+Strengths:
+
+- The ideas in the paper are simultaneously a synthesis of multiple technical
+  ideas applied to programming language user-interfaces, as well as a very
+  crisp, core model which captures the essential semantic model. This is a
+  challenging balance to strike, and in this reviewers opinion, there is value
+  in both, especially together.
+
+- The mechanization in Agda is quite substantial. (The mentions of it paper
+  don't do it justice.) In particular, the ability to capture interactive
+  programming language ideas like livelets (and typed holes, which this work
+  build on) using rigorous core formalisms is an area I wish our community paid
+  more attention to.
+
+- The paper reads more as a detailed recipe of the essential concerns any
+  language designer must consider when implementing user-interactive and/or live
+  programming features. I consider this a strength: even though on the surface
+  it may feel like the "technical meat" of the paper is lacking, I found it is
+  just condensed, and instead the less-technical---yet extremely
+  valuable---design principles are brought to the forefront instead.
+
+Weaknesses:
+
+- It isn't clear how much of the proofs (or accompanying Agda formalism) is
+  reused from the prior work on Hazel. If there is substantial reuse, I would be
+  concerned there isn't as much new here as implied by the writing.
+
+General Comments:
+
+I really enjoyed reading this paper. It's nice to see papers such as this (among
+perhaps too few) specifically on "programming language design and
+implementation" at a conference so named. I think this paper will be very
+valuable to language designers and implementers as they embed interactive
+elements within the core design of the language. Too often these elements are
+awkwardly plastered on top, and this paper shows how smooth and compositional
+these elements can be when considered from first principles.
+
+Having said that, there may be a case to be made that the contributions are not
+substantial enough for publication. It's difficult to know how to evaluate such
+a core contribution as the one described in this paper, between user studies,
+empirical experiments, or proved theorems. This paper is perhaps too heavy on
+the "here is a great idea", and perhaps too weak on the evidence of "here is why
+the idea is a good one". In any case, I'm curious most about the overlap in
+metatheory, proof and Agda development with prior work in the Hazel line of
+work. If there is little-to-know overlap, I feel the metatheory results are
+substantial on their own, and embody an evaluation that holds water suitable for
+publication at a top venue like PLDI.
+
+
+
+Response by Cyrus Omar <comar@umich.edu>
+---------------------------------------------------------------------------
+Thank you for the five thoughtful reviews!
+
+A
+
+Closure collection does require that the livelit influence the result. In practice, there is an implicit hole at the end of every program cell to support resumption [30], the closure for which is a de facto “use” of even otherwise unused variables.
+
+The captured value need not be a variable so it would not appear to the left of the turnstile; rather it is provided as an argument to the proto-expansion, essentially as an implicit additional splice (see [28]).
+
+Initial values for splices must be context independent (Line 595). The edit action semantics [31]  checks this when executing the update monad.
+
+Splices in our model are “analytic”, i.e. have a specified type, but adding “synthetic” splices + type introspection as suggested is an interesting idea! It would become more difficult for clients to know what is expected in each splice, so we chose the more "reasonable" [28] approach as our baseline.
+
+B 
+
+The late mention of structure editing was indeed to separate concerns. We did compare with MPS on Line 1233.
+
+Our use of “hygiene” is consistent with prior work, most directly [28], but given its various connotations we took care to clarify our specific definition immediately in Sec. 1 (Line 194). We agree that connecting to lexical scoping might further illuminate this definition.
+
+In [3], the authors mention hygiene only when admitting that hygiene is not maintained in “some  corner cases”. Further investigation reveals that macro providers can voluntarily invoke Racket’s scope management machinery to prevent capture for (text-only) splices, so we will include a sentence to clarify.
+
+C
+
+Thank you for the suggestions for the exposition in Sec 4. Line 901 should indeed say “expanded expression” not “external expression”.
+
+Although our more sophisticated examples do avail themselves of OCaml's more established GUI libraries for convenience, it is possible to define livelits entirely within Hazel as outlined in Sec. 3, and we have implemented several examples in this way. We plan to primarily show examples written using only Hazel at the conference (the Hazel language and ecosystem is young but growing!)
+
+D
+
+We would be happy to cite Andersen et al. [3] in Sec 7 as suggested. That paper disclaims support for visual notation in splices and does not describe live evaluation of splices (evaluation occurs in the edit-time environment). There may be as-yet-unreported methods possible given the highly dynamic nature of (Dr. )Racket. We are in correspondence with the authors to make sure we are accurately characterizing that paper.
+
+1. Livelits can handle all use cases presented in closely related systems that (1) generate expressions (Graphite and sage can generate arbitrary text, [3] can generate non-expressions), and (2) that do not violate the type and binding discipline. This includes examples across the taxonomy developed in [32]. New binding constructs are not possible (except via splices of arrow type). A future design might support them with a mechanism for explicitly introducing variables into splices, with editor support to alert clients of the situation.
+
+2. The expansion is not arbitrary Exp-typed code -- Exp is the type of expression encodings. The corresponding decoding is validated (Line 948) against the expansion type specified by the livelit, which is analogous to the return type of a function. (See point 3 for more.)
+
+- A Progress theorem for expansion could indeed be stated as a corollary of Progress for the internal language. It would only rule out failure from undefined behavior during evaluation of d_{expand} d_{model}. Decoding of d_{encoded} cannot fail due to Preservation + well-typedness of the livelit definition + the isomorphism between values of Exp type and expanded expressions. Our implementation in Hazel handles all other failure cases (e.g. validation failure + certain situations where the view is malformed) using non-empty holes [31], which we omitted from the formalism for simplicity and because other implementations might handle errors differently.
+
+3. Yes, all livelit definitions have exactly the components shown in Fig. 3. Hazel immediately creates this “skeleton” as soon as you type “livelit “. Each hole in this skeleton has the type shown in Fig. 3, and this code is regular Hazel code so all of Hazel’s editor services are available. 
+
+- The “Exp” type does not include the type of the encoded expression, so expansion validation is needed. Typed quotation systems could remove this need ([28] demonstrated the use of MetaOCaml for this purpose).
+
+- Livelit parameters operate like splices (Sec 2.3.1), so they have SpliceRef type within the definition.
+
+4. In our Sketch-n-Sketch prototype, the text buffer contains the persistent representation of the livelit i.e. its model and splice map as defined in Sec. 4. The user can press a hotkey to bring up a pop up window containing the livelit GUI. GUI actions cause edits to the underlying text buffer. Andersen et al. have also explored displaying the GUI inline in Dr. Racket, and we will also cite this as additional evidence that structure editing is not essential in Sec. 5.2.
+
+E
+
+The Agda mechanization was indeed a substantial effort. We were able to borrow a few basic judgements (e.g. typing of the internal language) from the Hazelnut Live mechanization effort, but the central typed expansion judgement and accompanying metatheory is original. Our prior work on textual literal macros at ICFP’18 stated a related expansion theorem (differing substantially in how splices are encoded and with hygiene defined and enforced quite differently due to the textual, not-yet-fully-parsed nature of that system), but there was no accompanying mechanization -- only paper proofs.
+
+In addition, Sec. 4.3 is original theoretical work introducing liveness into graphical notation formally for this first time, borrowing only the basic evaluation and hole filling mechanisms from Hazelnut Live.
+
+With regard to evaluation more broadly, our aim was to build on the substantial body of empirical evidence summarized in Sec. 1, supplementing it with additional non-trivial case studies designed specifically to showcase the novel and cohesive technical mechanisms that are the design contributions of this paper (which enable liveness, compositionality, persistence, parameterization, typing, and hygiene).

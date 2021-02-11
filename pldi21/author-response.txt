@@ -1,0 +1,51 @@
+Thank you for the five thoughtful reviews!
+
+A
+
+Closure collection does require that the livelit influence the result. In practice, there is an implicit hole at the end of every program cell to support resumption [30], the closure for which is a de facto “use” of even otherwise unused variables.
+
+The captured value need not be a variable so it would not appear to the left of the turnstile; rather it is provided as an argument to the proto-expansion, essentially as an implicit additional splice (see [28]).
+
+Initial values for splices must be context independent (Line 595). The edit action semantics [31]  checks this when executing the update monad.
+
+Splices in our model are “analytic”, i.e. have a specified type, but adding “synthetic” splices + type introspection as suggested is an interesting idea! It would become more difficult for clients to know what is expected in each splice, so we chose the more "reasonable" [28] approach as our baseline.
+
+B 
+
+The late mention of structure editing was indeed to separate concerns. We did compare with MPS on Line 1233.
+
+Our use of “hygiene” is consistent with prior work, most directly [28], but given its various connotations we took care to clarify our specific definition immediately in Sec. 1 (Line 194). We agree that connecting to lexical scoping might further illuminate this definition.
+
+In [3], the authors mention hygiene only when admitting that hygiene is not maintained in “some  corner cases”. Further investigation reveals that macro providers can voluntarily invoke Racket’s scope management machinery to prevent capture for (text-only) splices, so we will include a sentence to clarify.
+
+C
+
+Thank you for the suggestions for the exposition in Sec 4. Line 901 should indeed say “expanded expression” not “external expression”.
+
+Although our more sophisticated examples do avail themselves of OCaml's more established GUI libraries for convenience, it is possible to define livelits entirely within Hazel as outlined in Sec. 3, and we have implemented several examples in this way. We plan to primarily show examples written using only Hazel at the conference (the Hazel language and ecosystem is young but growing!)
+
+D
+
+We would be happy to cite Andersen et al. [3] in Sec 7 as suggested. That paper disclaims support for visual notation in splices and does not describe live evaluation of splices (evaluation occurs in the edit-time environment). There may be as-yet-unreported methods possible given the highly dynamic nature of (Dr. )Racket. We are in correspondence with the authors to make sure we are accurately characterizing that paper.
+
+1. Livelits can handle all use cases presented in closely related systems that (1) generate expressions (Graphite and sage can generate arbitrary text, [3] can generate non-expressions), and (2) that do not violate the type and binding discipline. This includes examples across the taxonomy developed in [32]. New binding constructs are not possible (except via splices of arrow type). A future design might support them with a mechanism for explicitly introducing variables into splices, with editor support to alert clients of the situation.
+
+2. The expansion is not arbitrary Exp-typed code -- Exp is the type of expression encodings. The corresponding decoding is validated (Line 948) against the expansion type specified by the livelit, which is analogous to the return type of a function. (See point 3 for more.)
+
+- A Progress theorem for expansion could indeed be stated as a corollary of Progress for the internal language. It would only rule out failure from undefined behavior during evaluation of d_{expand} d_{model}. Decoding of d_{encoded} cannot fail due to Preservation + well-typedness of the livelit definition + the isomorphism between values of Exp type and expanded expressions. Our implementation in Hazel handles all other failure cases (e.g. validation failure + certain situations where the view is malformed) using non-empty holes [31], which we omitted from the formalism for simplicity and because other implementations might handle errors differently.
+
+3. Yes, all livelit definitions have exactly the components shown in Fig. 3. Hazel immediately creates this “skeleton” as soon as you type “livelit “. Each hole in this skeleton has the type shown in Fig. 3, and this code is regular Hazel code so all of Hazel’s editor services are available. 
+
+- The “Exp” type does not include the type of the encoded expression, so expansion validation is needed. Typed quotation systems could remove this need ([28] demonstrated the use of MetaOCaml for this purpose).
+
+- Livelit parameters operate like splices (Sec 2.3.1), so they have SpliceRef type within the definition.
+
+4. In our Sketch-n-Sketch prototype, the text buffer contains the persistent representation of the livelit i.e. its model and splice map as defined in Sec. 4. The user can press a hotkey to bring up a pop up window containing the livelit GUI. GUI actions cause edits to the underlying text buffer. Andersen et al. have also explored displaying the GUI inline in Dr. Racket, and we will also cite this as additional evidence that structure editing is not essential in Sec. 5.2.
+
+E
+
+The Agda mechanization was indeed a substantial effort. We were able to borrow a few basic judgements (e.g. typing of the internal language) from the Hazelnut Live mechanization effort, but the central typed expansion judgement and accompanying metatheory is original. Our prior work on textual literal macros at ICFP’18 stated a related expansion theorem (differing substantially in how splices are encoded and with hygiene defined and enforced quite differently due to the textual, not-yet-fully-parsed nature of that system), but there was no accompanying mechanization -- only paper proofs.
+
+In addition, Sec. 4.3 is original theoretical work introducing liveness into graphical notation formally for this first time, borrowing only the basic evaluation and hole filling mechanisms from Hazelnut Live.
+
+With regard to evaluation more broadly, our aim was to build on the substantial body of empirical evidence summarized in Sec. 1, supplementing it with additional non-trivial case studies designed specifically to showcase the novel and cohesive technical mechanisms that are the design contributions of this paper (which enable liveness, compositionality, persistence, parameterization, typing, and hygiene).
