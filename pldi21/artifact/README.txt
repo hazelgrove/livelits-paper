@@ -333,7 +333,6 @@ root directories in this archive.
      s-expression serialization format that Hazel uses internally. This is not 
      fun to write manually, but we are not claiming this is fun (yet).
 
-
      Using these encodings, we can express an init value that creates one splice
      and stores its splice ref in the model. The update function does not need
      to do anything in the monad except return the new model.
@@ -368,7 +367,7 @@ root directories in this archive.
 
      Instead of "editor" being a monadic command that returns a splice editor
      for the given splice reference, we reserve a tag called "editor" in the
-     HTML and when it is seen as the output of the view function is processed,
+     HTML encoding and when it is seen as the output of the view function is processed,
      the appropriate call to generate the splice editor is made and it is
      inserted in place. The splice reference and other necessary information is
      encoded in the tag's attributes.
