@@ -284,4 +284,145 @@ root directories in this archive.
      of this figure in the paper as using unimplemented syntactic sugar and omitting
      certain incidental details.
 
+     In each of the examples above, the livelit GUI itself was implemented in
+     OCaml, i.e. the livelit was a "built in" livelit.
+
+     However, the system also supports user-defined livelits as outlined in Sec.
+     3, which covers Figure 3. 
      
+     Both built in and user-defined livelits use the same underlying code paths,
+     differing only in that user-defined livelits use the Hazel interpreter to
+     evaluate the various functions involved in livelit use at edit-time whereas
+     built in livelits are implemented natively in OCaml.
+
+     As discussed in the paper, the Hazel language is still quite simple so it
+     is rather challenging to implement complex GUIs and other constructs, e.g.
+     monads and quasiquotation, that are used in Fig. 3. We are limited to
+     tuples, binary sum types (not full recursive datatypes), strings, booleans,
+     integers, floats, and lists.
+    
+     With that said, this set of constructs is sufficient to express a
+     user-defined variant of the slider livelit, called $slidy. This can be seen
+     in the "user-defined livelit slider; basic" example shown in the dropdown
+     at the bottom of the UI.
+     
+     The livelit definition specifies an expansion type, Int. It also specifies 
+     a captured value, here `200` (to make it clear that the captured value need
+     not be a variable). It is not actually needed but can be used if desired.
+
+     The model type for $slidy is a pair of integers (the current and max
+     value).
+     
+     The action type is an integer, corresponding to a click action at that
+     location.
+     
+     The init value initializes one splice, which appears on the right of the
+     livelit GUI and can be used to specify the max of the slider. In the paper,
+     the init value is of UpdateMonad(Model) type. Here, we encode that type
+     using sums. In particular, we have the following API (not a full monad
+     because Hazel is not polymorphic, but sufficient for expressing typical examples):
+
+     return(x) = inj[L](inj[L](x))
+     bindNewSplice((typ, exp), f) = inj[R](inj[L](typ, (exp, f)))
+     bindSetSplice((splice_name, typ, exp), f) = inj[R](inj[R]((splice_name,
+       (typ, (exp, f)))))
+
+     The typ and exp types are both String and use the (verbose) auto-generated 
+     s-expression serialization format that Hazel uses internally. This is not 
+     fun to write manually, but we are not claiming this is fun (yet).
+
+     The splice_name type (a.k.a. SpliceRef in the paper) is Int.
+
+     Using these encodings, we can express an init value that creates one splice
+     and stores its splice ref in the model. The update function does not need
+     to do anything in the monad except return the new model.
+
+     The view function takes in a unique ID for the livelit invocation, called
+     llu, in addition to the model. We do not have algebraic datatypes so we 
+     choose to encode HTML virtual DOM nodes (see paper) as triples of the form 
+
+       (tag, attrs, children)
+
+     Where tag is a String tag, attrs is a [(String, String)] list of name/value
+     pairs, and children is a [?], i.e. a list of dynamic type (because Hazel 
+     does not have recursive types -- the children should also all be triples 
+     of this form.)
+
+     To be able to respond to GUI events, we simply defer to Javascript. For
+     example, the oninput event handler here contains Javascript code. We 
+     inject a function called "trigger" in the globals to allow this code to
+     trigger a livelit action. It takes the livelit's unique ID and a string
+     encoding of a value of action type.
+
+     The view monad from the paper is similarly encoded using sum types, 
+
+       return(x) = inj[L](x)
+       bindEvalSplice(splice_name, f) = inj[R](splice_name, f)
+
+     The function f receives the evaluated result of the given splice in
+     serialized form. For simplicity, we only support splices of Int type 
+     right now but other types could be supported using the s-expression 
+     serialization format described above (which, albeit, is not fun to 
+     try to parse using on Hazel code.)
+
+     Instead of "editor" being a monadic command that returns a splice 
+     editor for the given splice reference, we reserve a tag called "editor"
+     in the HTML and when it is seen as the output of this function is 
+     processed, the appropriate call to generate the splice editor is 
+     made. The splice reference and other necessary information is 
+     part of the attributes.
+
+     In addition to the view function, there is a shape function that was not
+     detailed in the paper. This function requests a certain amount of space for
+     the livelit. If it is an inline livelit, it is a pair of the form
+
+      (true, num_chars)
+    
+     If it is a multi-line livelit, it is of the form 
+
+      (false, num_rows)
+
+     This is necessary for the pretty printer to know how much space to leave
+     for the livelit GUI.
+
+     Finally, the expand function generates an expansion encoded as an
+     S-expression. It should be a function taking in the captures value 
+     (here ignored). Unlike the paper, splices are not passed in as a list 
+     argument. Instead, there is a naming scheme that allows you to refer 
+     to a variable corresponding to a given splice_name in the expansion. 
+     (This example does not need to use a splice in the expansion.)
+
+     All of these fields are required. They are constructed automatically 
+     when you type "livelit " and have the necessary types.
+
+     The Hazel implementation uses the interpreter to run these functions 
+     whenever necessary and then interprets the results back as values of 
+     OCaml native implementations of the UpdateMonad, VDom nodes which are 
+     the building blocks of the GUI system, and other necessary data structures.
+     As Hazel matures, this step will become more straightforward but the basic
+     idea will not need to change substantially -- Hazel code needs to be run 
+     at edit-time and interface with the underlying OCaml implementation.
+     The main complexities here are just in the encodings, not in the interface 
+     between Hazel code and the Hazel environment implementation.
+
+     Using strings in several places makes error handling critical. Hazel
+     supports error holes for livelits, i.e. live evaluation is not blocked 
+     just because of one erroneous livelit, just like with other errors in
+     Hazel. These error holes appear around a livelit invocation when: 
+
+      - A livelit that has not been bound is used
+      - A livelit has not been fully parameterized yet 
+      - A livelit is invoked but its expansion is invalid (i.e. not context
+      independent or not of the expansion type, or cannot even be parsed)
+        => This is demonstrated in the final two examples in the drop down, 
+           which are $slidy implementations with bugs. Notice the cursor 
+           inspector indicates the error.
+      - Errors in the view function, e.g. malformed HTML, can cause a 
+        livelit view error to be shown. This is not a semantic issue.
+
+    Certain error cases in the action processing code cause fatal errors 
+    as of this writing, however (e.g. malformed actions from the Javascript).
+    This is not a fundamental limitation (it requires adding an InvalidAction
+    action that causes the error to be reported in the syntax tree), but as 
+    we move away from string encodings this will no longer be necessary so 
+    we chose not to add this temporary measure.
