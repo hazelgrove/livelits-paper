@@ -20,17 +20,17 @@ root directories in this archive.
   including both:
    
    1. Agda source code
-   2. A Docker image which includes an Agda installation that can be used to
+   2. A Dockerfile which includes an Agda installation that can be used to
       check the proof without locally installing Agda.
 
-  Instructions for local installation and for running the Docker image are
-  included in the README file in /stllc.
+  Instructions for local installation and for running the Dockerfile are
+  included in the README.md file in /stllc.
 
   This mechanization was described in Sec. 4.2.3 of the paper and formalizes the
   syntax, semantics, and metatheory described in Sec. 4.0-4.2 of the paper and
   in Figure 4 and Figure 5. 
   
-  The README file in /stllc includes a mapping from the definitions, figures,
+  The README.md file in /stllc includes a mapping from the definitions, figures,
   and theorems in the paper to the corresponding Agda definitions. 
   
   We make liberal use of Unicode to try to make the syntax of terms and
