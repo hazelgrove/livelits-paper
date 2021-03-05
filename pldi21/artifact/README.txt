@@ -177,7 +177,7 @@ root directories in this archive.
       you build from scratch but it may sometimes crash the application
       and does not handle livelit actions correctly.)
 
-  2. Figure 2, with only incidental variation
+  2. Figure 1(c), with only incidental variation
 
     This example is called "grade_cutoffs" and can be loaded from the drop-down menu at
     the bottom of the user interface.
@@ -239,20 +239,49 @@ root directories in this archive.
       Currently, if any grades are indeterminate then the live view is disabled.
       In both cases, this is only a visual difference -- the expansion is still 
       being generated.
+  
+  3. Figure 2, with only incidental variation
 
-  3. Figure 3, with more substantial variation consistent with our characterization 
+    This example is called "map_img_filter" and can be loaded from the drop-down
+    menu at the bottom of the user interface.
+
+    This example demonstrates a livelit application inside a function. In this 
+    case we are defining an image filter called `classic_look` by making some 
+    adjustments to brightness and contrast. We test this filter by mapping it 
+    over some examples (here, two image URLs) at the bottom.
+
+    The $basic_adjustments livelit takes a URL as a parameter and previews the
+    adjustments being defined, when applied to that image. However, which image
+    of the two (or more) in the list at the bottom should be shown? The user can
+    decide! Multiple closures have been collected, and the user can choose 
+    between them by:
+
+    i)  Putting the cursor on the livelit name "$basic_adjustments"
+    ii) Using the "select a closure" UI at the bottom of the context inspector 
+        in the right sidebar.
+
+    Using this UI, the user can quickly toggle between the image set and see how
+    the filter will affect it. (Give your browser a moment to load the images
+    from the web -- an internet connection is required. If the images are no 
+    longer available when you read this, feel free to change the URLs to images
+    of your choice. You can add new images to the list -- the cons operator 
+    is inserted by typing semicolon (;)).
+
+    Notice that the brightness and contrast itself are determined by splices,
+    in this case filled by default by $percentage livelits. However, the 
+    user can delete those livelits and replace them with any expression of Int 
+    type.
+
+    For simplicity, the $basic_adjustments livelit expands to the integer 0
+    rather than a meaningful value. In practice, it would be an encoding of the 
+    transformation specified for use by downstream functionality, e.g.
+    transformation combinators, photography workflow tools, etc.
+
+    (Note that the map function is included monomorphically here -- Hazel does 
+    not currently support polymorphism.)
+
+  4. Figure 3, with more substantial variation consistent with our characterization 
      of this figure in the paper as using unimplemented syntactic sugar and omitting
      certain incidental details.
 
-  How?
-
-  
-
-  A brief introduction to Hazel
-
-2. A snapshot of the Hazel implementation of livelits, which can be used to reproduce (with incidental
-   variation) Fig. 1, Fig. 2, and a simplified variation on Fig. 3 (consistent with our characterization 
-   of Fig. 3 in the pape r text as using unimplemented syntactic sugar and omitting certain incidental details).
-
-
-A mechanization of the Simply Typed Livelit Calculus as described in Sec. 4.2.3 of the paper. 
+     
