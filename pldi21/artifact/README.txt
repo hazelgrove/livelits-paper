@@ -387,14 +387,15 @@ root directories in this archive.
      for the livelit GUI.
 
      Finally, the expand function generates an expansion encoded as an
-     S-expression. It should encode a function taking in the captures value 
-     (here ignored). Unlike the paper, splices are not passed in as a list 
-     argument. Instead, there is a naming scheme that allows you to refer 
-     to a variable corresponding to a given splice_name in the expansion. 
-     (This example does not need to use a splice in the expansion.)
+     S-expression. It should encode a function taking in the captures value (not
+     used in this example, though it could be). Unlike the paper, splices are
+     not passed in as a list argument. Instead, there is a naming scheme that
+     allows you to refer to a variable corresponding to a given splice_name in
+     the expansion. (This example does not need to use a splice in the
+     expansion.)
 
      All of these fields are required. They are constructed automatically 
-     when you type "livelit " and are initialized with hoels that have the
+     when you type "livelit " and are initialized with holes that have the
      necessary types. Normal Hazel editor services are available, including
      livelit application (only of built in livelits for the moment.)
      Only complete livelit definitions (no remaining holes) are added 
