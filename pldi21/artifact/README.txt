@@ -151,7 +151,8 @@ root directories in this archive.
     - Livelit abbreviations, e.g. "let $percent = ..." in this example, 
       are constructed by typing "abbrev " rather than "let " due to 
       limitations in the underlying editor (which are being fixed as 
-      part of a separate research project.)
+      part of a separate research project.) Typing "let $" will cause 
+      a fatal error (this is a bug).
 
     - The livelit must influence the result of the program in order for
       closures to be collected, which in turn is necessary for the live 
@@ -310,8 +311,8 @@ root directories in this archive.
      a captured value, here `200` (to make it clear that the captured value need
      not be a variable). It is not actually needed but can be used if desired.
 
-     The model type for $slidy is a pair of integers (the current and max
-     value).
+     The model type for $slidy is a pair of integers (the current and a splice 
+     reference for the splice that determines the max value.)
      
      The action type is an integer, corresponding to a click action at that
      location.
@@ -396,6 +397,11 @@ root directories in this archive.
      when you type "livelit " and are initialized with hoels that have the
      necessary types. Normal Hazel editor services are available, including
      livelit application (only of built in livelits for the moment.)
+     Only complete livelit definitions (no remaining holes) are added 
+     to the livelit context to simplify matters (in principle this is 
+     not necessary, but it requires additional error reporting support
+     to report, e.g., when the view cannot be determined due to a hole 
+     in the view function.)
 
      The Hazel implementation uses the interpreter to run these functions 
      whenever necessary and then interprets the results back as values of 
