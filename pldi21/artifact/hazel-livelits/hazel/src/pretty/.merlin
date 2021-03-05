@@ -1,0 +1,17 @@
+EXCLUDE_QUERY_DIR
+B /home/cyrus/.opam/4.08.1/lib/base/caml
+B /home/cyrus/.opam/4.08.1/lib/ocaml
+B /home/cyrus/.opam/4.08.1/lib/parsexp
+B /home/cyrus/.opam/4.08.1/lib/ppx_sexp_conv/runtime-lib
+B /home/cyrus/.opam/4.08.1/lib/sexplib
+B /home/cyrus/.opam/4.08.1/lib/sexplib0
+B ../../_build/default/src/pretty/.pretty.objs/byte
+S /home/cyrus/.opam/4.08.1/lib/base/caml
+S /home/cyrus/.opam/4.08.1/lib/ocaml
+S /home/cyrus/.opam/4.08.1/lib/parsexp
+S /home/cyrus/.opam/4.08.1/lib/ppx_sexp_conv/runtime-lib
+S /home/cyrus/.opam/4.08.1/lib/sexplib
+S /home/cyrus/.opam/4.08.1/lib/sexplib0
+S .
+FLG -ppx '/home/cyrus/Drive/projects/hazelnut/hazel2/_build/default/.ppx/99ce26c0794e45efde3013f872b0677a/ppx.exe --as-ppx --cookie '\''library-name="pretty"'\'''
+FLG -open Pretty -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs
