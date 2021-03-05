@@ -9,7 +9,7 @@ Andrew Blinn (University of Michigan)
 Ian Voysey (University of Michigan)
 Ravi Chugh (University of Chicago)
 
-# Summary 
+# Getting Started Guide  
 
 There are two independent components to this artifact, corresponding to the two
 root directories in this archive.
@@ -25,25 +25,6 @@ root directories in this archive.
 
   Instructions for local installation and for running the Dockerfile are
   included in the README.md file in /stllc.
-
-  This mechanization was described in Sec. 4.2.3 of the paper and formalizes the
-  syntax, semantics, and metatheory described in Sec. 4.0-4.2 of the paper and
-  in Figure 4 and Figure 5. 
-  
-  The README.md file in /stllc includes a mapping from the definitions, figures,
-  and theorems in the paper to the corresponding Agda definitions. 
-  
-  We make liberal use of Unicode to try to make the syntax of terms and
-  judgements match the syntax used in the paper in a recognizable fashion, up to
-  the limitations of Agda's syntax extension mechanism.
-
-  This mechanization is derived from the mechanization of Hazelnut Live, which
-  accompanied a prior paper by some of the authors.
-
-  Note that Sec. 4.3 of the paper, which discusses closure collection, is not
-  mechanized. This is because its correctness follows from the Resumption
-  theorem of Hazelnut Live, for which there was only a paper proof in the prior
-  work. We did not claim that this material was mechanized in the paper.
 
 /hazel-livelits
 
@@ -77,9 +58,29 @@ root directories in this archive.
     additions. The central new construct is the ApLivelit constructor of the
     UHExp.t datatype, which is a livelit invocation.
 
-  ## Reproduction Instructions
+  # Step-by-Step Instructions
 
-  The implementation can be used to reproduce the following figures:
+  ## Agda Mechanization 
+
+  The mechanization was described in Sec. 4.2.3 of the paper and formalizes the
+  syntax, semantics, and metatheory described in Sec. 4.0-4.2 of the paper and
+  in Figure 4 and Figure 5. 
+  
+  The README.md file in /stllc includes a mapping from the definitions, figures,
+  and theorems in the paper to the corresponding Agda definitions. 
+  
+  We make liberal use of Unicode to try to make the syntax of terms and
+  judgements match the syntax used in the paper in a recognizable fashion, up to
+  the limitations of Agda's syntax extension mechanism.
+
+  Note that Sec. 4.3 of the paper, which discusses closure collection, is not
+  mechanized. This is because its correctness follows from the Resumption
+  theorem of Hazelnut Live, for which there was only a paper proof in the prior
+  work. We did not claim that this material was mechanized in the paper.
+
+  ## Hazel Implementation
+
+  The Hazel implementation can be used to reproduce the following figures:
 
   1. Figure 1(b), with only incidental variation
     
@@ -285,8 +286,8 @@ root directories in this archive.
      of this figure in the paper as using unimplemented syntactic sugar and omitting
      certain incidental details.
 
-     In each of the examples above, the livelit GUI itself was implemented in
-     OCaml, i.e. the livelit was a "built in" livelit.
+     In each of the examples above, each livelit GUI itself was implemented in
+     OCaml, i.e. each livelit was a "built in" livelit.
 
      However, the system also supports user-defined livelits as outlined in Sec.
      3, which covers Figure 3. 
