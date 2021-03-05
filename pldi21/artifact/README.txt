@@ -359,18 +359,18 @@ root directories in this archive.
        return(x) = inj[L](x)
        bindEvalSplice(splice_name, f) = inj[R](splice_name, f)
 
-     The function f receives the evaluated result of the given splice in
-     serialized form. For simplicity, we only support splices of Int type 
+     The function f receives the evaluated result of the given splice. 
+     For simplicity, we only support splices of Int type 
      right now but other types could be supported using the s-expression 
      serialization format described above (which, albeit, is not fun to 
-     try to parse using on Hazel code.)
+     try to parse using Hazel code.)
 
-     Instead of "editor" being a monadic command that returns a splice 
-     editor for the given splice reference, we reserve a tag called "editor"
-     in the HTML and when it is seen as the output of this function is 
-     processed, the appropriate call to generate the splice editor is 
-     made. The splice reference and other necessary information is 
-     part of the attributes.
+     Instead of "editor" being a monadic command that returns a splice editor
+     for the given splice reference, we reserve a tag called "editor" in the
+     HTML and when it is seen as the output of the view function is processed,
+     the appropriate call to generate the splice editor is made and it is
+     inserted in place. The splice reference and other necessary information is
+     encoded in the tag's attributes.
 
      In addition to the view function, there is a shape function that was not
      detailed in the paper. This function requests a certain amount of space for
@@ -386,14 +386,16 @@ root directories in this archive.
      for the livelit GUI.
 
      Finally, the expand function generates an expansion encoded as an
-     S-expression. It should be a function taking in the captures value 
+     S-expression. It should encode a function taking in the captures value 
      (here ignored). Unlike the paper, splices are not passed in as a list 
      argument. Instead, there is a naming scheme that allows you to refer 
      to a variable corresponding to a given splice_name in the expansion. 
      (This example does not need to use a splice in the expansion.)
 
      All of these fields are required. They are constructed automatically 
-     when you type "livelit " and have the necessary types.
+     when you type "livelit " and are initialized with hoels that have the
+     necessary types. Normal Hazel editor services are available, including
+     livelit application (only of built in livelits for the moment.)
 
      The Hazel implementation uses the interpreter to run these functions 
      whenever necessary and then interprets the results back as values of 
