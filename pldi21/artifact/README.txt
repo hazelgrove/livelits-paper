@@ -102,8 +102,8 @@ root directories in this archive.
 
     When the splice values are indeterminate, e.g. due to a hole in the splice,
     the $color livelit cannot display a color, so it goes into its own
-    indeterminate feedback mode. An expansion is still being generated -- it is only the
-    live preview that is impossible to generate in this situation.
+    indeterminate feedback mode. An expansion is still being generated -- it is
+    only the live preview that is impossible to generate in this situation.
 
     Hazel does not support type abbreviations currently, so we use the 4-tuple
     type Int, Int, Int, Int to encode a color value. You can see the type of the
@@ -180,8 +180,8 @@ root directories in this archive.
 
   2. Figure 1(c), with only incidental variation
 
-    This example is called "grade_cutoffs" and can be loaded from the drop-down menu at
-    the bottom of the user interface.
+    This example is called "grade_cutoffs" and can be loaded from the drop-down
+    menu at the bottom of the user interface.
 
     Observe that the data frame's cells display the computed value of the
     cell. When the cell is selected, the expression that computes that value is
@@ -227,7 +227,7 @@ root directories in this archive.
 
     Known issues:
     - Focus management is again not great in the $data_frame livelit, e.g. 
-      when you click a cell it does not focus the corresponding splice. We are 
+      when you click a cell it does not focus the corresponding splice. We are
       revamping focus management to better support these kinds of use cases.
 
     - The full expansion is large enough that our pretty printer times out if 
@@ -359,18 +359,19 @@ root directories in this archive.
        return(x) = inj[L](x)
        bindEvalSplice(splice_name, f) = inj[R](splice_name, f)
 
-     The function f receives the evaluated result of the given splice. 
-     For simplicity, we only support splices of Int type 
-     right now but other types could be supported using the s-expression 
-     serialization format described above (which, albeit, is not fun to 
-     try to parse using Hazel code.)
+     The function f receives the evaluated result of the given splice. For
+     simplicity, we only support splices of Int type right now and pass in the
+     value rather than its syntax, but syntactic analysis could be supported
+     using the s-expression serialization format described above (which, albeit,
+     is not fun to try to parse using Hazel code, so we avoid for user-defined
+     livelits.)
 
      Instead of "editor" being a monadic command that returns a splice editor
      for the given splice reference, we reserve a tag called "editor" in the
-     HTML encoding and when it is seen as the output of the view function is processed,
-     the appropriate call to generate the splice editor is made and it is
-     inserted in place. The splice reference and other necessary information is
-     encoded in the tag's attributes.
+     HTML encoding and when it is seen as the output of the view function is
+     processed, the appropriate call to generate the splice editor is made and
+     it is inserted in place. The splice reference and other necessary
+     information is encoded in the tag's attributes.
 
      In addition to the view function, there is a shape function that was not
      detailed in the paper. This function requests a certain amount of space for
