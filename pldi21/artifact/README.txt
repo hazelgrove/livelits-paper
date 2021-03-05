@@ -312,7 +312,8 @@ root directories in this archive.
      not be a variable). It is not actually needed but can be used if desired.
 
      The model type for $slidy is a pair of integers (the current and a splice 
-     reference for the splice that determines the max value.)
+     reference for the splice that determines the max value.) 
+     The splice_name type (a.k.a. SpliceRef in the paper) is Int.
      
      The action type is an integer, corresponding to a click action at that
      location.
@@ -332,7 +333,6 @@ root directories in this archive.
      s-expression serialization format that Hazel uses internally. This is not 
      fun to write manually, but we are not claiming this is fun (yet).
 
-     The splice_name type (a.k.a. SpliceRef in the paper) is Int.
 
      Using these encodings, we can express an init value that creates one splice
      and stores its splice ref in the model. The update function does not need
