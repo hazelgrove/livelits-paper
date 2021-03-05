@@ -397,7 +397,7 @@ root directories in this archive.
      All of these fields are required. They are constructed automatically 
      when you type "livelit " and are initialized with holes that have the
      necessary types. Normal Hazel editor services are available, including
-     livelit application (only of built in livelits for the moment.)
+     livelit invocation (only of built in livelits for the moment.)
      Only complete livelit definitions (no remaining holes) are added 
      to the livelit context to simplify matters (in principle this is 
      not necessary, but it requires additional error reporting support
@@ -435,3 +435,5 @@ root directories in this archive.
     action that causes the error to be reported in the syntax tree), but as 
     we move away from string encodings this will no longer be necessary so 
     we chose not to add this temporary measure.
+
+Thank you for the time and effort you have put into reviewing our artifact!
