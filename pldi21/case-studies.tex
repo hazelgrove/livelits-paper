@@ -7,7 +7,8 @@ a course grade assignment case study in Sec.~\ref{sec:live-grading}
 and an image transformation case study in Sec.~\ref{sec:image-transformation}.
 % We also briefly mention several other examples in Sec.~\ref{sec:additional-examples}.\todo{do we?}{}
 These case studies have been implemented
-in Hazel, a browser-based live programming environment for a dialect of Elm.
+in Hazel, a browser-based live programming environment for a 
+variant of Elm \cite{Elm}.
 Elm is an industrial pure typed functional language in the
 ML family used for client-side web development.
 We assume basic familiarity with ML.
@@ -20,20 +21,21 @@ in order ultimately to assign final letter grades.
 (In fact, this case study is not contrived: one author is using Hazel to compute grades this semester.)
 
 The most common end-user application for this task is the spreadsheet, because
-it allows the instructor to record grades using a natural tabular interface,
-visualize this data in one of a finite number of plot styles,
-and perform basic computations,
+it allows an instructor to (1) record grades using a natural tabular interface,
+(2) visualize this data in one of a finite number of plot styles,
+and (3) perform basic computations,
 with results updated live.
 However, these affordances are limited.
-It is difficult to package up common operations
+It is difficult to package common operations
 into reusable libraries, interact with the data using domain-specific visualizations,
 and perform complex, unanticipated operations
-(e.g. preparing the data in an idiosyncratic format demanded by the university's grading system).
+(e.g. preparing the data in an idiosyncratic format demanded by the university registrar).
 
 General-purpose programming languages
-can handle these scenarios, but users
-lose the ability to receive live feedback and
-directly manipulate data and visualizations in the editor.
+\emph{can} handle these scenarios, but users
+lose the ability to 
+directly manipulate data and visualizations
+and receive live (in-editor) feedback.
 
 Livelits are able to address this tension.
 Fig.~\ref{fig:grading} shows a Hazel program where
@@ -42,19 +44,21 @@ the instructor alternates between programmatic and direct manipulation in severa
 First, the instructor defines a value \li{grades}
 that records the grades for each student using a livelit, \li{\$dataframe},
 that implements a tabular user interface. The formula bar
-allows the selected cell to be filled with an arbitrary Hazel expression.
-For the sake of demonstration, we show a cell that has been filled using another livelit,
-\li{\$slider}, in combination with symbolic manipulation.
-The table itself displays not the expression itself but rather its value, just as in a spreadsheet.
+allows the selected cell to be filled with an arbitrary Hazel expression,
+here a floating point expression that adds together individual problem scores,
+one of which is expressed using another livelit,
+\li{\$slider}.
+The table itself displays not the expression itself but rather its value, \li{93.}, just as in a spreadsheet.
 
 Next, the instructor computes \li{averages}
-for each student by applying \li{compute_averages}, a helper function
-defined in a library  (not shown) shared between multiple courses.
+for each student by applying \li{compute_weighted_averages}, a helper function
+defined in a library  (not shown) shared between courses.
 
-Next, the instructor wants to ``eyeball'' reasonable \li{cutoffs} between letter grades
+Next, the instructor wants to ``eyeball'' reasonable letter grade \li{cutoffs} 
 by directly manipulating a domain-specific livelit, \li{\$grade_cutoffs}, that provides draggable ``paddles''
-superimposed on a live visualization of the distribution of \li{averages}, which is provided as a livelit parameter.
-% The value of \li{cutoffs} is a labeled 4-tuple containing each cut-off.
+superimposed on a live visualization of the distribution of \li{averages}, 
+which is provided as a livelit parameter.
+The value of \li{cutoffs} is a labeled 4-tuple containing each cut-off.
 
 Finally,
 the instructor programmatically assigns grades to students
@@ -64,8 +68,8 @@ and \li{format_for_university},
 again shared functions.
 
 \subsection{Livelit Expansion}\label{sec:livelit-expansion}
-Livelit invocations
-expand to expressions.
+Livelit invocations are expressions 
+that are given meaning by expansion.
 For example, the expansion of Fig.~\ref{fig:grading} is:
 
 \begin{lstlisting}[xleftmargin=0.2cm]
@@ -74,7 +78,7 @@ let grades = Dataframe (
   [("Alice", [24. +. 36. +. 33.,
               92., 83.5, 95., 88.]),
    ("Bob", [61., 64., 98., 70., 85.]),
-   ("Ciri", [75., 81., 73., 82., 79.]),
+   ("Carol", [75., 81., 73., 82., 79.]),
    (* ... *) ]) in
 let averages = compute_averages grades weights in
 let cutoffs = (.A 90., .B 80., .C 70., .D 60.) in
@@ -114,7 +118,7 @@ Hazel displays the information in the livelit declaration when the cursor is on 
 just as it displays typing information in other situations (not shown) \cite{hazeltutor}.
 
 \subsection{Compositionality}\label{sec:splicing-and-parameterization}
-Livelits are compositional: they can work with sub-expressions
+Livelit invocations are compositional: they can embed sub-expressions
 in the form of parameters and splices.
 
 \subsubsection{Parameters}\label{sec:parameterization}
@@ -130,13 +134,16 @@ which allow multiple livelits to form dataflows (not shown).
 Livelit abbreviations can partially apply parameters. For example,
 we can partially apply the first parameter of \li{\$slider} to define a parameterized unsigned slider livelit:
 \begin{lstlisting}[numbers=none,xleftmargin=0cm]
-let $uslider = $slider 0 in ...
+  let $uslider = $slider 0 in ...
 \end{lstlisting}
 Only livelits with no remaining parameters can be invoked,
 so writing \li{\$uslider} in expression position will display as a ``missing livelit parameter'' error.
-(In Hazel, erroneous expressions
+In Hazel, erroneous expressions
 are automatically placed inside holes and do not prevent other parts of the program from evaluating
-\cite{HazelnutLive}.)
+\cite{HazelnutLive}.
+A livelit invocation can also indicate that no 
+expansion is available with a custom error message, e.g. due to non-sensical bounds,
+which is also displayed to the user (not shown).
 % \footnote{\label{footnote:typing}}
 
 
@@ -159,7 +166,7 @@ are automatically placed inside holes and do not prevent other parts of the prog
 
 
 \subsubsection{Splices}\label{sec:splices}
-Spliced expressions, or \emph{splices}, appear directly inside the livelit GUI.
+Spliced sub-expressions, or \emph{splices}, appear directly inside the livelit GUI.
 Splices can be filled with Hazel expressions of any form, including other livelit invocations.
 For example, each cell in the \li{\$dataframe} GUI in Fig.~\ref{fig:grading}
 has a corresponding splice. The formula bar at the top
@@ -167,14 +174,14 @@ allows the user to edit the splice corresponding to the selected cell,
 and all of Hazel's editing affordances are available when the client does so.
 % Not all splices necessarily appear in the GUI.
 Unlike parameters, the number of splices can change
-as the user interacts with the livelit, e.g. when changing the number of rows or columns in a \li{\$dataframe}.
+as the user interacts with the livelit, e.g. when adding or removing rows or columns in a \li{\$dataframe}.
 % The cell itself displays the live value of the spliced expression---
 % (we return to live evaluation in Sec.~\ref{sec:live-evaluation} below.
 
 The livelit provides an expected type for each splice when it is created.
 For example, the splices for the row and column keys in Fig.~\ref{fig:grading} have expected type \li{String},
 and the remaining cells have expected type \li{Float}.
-Hazel surfaces and uses the expected type when the cursor is in the splice \cite{hazeltutor}.
+Hazel displays and uses the expected type when the cursor is on the splice \cite{hazeltutor}.
 % If an expression of invalid type is entered, it will display in an error hole as usual,
 % and in Hazel this will not prevent evaluation of other expressions (see Footnote \ref{footnote:typing}).
 
@@ -182,24 +189,28 @@ Hazel surfaces and uses the expected type when the cursor is in the splice \cite
 % deleted, and filled through user interaction with the livelit. For example, clicking the \li{+} buttons
 % in Fig.~\ref{fig:grading} will create new rows or columns, which will in turn generate new splices.
 
-\subsubsection{Hygienic Composition}\label{sec:hygiene}
+\subsubsection{Binding Discipline}\label{sec:hygiene}
 
 
 Ensuring that clients can reason about binding while leaving expansions
- invisible
- requires a hygiene discipline that enforces \emph{capture avoidance}
-and \emph{context independence} \cite{TLMs,adamsHygiene}.
+ abstract
+ requires enforcing two key properties: \emph{capture avoidance}
+and \emph{context independence} \cite{TLMs,adamsHygiene,DBLP:conf/popl/ClingerR91}.
 
 \textbf{Capture Avoidance.}
-Splices and parameters can appear anywhere in the expansion.
-This becomes problematic when
-they appear under a binder, e.g. in the body of a function or \li{let} binding.
-Na\"ively, this could cause inadvertent capture of the bound variable by a free variable
+Splices and parameters are passed into the expansion as function arguments, 
+so they cannot capture any bindings internal to the expansion. All bindings 
+are lexically scoped to the livelit invocation site.
+
+Consider an alternative where 
+splices could directly appear anywhere within the expansion, 
+e.g. in the body of a generated function or \li{let} binding.
+Na\"ively, this could cause inadvertent capture of the bound variables in the expansion by a free variable
 in the parameter or splice. For example, consider a livelit that generates an expansion
 of the following seemingly innocuous form:
 \begin{lstlisting}[numbers=none]
-let len = strlen <splice1> in
-Some (<splice2> + len)
+  let len = strlen <splice1> in
+  if len > 0 then Some (<splice2> + len) else None 
 \end{lstlisting}
 Here, \li{<splice2>} appears under the binding of \li{len}. If the client has filled
 \li{<splice2>} with an expression that refers to a client-side binding of \li{len},
@@ -209,11 +220,32 @@ This breaks abstraction and is notoriously difficult to debug,
 both for the livelit provider, who has no way to predict which variables a client will use,
  and the client, who does not know which variables the provider used.
 
-To avoid this situation, parameters and splices are placed in the expansion
+To avoid this situation, parameters and splices must be placed in the expansion
 in a capture-avoiding manner: variables in splices
 always refer to the bindings visible to the client,
 rather than bindings that are hidden inside the expansion.
-We discuss how this is implemented in Sec.~\ref{sec:expansion}.
+In other macro systems, e.g. that of \citet{TLMs}, 
+capture avoiding substitution is used. 
+% This allows splices to appear 
+% multiple times and also appear in branches that may or may not evaluate. 
+To simplify reasoning about live evaluation, discussed below, we take 
+an even more restrictive approach by passing splices in as function 
+arguments. In an eagerly evaluated language, this ensures that 
+splice evaluation is not conditional on computations invisible to the 
+client (such as the length check above), 
+and it also ensures that evaluation will not inadvertently 
+occur multiple times or not occur at all. 
+% We discuss how this is implemented in Sec.~\ref{sec:expansion}.
+
+The trade-off is that this prevents the expression of new 
+binding constructs and even control flow constructs as livelits.
+We take this as a strength, in that it simplifies 
+reasoning for client programmers. However, this is an independent 
+design decision: 
+more permissive designs that nevertheless 
+maintain the critical capture avoidance property are possible.
+
+
 % This is implemented by alpha-renaming bindings internal to the expansion as necessary.
 % (We discuss potentially relaxed variations of this hygiene discipline in Sec.~\ref{sec:discussion}.)
 
@@ -250,7 +282,7 @@ corresponding hole closures, i.e. holes with environments.
 For example, there is one closure for \li{\$dataframe} in Fig.~\ref{fig:grading}.
 It contains the value of \li{q1\_max} and the other variables in scope.
 These values can be used to evaluate
-splices that use the corresponding variables, such as the cell selected in Fig.~\ref{fig:grading}.
+splices that use these variables, such as the cell selected in Fig.~\ref{fig:grading}.
 
 Similarly, the closure for \li{\$grade_cutoffs} in Fig.~\ref{fig:grading} includes
 the necessary \li{averages} variable, but

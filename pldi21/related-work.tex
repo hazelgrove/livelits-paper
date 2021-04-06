@@ -23,7 +23,7 @@ The typed expansion judgement central to the typed livelit calculus in this pape
 is structured similarly 
 to the corresponding judgements in the formal systems describing TLMs and TSLs,
 and the reasoning principles are closely related. However, the  
-approach to hygiene we take is cleaner by its use of function application 
+approach to capture avoidance we take is both more restrictive and cleaner by its use of function application 
 rather than direct insertion of splices (and could perhaps be ported to those formalisms).
 Splices also operate quite differently in our work,
 because they are placed automatically and structurally delimited in the user interface, rather than 
@@ -35,10 +35,16 @@ Recent work on a interactive visual macro system in Racket
 is quite similar in spirit to our work \cite{interactive-visual-syntax}.
 However, it supports only a limited form of splicing via a pop up text editor
 that does not support full compositionality as described here, where livelits 
-can appear within other livelits. Splicing is not hygienic, nor is there any 
+can appear within other livelits. Splicing is not strictly hygienic, though 
+Racket's scope management machine can be used by macros to voluntarily 
+maintain a binding discipline \cite{DBLP:conf/popl/Flatt16}. There is not any 
 consideration of typing. Parameterization and partial application is also impossible, because invocation 
 is via an editor command rather than a syntactic mechanism. Finally,
-there is no support for liveness. 
+there is no support for liveness: macro evaluation occurs in the editor 
+environment, not the run-time environment of the program being written, 
+so splice evaluation would not work correctly (except in trivial cases
+where the splice was, e.g., a closed expression, or used only standard 
+library constructs).
 
 Our structural delimitation of splices is reminiscent of work on 
 \emph{language boxes} \cite{DBLP:conf/sle/RenggliDN09}, which focused on 

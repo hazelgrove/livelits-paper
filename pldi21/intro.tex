@@ -1,75 +1,80 @@
 \section{Introduction}\label{sec:intro}
-Text-based program editors are flexible and expressive user interfaces
+Text-based program editors are flexible and powerful user interfaces, 
 so it is little wonder that they remain dominant decades after the teletype.
 However, textual user interfaces are not the best tool for every computational job.
 % In particular, there are countless 
 % data types for which a non-textual
 % user interface may situationally be more appropriate.
 
-As a simple example, consider a record type
+Consider, as a simple example, a record type
 classifying RGBA-encoded colors. 
 It is possible to select a particular color by entering
-an expression of this type in a text editor, e.g. \li{\{ r: 255, g: 178, b: 45, a: 100 \}}. 
-The problem with this textual user interface for color selection is that 
-it offers no live feedback about which color has been selected 
-and limited editing affordances for tweaking the selected color.
+an expression of this type in a text editor, e.g. \li{\{ r: 57, g: 107, b: 57, a: 92 \}}. 
+The problem with this \emph{de facto} textual user interface for color selection is that 
+it offers no live feedback about which color has been expressed 
+and limited editing affordances for choosing a different color.
 Analagous critiques apply to strictly textual user interfaces for 
 countless other data structures,
-such as vector graphics,
+e.g. vector graphics,
 animation parameters,
 musical sequences,
 audio filters,
 board game states, 
 GUI widgets and layouts,
-tabular data, 
+tabular numeric data, 
 plots,
 geospatial data, 
 neural network diagrams, 
 biological neuron models, 
-mathematical diagrams, 
-and so on.
-
-% It is difficult for the programmer, or anyone subsequently reading or modifying the code, to know which color is represented
-% and to interactively tweak that color.
+and mathematical diagrams.
 
 Practitioners in domains where manipulating data of types like these is 
 a central activity 
 have largely eschewed general-purpose programming environments 
-in favor of more specialized graphical end-user applications, like %
+in favor of specialized graphical end-user applications, e.g. %
 image and video editors, music composition software, level design tools, 
-and bespoke GUIs written by students or lab technicians, 
-in large part because these applications 
-take seriously the need for domain-specific forms of live feedback, 
-graphical data representations, and 
+and bespoke GUIs written by students or lab technicians.
+This is in large part because these applications 
+take seriously the need for live feedback, domain-specific 
+non-textual data representations, and 
 direct manipulation affordances, 
-e.g. color palettes, visual timelines, interactive plots, and maps.
+e.g. color palettes, visual timelines, plots, and maps.
 
 The tragedy is that these applications have 
 limited support for abstraction and composition.
 It is difficult, for example, to bind a
 color to a variable for use in multiple locations in an
-otherwise directly constructed game map,
-or to define a function that computes portions of an 
-otherwise directly constructed vector graphic,
-or to transform a directly constructed musical sequence 
-by passing it through a series of symbolically defined functions.
-Moreover, it is difficult to add new affordances or to compose
+otherwise directly constructed game map, 
+or to define functional combinators to compute portions of an 
+otherwise directly constructed musical composition. 
+Some applications include \emph{ad hoc} abstraction mechanisms for 
+the most common such use cases, e.g. named color swatches, 
+but users cannot themselves define new affordances, either programmatic or graphical, 
+nor compose
 affordances in ways that the application developer did not anticipate.
-Users cannot easily make even simple changes like replacing a numeric text box in a dialog with a slider,
-much less more ambitious changes like installing an alternative visual interface for expressing geospatial data queries 
-into a database frontend.
+For example, 
+users cannot make even simple changes like replacing a 
+numeric text box with a slider,
+much less more ambitious changes like importing an alternative 
+visual interface for expressing geospatial data queries 
+into a civic database front-end. 
+% In short, end users and programmers speak entirely different languages, 
+% leaving end users to rely helplessly on programmers, 
+% and programmers unable to bring their skills to bear 
+% when using end-user applications.
 
 % Better support for manipulating data of types like these would be particularly helpful for users engaging in
 % live and exploratory programming in domains like web design, media production,
 % and data analysis. Indeed, 
 
-This paper aims to resolve this tension between
+This paper aims to bridge the gap between
 programmatic and direct manipulation user interfaces by designing 
 a programming environment that
-is able to surface GUIs when working with types for which
-they are useful, while retaining full support for symbolic program manipulation
+is able to surface a GUI when entering an expression of a type for which
+it is useful, while retaining full support for symbolic program manipulation
 and the abstraction and composition mechanisms
-available in modern general-purpose programming languages.
+available in modern general-purpose languages, both   
+in the spaces between these GUIs and compositionally within these GUIs.
 
 \subsection{Background}\label{sec:background}
 \definecolor{mygray}{rgb}{0.93, 0.93, 0.93}
@@ -116,8 +121,8 @@ available in modern general-purpose programming languages.
 %   \vspace*{-2mm}
 \end{figure*}
 
-Of course, we are not the first to integrate direct manipulation interfaces
-into symbolic programming environments.
+We are not the first to integrate GUIs 
+into programming.
 % Prior work on projectional editing
 % and active code completion, detailed in Sec. \ref{sec:related-work},
 % has also considered the problem of entering expressions
@@ -127,21 +132,21 @@ into symbolic programming environments.
 The prior work most relevant to this paper is the {Graphite} system for Eclipse for Java,
 demonstrated in Fig.~\ref{fig:graphite} \cite{Graphite}.
 Graphite allows a library provider to associate a GUI, called a \emph{palette}, with a type 
-(via a Java class annotation).
+(via a Java class annotation), here \li{Color}.
 Wherever an expression of this type is needed,
-i.e. wherever there is a \emph{hole} of that type in the program
+i.e. wherever there is a \emph{hole} of this type 
 (as determined by Eclipse's online parser and typechecker),
 the environment offers the client the option, via the code completion menu,
-to interact with the palette.
-Once the interaction is finished, the palette generates a
-Java expression to fill the hole.
-Figure~\ref{fig:graphite}, adapted from this prior work, demonstrates a color palette invoked using Graphite.
-When the user presses the \li{Enter} key, the Java expression \li{new Color(173, 173, 173, 85)} is inserted at the cursor and the palette disappears.
-Several related systems, such as the  
-\textbf{mage} system for the Jupyter notebook environment \cite{DBLP:conf/uist/KeryRHMWP20}
-behave fundamentally similarly.
+to generate it using the palette.
+Once the user presses \li{Enter} to indicate that the 
+interaction is finished, the palette generates a
+Java expression to fill the hole, here \li{new Color(57, 107, 57, 235)}.
+Several other systems, such as the  
+\textbf{mage} system for Jupyter notebooks \cite{DBLP:conf/uist/KeryRHMWP20}
+behave analagously.
 Projectional editing, the visual macro system in Racket \cite{interactive-visual-syntax}, and a number of other designs
-also confront this general problem of integrating GUIs and code.
+also confront this general problem of integrating GUIs with symbolic code
+in broadly similar ways.
 
 \citet{Graphite} evaluated Graphite by surveying 473 developers 
 and \citet{DBLP:conf/uist/KeryRHMWP20} evaluated \textbf{mage} by interviewing 9 developers.
@@ -162,36 +167,36 @@ and the Graphite survey solicited dozens of additional use cases from participan
 which the authors systematically taxonomize \cite{Graphite}. 
 We take these extensive empirical findings   
 as evidence for, and a showcase of, 
-the value of this class of mechanisms for integrating GUIs into code.
+the value of this broad class of mechanisms for integrating GUIs with code.
 \vspace{-1mm}
 \subsection{Contributions}
 \label{sec:contributions}
-We turn our attention in this paper to several fundamental technical
-deficiencies that limit GUI providers and clients using these prior systems.
+We turn our attention in this paper to a number of fundamental technical
+deficiencies that limit both GUI providers and clients using these prior mechanisms.
 To address these, 
 we introduce a system of \emph{live literals}, or \emph{livelits}, 
 demonstrated in Fig.~\ref{fig:color}. 
 Livelits are unique in achieving all of the following properties.
-(We describe which subset of these properties 
+(Sec.~\ref{sec:related-work} describes which subset of these  
 are achieved by prior systems,
-including those just mentioned, 
-in Sec.~\ref{sec:related-work}.)
+including those just mentioned.)
 
 \newcommand{\llproperty}[1]{\vspace{5px}\noindent\textbf{#1}.}
 
 \llproperty{Decentralized Extensibility}
-    Providers define livelits in libraries, and 
-    clients invoke livelits by name. Livelit names, e.g. \li{\$color},  are prefixed by \li{\$},    
+    Providers define livelits in libraries. 
+    Clients invoke livelits by name. Livelit names, e.g. \li{\$color}, 
+    are prefixed by \li{\$} (pronounced ``lit''),    
     to distinguish them from variables.
-    % We call this \emph{decentralized extensibility}.
+    We call this \emph{decentralized extensibility}
+    to distinguish it from systems that are not extensible or 
+    that can only be extended via editor extensions or editor generation.
     % Both mage and Racket's visual syntax system are similarly extensible, 
     % but 
     % In Graphite, palettes are associated with class definitions, 
     % so there is a tighter association between 
-    % Other systems, discussed in Sec.~\ref{sec:related-work}, 
-    % are either non-extensible, or cannot be extended by library providers 
-    % (only by, for example, separately installed editor extensions, or by 
-    % regenerating the editor using a language workbench.)
+    % as distinct from systems that 
+    % are either non-extensible or cannot be extended by library providers.
  
 \llproperty{Persistence}
   % In Graphite and \textbf{mage}, GUIs are {ephemeral},
@@ -206,37 +211,43 @@ in Sec.~\ref{sec:related-work}.)
   % a parser for the subset of Java used in the code that it generates,
   % and therefore this mechanism is quite brittle. It is also difficult
   % to persist GUI state that is not included in the generated code.}
-  Livelits are persistent elements of the syntax tree. They operate as  
+  Livelit invocations are expressions, i.e. they  are persistent elements of the syntax tree. They operate as  
   graphical literals, rather than as the ephemeral code generation GUIs of Graphite and \textbf{mage}. 
   We define a pure model-view-update-expand architecture
   (a variation on Elm's model-view-update architecture \cite{ElmArchitecture}) 
   where only the model needs to be persisted.
-  The dynamic meaning of a livelit is determined by macro expansion.
+  The dynamic meaning of a livelit is determined by a macro expansion step.
   % We chose the word ``literal'' rather than ``palette'' because,  persistence, livelits
   % operate as graphical literals.
 
-\llproperty{Hygienic Composition}
+\llproperty{Compositionality}
 % Prior systems have limited or no support for {entering sub-expressions within the GUI}, 
 % so they are useful mainly for generating expressions composed of constants,
 % e.g. color constants in Fig.~\ref{fig:color}(a).
 %
-  Livelits support sub-expressions directly in the GUI, which we call \emph{splices} (after
+   Livelit GUIs can embed sub-expressions, which we call \emph{splices} (after
    \citet{TLMs}).
   Fig.~\ref{fig:color} demonstrates splicing: the RGBA components  
-  are splice editors, so the client can define a variable, \li{baseline},
-  to relate the color components 
+  are each splice editors, so the client can define a variable, \li{baseline},
+  to relate the color components (here, to explore greens by offsetting the green component past the baseline)
   and use a slider livelit inline to specify the alpha component.
   % Similarly, Fig.~\ref{fig:grading}(b)\todo{subfigure labels}{} demonstrates a 
   %  data table livelit where each entry is a splice.
   
-  Crucially, composition is strictly 
-  governed by a hygiene discipline that ensures
-  (1) \textbf{capture avoidance}, i.e. that variables that the client uses in splices 
-  will not capture expansion-internal bindings; and 
+  Crucially, composition is  
+  governed by a binding discipline that ensures 
+  (1) \textbf{capture avoidance}, i.e. that variables that the client uses in splices, like \li{baseline},  
+  are lexically scoped to the livelit invocation site (so they cannot inadvertently capture expansion-internal bindings, which can therefore be left abstract); and 
   (2) \textbf{context independence}, i.e. that the livelit 
-  can be invoked in any program context.%without pre-condition or conflict.
+  can be invoked and operate in any lexical context (so the client need not worry about naming conflicts or manage hidden library dependencies).
+  This binding discipline is a form of ``macro hygiene'' \cite{TLMs, adamsHygiene, DBLP:conf/popl/ClingerR91}, 
+  though note that we take a particularly restrictive approach to hygiene compared to, for example, the Racket macro system \cite{DBLP:conf/popl/Flatt16}: 
+  new binding and control flow constructs intentionally cannot be expressed to allow clients to understand splices as   
+  function parameters (and indeed this is how they are internally handled).
 
-\llproperty{Parameterization} Livelits can form parameterized families.
+ %without pre-condition or conflict.
+
+\llproperty{Parameterization} Livelits can also take parameters directly, forming parameterized families.
   For example, \li{\$slider} in Fig.~\ref{fig:color} is parameterized by the slider's bounds.
   Parameters operate like splices, differing in that they can be partially applied in
   livelit abbreviations. For example, Fig.~\ref{fig:color}
@@ -246,11 +257,13 @@ in Sec.~\ref{sec:related-work}.)
   % \end{lstlisting}
   % Parameterization also underlies the hygiene mechanism, as we will discuss in Sec.~\ref{sec:livelit-definitions}.
 
-\llproperty{Typing} Each livelit specifies the type of expansions it generates, 
-and parameters and splices also specify types, 
-so livelits are compatible with type-driven methodologies and tools.
-Together with the hygiene discipline, this allow clients to reason abstractly about expansions, i.e.  
-without inspecting the expansions or livelit implementations directly.
+\llproperty{Typing} Each livelit must specify an expansion type, 
+and parameters and splices must also specify types, 
+so livelits are compatible with type-driven development.
+Together with the binding discipline, 
+this allow clients to reason abstractly, i.e.  
+without inspecting the expansion or livelit implementation.
+% in the manner of a function application. 
 
 \llproperty{Liveness} Uniquely, livelits can evaluate splices 
   throughout the editing process 
@@ -262,32 +275,34 @@ without inspecting the expansions or livelit implementations directly.
   Evaluation occurs in a run-time environment (i.e. closure) determined by
   leaving the hole being filled by the livelit temporarily unfilled and then evaluating
   using a two-phased variant of the semantics for 
-  live programming with typed holes developed by \citet{HazelnutLive}.
-  We support live evaluation even for livelits 
-  that appear inside a function. Multiple function calls lead 
+  Hazelnut Live \cite{HazelnutLive}.
+  Live evaluation is supported even for livelits 
+  that appear inside a function: multiple function calls 
+  can lead 
   to multiple closures that the client 
-   can select between.
+   selects between.
 
-\paragraph{Outline.} We begin in Sec.~\ref{sec:case-studies} by introducing
+\paragraph{Outline.} Sec.~\ref{sec:case-studies} introduces
 livelits from the perspective of client programmers. 
-Our examples are organized into case studies 
-and are chosen to demonstrate the novel contributions of this paper.
-In Sec.~\ref{sec:livelit-definitions}, 
-we consider the livelit provider's perspective by introducing livelit
+% Our examples are organized into case studies 
+% that demonstrate the novel contributions of this paper.
+Sec.~\ref{sec:livelit-definitions} then 
+considers the livelit provider's perspective by introducing livelit
 definitions with a detailed example.
-In Sec.~\ref{sec:livelit-calculus}, we define the \emph{typed livelit calculus}. 
-We have mechanically specified the central mechanism, livelit expansion, and proven the associated metatheorems in Agda.
+Sec.~\ref{sec:livelit-calculus} defines the \emph{typed livelit calculus}. 
+We have mechanically specified the central mechanism, livelit expansion, 
+and proven the associated metatheorems in Agda.
 This calculus 
 serves to capture the essential nature of livelits 
 independent of the particularities of syntax, GUI frameworks, 
 and other orthogonal design details,
 because we believe livelits can be integrated into a wide variety of programming systems. 
-In Sec.~\ref{sec:implementation}, we provide a more detailed account of our two implementations of livelits.
+Sec.~\ref{sec:implementation} provides a more detailed account of our implementation of livelits.
 Our primary implementation, used in the screenshots in the paper,
-is integrated into Hazel, a live programming environment designed 
+is integrated into Hazel, a live functional programming environment designed 
 around hole-driven development. 
-We have also prototyped livelits within a standard text editor. 
+We have also prototyped livelit editing within a standard text editor. 
 Additionally, we discuss factors that must be considered when integrating livelits into languages with side effects.
-In Sec.~\ref{sec:related-work}, we compare livelits to related work using the design properties outlined above 
+Sec.~\ref{sec:related-work} compares livelits to related work using the design properties outlined above 
 as a rubric.
-Finally, we conclude in Sec.~\ref{sec:discussion} after a discussion of present limitations and future work.
+We conclude in Sec.~\ref{sec:discussion} after a discussion of present limitations and several directions for future work.

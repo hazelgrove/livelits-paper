@@ -5,38 +5,38 @@
 %% \cite{popl-paper}
 
 \begin{abstract}
-    Although text editing is powerful, 
+    Text editing is powerful, but 
     some types of expressions are more naturally represented and manipulated
     graphically.
-    % Examples include expressions that compute 
-    % colors,
-    % animation parameters,
-    % musical sequences,
-    % tabular data, 
-    % plot parameters,
-    % GUI widgets, 
-    % and various other domain-specific data structures.
+    Examples include expressions that compute 
+    colors,
+    music,
+    animations,
+    tabular data, 
+    plots,
+    GUI widgets, 
+    mathematical diagrams, 
+    and other domain-specific data structures.
     This paper introduces \emph{live literals}, or \emph{livelits}, 
     which allow
-    clients to fill holes of these types  
+    clients to fill holes of types like these   
     by directly manipulating a     
-    provider-defined GUI embedded persistently into otherwise 
-    symbolic code. 
-    Uniquely, livelits are compositional: the GUI can itself contain
-    spliced expressions, which have full editor support and can in turn contain other livelits. 
-    Splices are typed and the system 
-    ensures that livelits treat splices hygienically. 
-    Livelits are also uniquely live: 
-    they can offer {immediate feedback} about the run-time implications 
+    user-defined GUI embedded persistently into code. 
+    Uniquely, livelits are \emph{compositional}: a livelit GUI can itself embed 
+    spliced expressions, which are typed, lexically scoped, enjoy full editor support and can in turn embed 
+    other livelits. 
+    Livelits are also uniquely \emph{live}: 
+    a livelit can provide {continuous feedback} about the run-time implications 
     of the client's choices 
     even when splices mention bound variables, 
     because the system continuously gathers closures associated with the 
     hole that the livelit is tasked with filling.
-    This paper introduces livelits with case studies that exercise these novel capabilities. 
-    We implement livelits in Hazel, 
+    We integrate livelits into Hazel, 
     a live programming environment able to 
-    typecheck and run programs with holes. 
-    We then define a typed lambda calculus that captures the essence of livelits as 
+    typecheck and run programs with holes, 
+    and describe several case studies that exercise these novel capabilities. 
+    We then define a minimal typed livelit calculus, which precisely 
+    specifies how livelits operate as 
     live graphical macros.     
-    The macro expansion process has been mechanized in Agda.
+    The metatheory of macro expansion has been mechanized in Agda.
 \end{abstract}

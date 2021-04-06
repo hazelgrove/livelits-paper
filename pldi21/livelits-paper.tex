@@ -1,6 +1,6 @@
 \PassOptionsToPackage{svgnames,dvipsnames,svgnames}{xcolor}
 \documentclass[sigplan,10pt]{acmart}
-\settopmatter{printfolios=true,printccs=false,printacmref=false}
+\settopmatter{printfolios=true,printccs=true,printacmref=true}
 %% For double-blind review submission, w/ CCS and ACM Reference
 %\documentclass[acmsmall,review,anonymous]{acmart}\settopmatter{printfolios=true}
 %% For single-blind review submission, w/o CCS and ACM Reference (max submission space)
@@ -13,17 +13,26 @@
 %% Conference information
 %% Supplied to authors by publisher for camera-ready submission;
 %% use defaults for review submission.
-\acmConference[PL'21]{ACM SIGPLAN Conference on Programming Languages}{January 01--03, 2018}{New York, NY, USA}
+% \acmConference[PL'21]{ACM SIGPLAN Conference on Programming Languages}{January 01--03, 2018}{New York, NY, USA}
+% \acmYear{2021}
+% \acmISBN{} % \acmISBN{978-x-xxxx-xxxx-x/YY/MM}
+% \acmDOI{} % \acmDOI{10.1145/nnnnnnn.nnnnnnn}
+% \startPage{1}
+\setcopyright{rightsretained}
+\acmPrice{}
+\acmDOI{10.1145/3453483.3454059}
 \acmYear{2021}
-\acmISBN{} % \acmISBN{978-x-xxxx-xxxx-x/YY/MM}
-\acmDOI{} % \acmDOI{10.1145/nnnnnnn.nnnnnnn}
-\startPage{1}
+\copyrightyear{2021}
+\acmSubmissionID{pldi21main-p174-p}
+\acmISBN{978-1-4503-8391-2/21/06}
+\acmConference[PLDI '21]{Proceedings of the 42nd ACM SIGPLAN International Conference on Programming Language Design and Implementation}{June 20--25, 2021}{Virtual, Canada}
+\acmBooktitle{Proceedings of the 42nd ACM SIGPLAN International Conference on Programming Language Design and Implementation (PLDI '21), June 20--25, 2021, Virtual, Canada}
 
 %% Copyright information
 %% Supplied to authors (based on authors' rights management selection;
 %% see authors.acm.org) by publisher for camera-ready submission;
 %% use 'none' for review submission.
-\setcopyright{none}
+% \setcopyright{none}
 %\setcopyright{acmcopyright}
 %\setcopyright{acmlicensed}
 %\setcopyright{rightsretained}
@@ -77,8 +86,8 @@ commentstyle=\itshape\ttfamily\color{gray},
 stringstyle=\ttfamily\color{purple},
 mathescape=false,escapechar=\#,
 numbers=left, numberstyle=\scriptsize\color{gray}\ttfamily, language=ML, showspaces=false,showstringspaces=false,xleftmargin=15pt,
-morekeywords={string, float, int, Int, Float, String, livelit, at, SpliceRef, UpdateMonad, ViewMonad, Html, return,
-captures, Typ, Exp, Maybe, List, Result, Dim, Unit},
+morekeywords={string, float, int, Int, Float, String, livelit, at, SpliceRef, UpdateCmd, ViewCmd, Html, return,
+context, Typ, Exp, Maybe, List, Result, Dim, Unit},
 classoffset=0,belowskip=\smallskipamount, aboveskip=\smallskipamount,
 xleftmargin=0cm,
 moredelim=**[is][\color{red}]{SSTR}{ESTR}
@@ -157,30 +166,30 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \makeatletter\if@ACM@journal\makeatother
 %% Journal information (used by PACMPL format)
 %% Supplied to authors by publisher for camera-ready submission
-\acmJournal{PACMPL}
-\acmVolume{1}
-\acmNumber{1}
-\acmArticle{1}
-\acmYear{2018}
-\acmMonth{3}
-\acmDOI{10.1145/nnnnnnn.nnnnnnn}
+% \acmJournal{PACMPL}
+% \acmVolume{1}
+% \acmNumber{1}
+% \acmArticle{1}
+% \acmYear{2018}
+% \acmMonth{3}
+% \acmDOI{10.1145/nnnnnnn.nnnnnnn}
 \startPage{1}
 \else\makeatother
 %% Conference information (used by SIGPLAN proceedings format)
 %% Supplied to authors by publisher for camera-ready submission
 % \acmConference[]{ACM SIGPLAN Conference on Programming Languages}{January 01--03, 2017}{New York, NY, USA}
 
-\acmYear{2018}
-\acmISBN{978-x-xxxx-xxxx-x/YY/MM}
-\acmDOI{10.1145/nnnnnnn.nnnnnnn}
-\startPage{1}
+% \acmYear{2018}
+% \acmISBN{978-x-xxxx-xxxx-x/YY/MM}
+% \acmDOI{10.1145/nnnnnnn.nnnnnnn}
+% \startPage{1}
 \fi
 
 
 %% Copyright information
 %% Supplied to authors (based on authors' rights management selection;
 %% see authors.acm.org) by publisher for camera-ready submission
-\setcopyright{none}             %% For review submission
+% \setcopyright{none}             %% For review submission
 %\setcopyright{acmcopyright}
 %\setcopyright{acmlicensed}
 %\setcopyright{rightsretained}
@@ -426,7 +435,7 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 % </ccs2012>
 % \end{CCSXML}
 
-% \ccsdesc[500]{Software and its engineering~General programming languages}
+\ccsdesc[500]{Software and its engineering~General programming languages}
 % \ccsdesc[300]{Social and professional topics~History of programming languages}
 %% End of generated code
 
@@ -434,7 +443,7 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 %% Keywords
 %% comma separated list
 % \keywords{keyword1, keyword2, keyword3}  %% \keywords is optional
-% \keywords{Live Programming, Palettes, Hazel, Code Editors}
+\keywords{live programming, macros, typed holes, GUIs}
 
 
 %% \maketitle
@@ -472,9 +481,6 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \input{related-work}
 \input{discussion}
 
-
-
-\
 
 %\clearpage
 \bibliography{references,all.short,hazel_NSF}

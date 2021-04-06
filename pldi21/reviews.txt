@@ -91,6 +91,25 @@ mentions "corner cases" with respect to a much more expressive
 extension API, and it will not suffer hygiene problems with simple
 expression extensions.
 
+Post author-response comments
+-----------------------------
+Thank you for the response!
+
+I am now convinced that this paper should be required to
+replace "hygiene" with "lexical scope". I agree that [28] stretched the
+term "hygiene" almost as far, because its a small step from the
+limited expressiveness of that system (an extension-independent
+desugaring of patterns) to plain old lexical scope. The use of plain
+old lexical scope seems even clearer here.
+
+That is, the question is not whether "hygiene" has been overused once
+before, but whether this paper can be understood by readers in terms
+of normal lexical scope. Since it can, "lexical scope" is the right
+term.
+
+I remain in favor of accepting the paper, and I think this one aspect
+should be easy to clear up.
+
 
 
 Review #174C
@@ -155,11 +174,11 @@ Typos
 
 Review #174D
 ===========================================================================
+* Updated: 24 Feb 2021 11:46:16am EST
 
 Overall merit
 -------------
-C. I would not accept this paper but will not argue strongly against
-   accepting it.
+B. I support accepting this paper but will not champion it.
 
 Reviewer expertise
 ------------------
@@ -252,6 +271,41 @@ in Hazel (points 3 and 4 below).
 - l.1296 : Andersen et al. (OOPSLA'20) support live patterns, live bindings, and more --- in addition to live literals.
 - l.1338 : remove "et al."
 
+Post author-response comments
+-----------------------------
+Thanks for the many clarifications. I took another look, but still find the
+paper very optimistic --- with too few details about what can go wrong
+and how types help.
+
+Here are two additional requests:
+
+- At the end of section 4, acknowledge the gaps between the model and your
+  implementations. Give future implementors some hints about what to look out
+  for, including validation errors.
+  + I now see that decoding cannot fail in the model (`EApLivelit`), but I
+    don't see how progress for expansion is a corollary. Definition 4.3
+    says `|- d_{expand} : T_{model} -> Exp` but `EApLiveLit` expects the
+    decoding of `d_{expand} d_{model}` to have type `{T_i}_{i<n} -> T_{expand}`.
+    How do we know that the `Exp` matches this specific function type?
+    Also, where do the types `{T_i}_{i<n}` come from?
+
+- In section 3, say that all livelits have the same types and explain how
+  these types fit together. Here are a few questions about `$color` to explain
+  what I have in mind:
+  + Why do we need type `Color` and type `Model`? Do you have examples where
+    these types are very different?
+  + Why must `expand` return an `Exp` that encodes a function that expects four inputs?
+    Are expand functions always 1-line maps from `Model` to the expansion type?
+  + When do quasiquotes run, and what happens if things go wrong? For
+    example, what currently happens when `init` makes a bad splice? What if
+    expand makes a bad SpliceRef? (I agree MetaOCaml could help, but don't know
+    whether it can express your livelits.)
+
+Consider adding a more detailed discussion of related work. For one, I think
+you have a compelling story here --- that livelits can express lots of
+motivating examples. Second, a quick list of examples that violate your type
+and binding discipline could motivate future work.
+
 
 
 Review #174E
@@ -340,5 +394,66 @@ work. If there is little-to-know overlap, I feel the metatheory results are
 substantial on their own, and embody an evaluation that holds water suitable for
 publication at a top venue like PLDI.
 
+Post author-response comments
+-----------------------------
+Thanks for the author response.
 
 
+
+Response by Cyrus Omar <comar@umich.edu>
+---------------------------------------------------------------------------
+Thank you for the five thoughtful reviews!
+
+A
+
+Closure collection does require that the livelit influence the result. In practice, there is an implicit hole at the end of every program cell to support resumption [30], the closure for which is a de facto “use” of even otherwise unused variables.
+
+The captured value need not be a variable so it would not appear to the left of the turnstile; rather it is provided as an argument to the proto-expansion, essentially as an implicit additional splice (see [28]).
+
+Initial values for splices must be context independent (Line 595). The edit action semantics [31]  checks this when executing the update monad.
+
+Splices in our model are “analytic”, i.e. have a specified type, but adding “synthetic” splices + type introspection as suggested is an interesting idea! It would become more difficult for clients to know what is expected in each splice, so we chose the more "reasonable" [28] approach as our baseline.
+
+B 
+
+The late mention of structure editing was indeed to separate concerns. We did compare with MPS on Line 1233.
+
+Our use of “hygiene” is consistent with prior work, most directly [28], but given its various connotations we took care to clarify our specific definition immediately in Sec. 1 (Line 194). We agree that connecting to lexical scoping might further illuminate this definition.
+
+In [3], the authors mention hygiene only when admitting that hygiene is not maintained in “some  corner cases”. Further investigation reveals that macro providers can voluntarily invoke Racket’s scope management machinery to prevent capture for (text-only) splices, so we will include a sentence to clarify.
+
+C
+
+Thank you for the suggestions for the exposition in Sec 4. Line 901 should indeed say “expanded expression” not “external expression”.
+
+Although our more sophisticated examples do avail themselves of OCaml's more established GUI libraries for convenience, it is possible to define livelits entirely within Hazel as outlined in Sec. 3, and we have implemented several examples in this way. We plan to primarily show examples written using only Hazel at the conference (the Hazel language and ecosystem is young but growing!)
+
+D
+
+2. The expansion is not arbitrary Exp-typed code -- Exp is just the type of expression encodings. The corresponding decoding is validated (Line 948) against the expansion type specified by the livelit, which is analogous to the return type of a function. (See point 3 for more.)
+
+_Regarding points 3 and 4, identified by the reviewer as points that if resolved would make them excited about the paper, we do not believe that these require removal of the (already terse) theory section nor any other major changes -- the details are already in the paper and we can highlight them better:_
+
+3. All livelit definitions have exactly the components shown in Fig. 3. Hazel immediately creates this “skeleton” as soon as you type “livelit “. Each hole in this skeleton has the type shown in Fig. 3, and this code is regular Hazel code so all of Hazel’s editor services are available. 
+
+- The “Exp” type does not include the type of the encoded expression, so expansion validation (Line 948) is needed. Typed quotation systems could remove this need ([28] demonstrated the use of MetaOCaml for this purpose).
+
+- Livelit parameters operate like splices (Sec 2.3.1), so they also simply have SpliceRef type within the definition. We will clarify this with one additional sentence.
+
+4. In our Sketch-n-Sketch prototype, the text buffer contains the persistent representation of the livelit i.e. its model and splice map as defined in Sec. 4. The user can press a hotkey to bring up a pop up window containing the livelit GUI. GUI actions cause edits to the underlying text buffer. Andersen et al. have also explored displaying the GUI inline in Dr. Racket, and we will also cite this as additional evidence that structure editing is not essential in Sec. 5.2.
+
+E
+
+The Agda mechanization was indeed a substantial effort. We were able to borrow the basic judgements (e.g. typing of the internal language, elaboration from external to internal languages) from the Hazelnut Live mechanization effort, but the central typed expansion judgement and accompanying metatheory is original. Our prior work on textual literal macros at ICFP’18 stated a related expansion theorem (differing substantially in how splices are encoded and with hygiene defined and enforced quite differently due to the textual, not-yet-fully-parsed nature of that system), but there was no accompanying mechanization -- only paper proofs.
+
+In addition, Sec. 4.3 is original theoretical work introducing liveness into graphical notation formally for this first time, borrowing only the basic evaluation and hole filling mechanisms from Hazelnut Live.
+
+With regard to evaluation more broadly, our aim was to build on the substantial body of empirical evidence summarized in Sec. 1, supplementing it with additional realistic case studies designed specifically to showcase the novel and cohesive technical design that is the central contribution of this paper (and which is the first to support all of: liveness, compositionality, persistence, parameterization, typing, and hygiene).
+
+Additional comments for D:
+
+- We would be happy to cite Andersen et al. [3] again in Sec 7 as suggested. Note: that paper disclaims support for visual notation in splices and does not describe live evaluation of splices (evaluation occurs in the edit-time environment). There may be as-yet-unreported methods possible given the highly dynamic nature of (Dr. )Racket. We are in correspondence with the authors to make sure we are accurately characterizing that paper.
+
+1. Livelits can handle all use cases presented in closely related systems that (1) generate expressions (Graphite and sage can generate arbitrary text, [3] can generate non-expressions), and (2) that do not violate the type and binding discipline. This includes examples across the taxonomy developed in [32]. New binding constructs are not possible (except via splices of arrow type). A future design might support them with a mechanism for explicitly introducing variables into splices, with editor support to alert clients of the situation.
+
+- A Progress theorem for expansion could indeed be stated as a corollary of Progress for the internal language. It would only rule out failure from undefined behavior during evaluation of d_{expand} d_{model}. Decoding of d_{encoded} cannot fail due to Preservation + well-typedness of the livelit definition + the isomorphism between values of Exp type and expanded expressions. Our implementation in Hazel handles all other failure cases (e.g. validation failure + certain situations where the view is malformed) using non-empty holes [31], which we omitted from the formalism for simplicity and because other implementations might handle errors differently.

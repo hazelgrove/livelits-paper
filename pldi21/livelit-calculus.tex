@@ -1,6 +1,7 @@
 \section{A Simply Typed Livelit Calculus}\label{sec:livelit-calculus}
 
 \begin{figure}
+    \vspace{-3px}
     \[
     \arraycolsep=3pt\begin{array}{rlcl}
         \mathsf{Typ} & \tau & ::= &
@@ -29,8 +30,7 @@
         \mathsf{EExp} & e & ::= & x ~\vert~ \hlam{x}{e} ~\vert~ \hap{e_1}{e_2} ~\vert~ ... ~\vert~ \hehole{u}\\
         \mathsf{IExp} & d & ::= & x ~\vert~ \hlam{x}{d} ~\vert~ \hap{d_1}{d_2} ~\vert~ ... ~\vert~ \dehole{u}{\sigma}\\
         \mathsf{Splice} & \psi & ::= & \hsplice{\hat e}{\tau}
-    \end{array}
-    \]
+    \end{array}\]
     \caption{Syntax of types, $\tau$, unexpanded expressions, $\hat{e}$, expanded expressions, $e$, and internal expressions, $d$.
     Here, $x$ ranges over variables, $u$ over hole names, and $\livelitname{a}$ over livelit names.
     We write $\splat{\psi_i}$ for a finite sequence of $n \geq 0$ splices,

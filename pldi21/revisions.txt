@@ -1,0 +1,196 @@
+Summary of Second Round Revisions
+PLDI 2021 Paper #174
+
+# Required Revisions
+
+1. Replace discussion of "hygiene" by "lexical scope"
+
+  - In the abstract, we changed this sentence:
+   
+    "Splices are typed and the system ensures that livelits treat splices hygienically."
+
+    to
+
+    "Uniquely, livelits are \emph{compositional}: a livelit GUI can itself embed 
+    spliced expressions, which are typed, lexically scoped, enjoy full editor support and can in turn embed 
+    other livelits."
+
+  - In Sec 1.2 (Contributions), we made the following changes:
+    * We renamed "Hygienic Composition" to "Compositionality".
+
+    * We changed 
+      
+      "composition is strictly governed by a hygiene discipline that..." 
+      
+      to
+
+      "composition is strictly governed by a binding discipline that..." 
+
+    * We used the phrase "lexically scoped" in the description of capture 
+      avoidance as requested.
+
+    * We changed the phrase "program context" to "lexical context" in the 
+      description of context independence to draw parallels to lexical 
+      scoping again as requested.
+
+    * To clarify the connection with macro hygiene, which we believe is 
+      legitimate to bring up given that livelits are macros, we added 
+      the sentence:
+    
+      "This binding discipline is a form of ``macro hygiene'' [2, 9, 30]."
+
+      which cites both: 
+      
+      (i)   our prior work on TLMs [30], which uses the phrase hygiene
+            for the combination of capture avoidance and context 
+            independence in the same sense as this paper, 
+    
+      (ii)  Clinger and Rees (POPL 1991) as requested by a reviewer
+
+      (iii) the work of Adams [2015], which defines hygiene formally 
+            in a manner consistent with our usage (while also considering 
+            problems related to iterated macro expansion that are not 
+            relevant for livelits). 
+           
+            Note that Adams' paper also states directly in its intro that: 
+        
+              "Essentially, hygiene is the moral equivalent of lexical 
+               scoping at the macro level." (Adams, 2015)
+           
+            We believe that this justifies our use of ``macro hygiene'' in 
+            quotes to describe mechanisms that a reviewer described as 
+            lexical scoping. We emphasize that this yis only after introducing 
+            first precisely what we are claiming. 
+        
+      We go on to add a direct comparison to the more permissive Racket 
+      macro system:
+
+        "though note that we take a particularly restrictive approach to 
+        hygiene compared to, for example, the Racket macro system 
+        \cite{DBLP:conf/popl/Flatt16}: new binding and control flow 
+        constructs intentionally cannot be expressed to allow clients to 
+        understand splices as function parameters (and indeed this is how 
+        they are internally handled)."
+
+      This then connects to the next paragraph on Parameterization. 
+
+  - We renamed Sec 2.3.3 from "Hygienic Composition" to "Binding Discipline"
+    and substantially expanded the discussion on Capture Avoidance to 
+    distinguish the property from our realization of it, which is even 
+    more restrictive than is typical because we want to ensure that splice
+    evaluation is not control flow dependent, that it does not occur multiple
+    times, and that it necessarily occurs. These considerations are less 
+    relevant in non-live settings.
+
+  - We changed our discussion of hygiene in several places in Sec. 6 to 
+    more generously characterize Racket's visual macros system and further 
+    clarify the particular binding discipline that we have specified, 
+    both in how it is similar to traditional hygiene mechanisms and in 
+    how it differs from traditional accounts.
+
+2. Describe the general form of a livelit definition
+
+We added the following sentence to make it more clear that Fig. 3 is the general form of a livelit definition: 
+
+  "Every livelit implementation must include all of the definitions shown in Fig. 3, which we will discuss in turn below."
+
+# Recommended Revisions
+
+3. Make the textual changes agreed to in the response, specifically:
+  (a) Clarify Section 4
+
+
+  (b) Clarify the discussion of [3] 
+
+
+4. Explain, informally, the gaps between the paper's model and Hazel's implementation, including: 
+  (a) That expansion validation is needed
+
+  (b) What happens if decoding the initial value fails 
+
+  (c) What happens if the expansion fails to have the expected function type 
+
+  (d) The implicit use of all open holes 
+
+5. Prove some intuition (the grading example might be appropriate) for why a separate Model and expansion type are necessary 
+
+  We edited the beginning of Sec 3.1.1 from 
+    
+    "The state of a livelit invocation is encoded in its model value." 
+ 
+  to 
+
+    "The state of a livelit's GUI is encoded in its model value."
+
+  We also added the following parenthetical to Sec 3.1.5:
+
+    "The \li{expand} function determines the expansion based on the model 
+    (which encodes the GUI state, and so usually contains information, like 
+    splice references and widget states, that should not persist into run-time 
+    as part of the expansion)."  
+
+# Other Changes
+
+>> "- l.156 : What makes decentralized extensibility a research contribution? Why is it important to distinguish livelit names from other identifiers; does this mean that livelit names are not first class?"
+
+We elaborate on this in Sec 1.2. 
+
+>> "- l.281 : What is "live" in this context? Spell it out; don't rely on the citation back on l.213."
+
+This has been clarified.
+
+>> "- l.311 : Why/how is Alice's first grade expressed as a sum?"
+
+This has been clarified.
+
+>> "- l.362 : In what way is `$slider 0` unsigned? The type system does not rule out an application `$uslider -1`."
+
+This has been clarified with the following:
+  
+  "A livelit invocation can also indicate that no expansion is available 
+  with a custom error message, e.g. due to non-sensical bounds, which is 
+  also displayed to the user (not shown)."
+
+>> "It would also be nice to see the example on line 397-398 replaced with a more realistic example."
+
+The example now demonstrates control flow (in)dependence to demonstrate each of the issues 
+in the section. 
+
+>> "- l.594 : What is the difference between `0` and quasiquoted `0` ?"
+
+We have clarified that quasiquotation forms are the introduction forms for syntax encodings 
+like Exp and Typ.
+
+"- l.607 : It's a bit disappointing that the only example livelit code takes no parameters."
+
+We added the following sentence when discussing live evaluation (the first part of the section 
+where parameters might be relevant.)
+"(Parameters, not shown in this example but discussed in Sec.~\ref{sec:parameterization}, operate like splices and have type \li{SpliceRef}
+within the livelit definition.)"
+
+>> - l.671 : The `Html` type looks like a parameterized type, not a family of mutually-dependent types."
+
+We simplified the wording here to make this more clear.
+
+>> "- l.725 : What is the `eval` command? Is a command different from a function?"
+>> "- l.745 : If an `update` function requests evaluation, does a compile-time error occur?"
+
+For readers unfamiliar with monadic IO a la Haskell, we added the following intuition to 3.1.0: 
+
+  "(monadic commands, like \li{new_splice} discussed below, are executed by the editor)"
+
+In addition, we renamed "UpdateMonad" and "ViewMonad" to "UpdateCmd" and "ViewCmd" to make 
+it more clear that these are pure functional encodings of commands (that are executed by the
+editor). Finally, we add the following parenthetical to emphasize that the ViewCmd offers a 
+different collection of commands (e.g. eval):
+
+"The \li{view} function computes the view given the model and access to the commands in 
+the \li{ViewCmd} monad (which is distinct from the \li{UpdateCmd} monad)."
+
+>> "- l.762 : How can `expand` expect 4 inputs when the type `Model` is a tuple?"
+
+We have expanded Sec. 3.1.5 to further clarify that the expand function itself depends on the 
+model but that the input of the returned proto-expansion (renamed from parameterized expansion 
+for consistency with Sec. 4) depends on the length and associated types of the splice list, not 
+the model. 
+
