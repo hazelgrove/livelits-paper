@@ -53,10 +53,12 @@ We have also developed a
 proof-of-concept implementation of livelits in a textual program editor, Sketch-n-Sketch \cite{sns-pldi,sns-uist},
 which recently added support for the necessary mechanisms \cite{DBLP:journals/pacmpl/LubinCOC20}.
 Livelit interaction causes the serialized model in the text buffer to be changed, which updates the view.
-This proof-of-concept is not at feature parity with 
+This proof-of-concept is focused on this interaction so it is not at feature parity with the 
+mechanism as described here or 
 our main implementation, but it demonstrates that a syntax-recognizing text editor \cite{DBLP:journals/tosem/BallanceGV92,DBLP:conf/sde/HorganM84,interactive-visual-syntax} 
 is sufficient to support livelits, albeit with some gaps in availability when 
 there are syntax errors.
+There are other systems that integrate visual syntax into an otherwise textual editor as well, notably Dr. Racket's recently introduced visual macro system \cite{interactive-visual-syntax}, discussed in the next section.
 
 \subsection{Layout}\label{sec:layout}
 Whether implemented in a structure editor or a text editor, livelits present 
