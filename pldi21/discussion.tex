@@ -55,6 +55,9 @@ may prove fruitful in the future.
   The livelits mechanism as described in this paper operates only on expressions,
   but livelits might be useful for generating other sorts of terms, such as types,
   patterns, and entire modules. Prior work on literal macros has explored this \cite{TLMs}.
+  (Note that Racket's visual macro system generates
+  arbitrary syntax, so it can already be used in 
+  this manner, albeit with no sort-specific semantic guarantees.)
   % Support for type and module splices, too, would likely be useful.
   % With these, better support for reflecting on the provided type might allow for 
   % the development of more general livelits, e.g. a variant of \li{\$datatype} 
@@ -85,7 +88,6 @@ may prove fruitful in the future.
   % involving edits to arbitrary user interfaces. 
   % We believe that these problems are surmountable.
 
-\newpage
 % \begin{itemize}
 %   \item pattern matching
 %   \item type splices
@@ -101,3 +103,7 @@ may prove fruitful in the future.
 %   \item full screening livelits (or compositions thereof) as a way to create end-user workflows
 %   \item big vision: authoring environment based on livelits
 % \end{itemize}
+
+\section*{Acknowledgements}
+
+(Acknowledgements are being prepared and will be included in the version sent to the publisher.)

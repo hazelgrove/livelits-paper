@@ -99,18 +99,91 @@ We added the following sentence to make it more clear that Fig. 3 is the general
 3. Make the textual changes agreed to in the response, specifically:
   (a) Clarify Section 4
 
+    >> "The intuitive meaning of hole typing assumptions, $u::\tau[\Gamma]$, should be explained when they are introduced.  Reading the section, I later understand that $\Gamma$ stores the types of the variables that can be used inside the "hole", but I had to search for it."
+
+    We have stated this more directly in 4.1.
+
+    >> "I understand that the type system is not formalised algorithmically. Nevertheless, $\tau$ appears free in the rule Elab-Hole. It would be nice to have an intuitive explanation for how the types of holes are computed in practice. "
+
+    We have clarified this as follows: 
+      
+      "In this declarative formulation, the type $\tau$ is arbitrary (in Hazelnut Live, elaboration is specified algorithmically \cite{HazelnutLive})."
+
+    >> "Exp stands for a type whose values isomorphically encode external expressions" (line 901). So far, the reader has been told about: unexpanded expressions, expanded expressions, and internal expressions. We are now told about "external expressions". I suppose you mean "expanded expressions" because you use the same non-termina $e$. It would be nice to have a consistent name."
+
+    We have used "external expressions" consistently (since that is what they are called in Hazelnut Live), but we also leave as a parenthetical in 4.0 that one might also use "expanded expression" (when they are the result of expansion).
+
+    >> "The definition of context, $\sigma$, should be given where contexts are first introduced (line 827) instead of in the caption of Figure 4."
+
+    We now define \sigma in both locations.
+
+    >> "- l.857 : The sentence here seems to be missing a few words."
+
+    Fixed.
+
+    >> "- l.896 : Define `\Phi`; perhaps in figure 5."
+
+    \Phi is defined at the beginning of 4.2.1.
+
+    >> "- l.900 : The `Exp` type comes as a surprise, and significantly limits what the model can say about livelits."
+    >> "In what ways does the language help programmers get their types and expressions right?" 
+    >> "How do we know that the `Exp` matches this specific function type?" 
+    >> "When do quasiquotes run, and what happens if things go wrong? For
+        example, what currently happens when `init` makes a bad splice? What if
+        expand makes a bad SpliceRef? (I agree MetaOCaml could help, but don't know
+        whether it can express your livelits.)"
+
+    We added a paragraph to 3.1.5 clarifying the type Exp and how using standard quotations 
+    means that expansion validation is necessary. We speculate briefly about the use 
+    of a typed quotation system to move the necessary checks to definition time, and acknowledge 
+    that it would not be trivial due to type dependency. We have also 
+    added a sentence to Sec. 4.2.2 to further clarify that validation can fail at invocation time,
+    and that Hazel reports this as an error and treats it as a non-empty hole.
+
+      "Validation can fail, in which case expansion fails. (In Hazel, expansion failure causes non-empty hole insertion and an error is reported.)"
+
+    >> "Also, where do the types `{T_i}_{i<n}` come from?"
+
+    The types are in the splice list, which is part of the livelit invocation. 
+    We have clarified the text to emphasize this.
+
+    >> "Could a livelit fail to be context-independent by containing a splice that is initialized to an expression that refers to its environment? In the paper's examples, the initial value of a splice is always closed, but the formalization does not clarify this. If this "evil livelit" also hides the actual splice (by setting "display: none", say) how could the user correct the problem? More generally, the provided calculus does not mention the mechanics of livelit instantiation and updates, and that is appropriate, but there are some subtle issues hiding here."
+
+    This cannot occur -- Sec. 3 discusses how context independence of explicitly set splice contents is maintained. We have clarified the wording in several places.
+    We have further clarified in Sec. 4 that the livelit calculus does not model edits to the program, which is where these considerations would be relevant.
+
+    >> "In Section 4.2.2, you reference the explicit capture set as allowing a livelit expansion to reference helper functions. Does the explicit capture set then go to the left of both empty turnstiles in the EApLiveLit rule?"
+
+    We have further clarified the explicit capture set (now called the explicit context value) in Sec. 3 and 4.2.2, where we state that it would appear as an additional function argument, not to the left of the turnstile.
+    
+    >> "- cc-contexts ($\Omega$) and closures should be formally defined before the rule CCApLivelit."
+
+    We now do so.
 
   (b) Clarify the discussion of [3] 
 
+    We have substantially expanded the discussion of the Dr. Racket visual macro system [3].
+    We have also mentioned in our discussion of future work around livelits of other sorts.
 
 4. Explain, informally, the gaps between the paper's model and Hazel's implementation, including: 
+  We added a new paragraph to 5.1 explaining specifically how Hazel handles various classes of 
+  errors. In addition, we discuss the ways in which expansion can be undefined in Sec 4. See below.
+
   (a) That expansion validation is needed
+
+    We are more clear about this in Sec. 4.2.2. 
 
   (b) What happens if decoding the initial value fails 
 
+    Decoding cannot fail. We emphasize this in Sec. 4.2.2.
+
   (c) What happens if the expansion fails to have the expected function type 
 
+    This is what expansion validation detects. We are more clear about this in Sec. 4.2.2. 
+
   (d) The implicit use of all open holes 
+
+    We now mention this in both Sec. 3.1.3 and Sec. 4.3.2.
 
 5. Prove some intuition (the grading example might be appropriate) for why a separate Model and expansion type are necessary 
 
@@ -193,4 +266,11 @@ We have expanded Sec. 3.1.5 to further clarify that the expand function itself d
 model but that the input of the returned proto-expansion (renamed from parameterized expansion 
 for consistency with Sec. 4) depends on the length and associated types of the splice list, not 
 the model. 
+
+>> "In what ways does the language help programmers get their types and expressions right?" 
+
+We added a paragraph to 3.1.5 clarifying the type Exp and how using standard quotations 
+means that proto-expansion validation is necessary. We 
+speculate briefly about the use of a typed quotation system to move the necessary checks 
+to definition time.
 

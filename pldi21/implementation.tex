@@ -29,6 +29,14 @@ even when the program is incomplete or erroneous. Hazel achieves this ``gap-free
 while the user edits 
 the program. Formally, Hazel is a type-aware structure editor \cite{Hazelnut}, rather than a text editor, 
 although the developers are aiming to maintain a text-like experience (this effort is orthogonal to our own). 
+To maintain this guarantee, Hazel inserts empty holes where there are missing terms, 
+and non-empty holes as markers of errors. To maintain this invariant in the presence of livelits, 
+new non-empty holes are needed to mark each of the failure modes suggested by the premises of the \rulename{ELivelit} rule in Fig.~\ref{fig:expansion}. 
+In particular, non-empty holes mark (1) the invocation of an unbound livelit; (2) the invocation of a livelit 
+with a model value of the wrong type; 
+(3) a run-time error during evaluation of \li{init}, \li{update}, or \li{expand} functions (which manifests as a run-time hole); (4) 
+expansion validation failure (i.e. that the parameterized expansion is of the wrong type given the splice list).  
+Errors in view generation are not considered semantic errors (they display as error messages where the livelit GUI would have appeared.)
 
 % The examples in this paper were instead implemented in OCaml as modules satisfying the signature 
 % implied by Fig.~\ref{fig:color-impl}. A functor then adapts these OCaml-based livelit implementations 

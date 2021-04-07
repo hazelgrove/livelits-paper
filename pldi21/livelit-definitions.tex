@@ -275,30 +275,29 @@ that should not persist into run-time as part of the expansion).
 The expansion can include the spliced expressions, 
 but the system does not make the expression  
 available directly as a value of type \li{Exp}. 
-Instead, \li{expand} returns a \emph{proto-expansion}, of type \li{Exp}, 
+Instead, \li{expand} returns a \emph{parameterized expansion}, of type \li{Exp}, 
 paired with a list of \li{SpliceRef}s (which can come from 
 both splices and parameters as discussed above).
-The {proto-expansion}
+The {parameterized expansion}
  is an encoding (i.e. a value of type \li{Exp}) of a function 
  (here curried)
  that takes an argument for each listed \li{SpliceRef}. 
  That argument is of the corresponding splice 
 type, which was provided when the splice was initialized. 
- The return type of the proto-expansion is the expansion type.
- So here, the proto-expansion for \li{\$color} must be a function of type 
+ The return type of the parameterized expansion is the expansion type.
+ So here, the parameterized expansion for \li{\$color} must be a function of type 
  \li{Int -> Int -> Int -> Int -> Color}.
 
 Note that Hazel does \emph{not} statically check the definition of \li{expand}
-to ensure that the encoded proto-expansion has this type. Instead, the proto-expansion 
+to ensure that the encoded parameterized expansion has this type. Instead, the parameterized expansion 
 is \emph{validated} at each livelit invocation site, with errors reported to the client. 
-A \emph{typed quotation} system as in, e.g., MetaOCaml \cite{DBLP:conf/flops/Kiselyov14}, could be adapted to allow for definition-site verification 
-in lieu of client-site validation, as discussed in \cite{TLMs}, but we leave the integration 
-of such a system into Hazel as future work. This would be non-trivial:  
+A \emph{typed quotation} system as in, e.g., MetaOCaml \cite{DBLP:conf/flops/Kiselyov14}, could be adapted to allow for definition-site verification, as discussed in \cite{TLMs}, but 
+note that   
 the type of the quotation depends on the type of each splice in 
-the splice list, which may be of model-dependent length (e.g. in the case of \li{\$dataframe}).
+the splice list.
 
 This parameterization strategy makes it simple to enforce the binding discipline described in Sec.~\ref{sec:hygiene}. 
-The proto-expansion 
+The parameterized expansion 
 can depend only on the \li{context}, whereas the splices are entered by the client and so they can 
 depend only on the client site typing context. The use of function application ensures
 that splices are capture avoiding as discussed in Sec.~\ref{sec:hygiene}. 
