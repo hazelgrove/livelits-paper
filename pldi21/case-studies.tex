@@ -48,7 +48,7 @@ allows the selected cell to be filled with an arbitrary Hazel expression,
 here a floating point expression that adds together individual problem scores,
 one of which is expressed using another livelit,
 \li{\$slider}.
-The table itself displays not the expression itself but rather its value, \li{93.}, just as in a spreadsheet.
+The table itself displays not the expression itself but rather its value, \li{80.}, just as in a spreadsheet.
 
 Next, the instructor computes \li{averages}
 for each student by applying \li{compute_weighted_averages}, a helper function
@@ -73,15 +73,16 @@ that are given meaning by expansion.
 For example, the expansion of Fig.~\ref{fig:grading} is:
 
 \begin{lstlisting}[xleftmargin=0.2cm]
+let q1_max = 36. in 
 let grades = Dataframe (
   ["A1", "A2", "A3", "Midterm", "Final"],
-  [("Alice", [24. +. 36. +. 33.,
-              92., 83.5, 95., 88.]),
-   ("Bob", [61., 64., 98., 70., 85.]),
-   ("Carol", [75., 81., 73., 82., 79.]),
+  [("Andrew", [q1_max +. 24. +. 20.,
+               92., 83.5, 95., 88.]),
+   ("Cyrus", [61., 64., 98., 70., 85.]),
+   ("David", [75., 81., 73., 82., 79.]),
    (* ... *) ]) in
 let averages = compute_averages grades weights in
-let cutoffs = (.A 90., .B 80., .C 70., .D 60.) in
+let cutoffs = (.A 86., .B 76., .C 67., .D 48.) in
 format_for_university
   (assign_grades averages cutoffs)
 \end{lstlisting}
