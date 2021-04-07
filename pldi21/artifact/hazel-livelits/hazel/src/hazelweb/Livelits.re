@@ -423,13 +423,30 @@ module GradeCutoffLivelitView = {
         )
       };
     /*
-     let grades = [93, 88, 75, 86, 78, 82, 67, 54, 45, 71, 69, 62, 97, 83, 85];
+     let grades = [
+       93.,
+       88.,
+       75.,
+       86.,
+       78.,
+       82.,
+       67.,
+       54.,
+       45.,
+       71.,
+       69.,
+       62.,
+       97.,
+       83.,
+       85.,
+     ];
      let data_opt =
        Some(
          grades
          |> List.fold_left(
-              (acc, g) => DHExp.Cons(IntLit(g), acc),
-              DHExp.ListNil(Int),
+              (acc, g) =>
+                DHExp.Cons(Pair(StringLit(""), FloatLit(g)), acc),
+              DHExp.ListNil(Float),
             ),
        );
      */
@@ -1408,7 +1425,16 @@ module SliderLivelitView = {
         ],
       );
     ({dargs, _}: LivelitView.splice_and_param_getters) => {
-      switch (dargs) {
+      let stripped_dargs =
+        Option.map(
+          List.map(
+            PairUtil.map_snd(
+              Option.map(PairUtil.map_fst(DHExp.strip_casts')),
+            ),
+          ),
+          dargs,
+        );
+      switch (stripped_dargs) {
       | Some([
           ("min", Some((DHExp.IntLit(min), _))),
           ("max", Some((DHExp.IntLit(max), _))),
@@ -1532,7 +1558,7 @@ module SliderLivelitFloatView = {
 };
 
 module DataFrameLivelitView = {
-  let name = "$data_frame";
+  let name = "$dataframe";
   let expansion_ty =
     HTyp.(Prod([List(String), List(Prod([String, List(Float)]))]));
   let param_tys = [];
@@ -1727,7 +1753,7 @@ module DataFrameLivelitView = {
           [
             Node.div(
               [Attr.classes(["formula-bar-prompt"])],
-              [Node.text(" > ")],
+              [Node.text(" = ")],
             ),
             uhcode(m.selected),
           ],
