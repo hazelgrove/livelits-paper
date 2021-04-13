@@ -1,7 +1,7 @@
 \section{A Simply Typed Livelit Calculus}\label{sec:livelit-calculus}
 
 
-In order to communicate the semantics of livelits
+In order to specify the semantics of livelits
 independently
 of the specifics of the Hazel environment and the web platform, 
 we now specify a \emph{simply typed livelit calculus}.
@@ -10,17 +10,19 @@ Fig.~\ref{fig:syntax} specifies the syntax of the livelit calculus.
 Programs are written as \emph{unexpanded expressions}, $\hat e$, which are \emph{expanded} to
 \emph{external }(or \emph{expanded}) \emph{expressions}, $e$, before being \emph{elaborated}
 to \emph{internal expressions}, $d$, for evaluation. All three sorts are classified
-by the same types, $\tau$. We include partial functions, products, sums, and recursive
+by the same types, $\tau$. 
+
+We include partial functions, products, sums, and recursive
 types, all in their standard form \cite{pfpl}, but this specific type structure is not critical.
 Any language expressive
 enough to encode its own abstract syntax 
-would be a suitable basis for a livelit calculus. 
+would be a suitable basis. 
 
-We begin in Sec.~\ref{sec:external-and-internal-lang} with a terse
-overview of the external and internal languages,
-which are adapted from Hazelnut Live \cite{HazelnutLive}.
-We then detail livelit expansion (Sec.~\ref{sec:calculus-expansion}) and 
-liveness via closure collection (Sec.~\ref{sec:calculus-closure-collection}). 
+% We begin in Sec.~\ref{sec:external-and-internal-lang} with a terse
+% overview of the external and internal languages,
+% which are adapted from Hazelnut Live \cite{HazelnutLive}.
+% We then detail livelit expansion (Sec.~\ref{sec:calculus-expansion}) and 
+% liveness via closure collection (Sec.~\ref{sec:calculus-closure-collection}). 
 % and parameterization (Sec.~\ref{sec:calculus-parameterization}).
 
 
@@ -89,16 +91,17 @@ unique in the external language, they can be duplicated during evaluation of int
 \newcommand{\tnat}{\mathsf{nat}}
 
 External expressions elaborate to internal expressions, $d$,
-by the judgement $\elabs{\Gamma}{e}{d}{\tau}{\Delta}$.
+according to the declarative elaboration judgement $\elabs{\Gamma}{e}{d}{\tau}{\Delta}$.
+(Hazelnut Live specifies elaboration algorithmically \cite{HazelnutLive}.)
 The main purpose of elaboration is to initialize the substitution $\sigma$ on each hole closure, $\dehole{u}{\sigma}$, 
 which takes the form $[d_i/x_i]_{i<n}$ and serves to capture
-the substitutions that occur around the hole during evaluation. The key rule is:
+the substitutions that occur around the hole during evaluation. The key rule for elaboration at type $\tau$ is:
 \begin{mathpar}
 \inferrule[Elab-Hole]{ }{
     \elabs{\Gamma}{\hehole{u}}{\dehole{u}{\idof{\Gamma}}}{\tau}{u :: \tau[\Gamma]}
 }
 \end{mathpar}
-In this declarative formulation, the type $\tau$ is arbitrary (in Hazelnut Live, elaboration is specified algorithmically \cite{HazelnutLive}).
+% In this declarative formulation, the type $\tau$ is arbitrary .
 The substitution is initially the identity substitution, $\idof{\Gamma}$, i.e. the
 substitution that maps each variable in $\Gamma$ to itself, because no substitutions have yet occurred. For example,
 \[ \elabs{ }{(\hlam{x}{\hehole{u}})~\hnum{5}}{(\hlam{x}{\dehole{u}{[x/x]}})~{\hnum{5}}}{\tnat}{u :: \tnum[x : \tnat]} \]
