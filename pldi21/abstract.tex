@@ -14,8 +14,7 @@
     animations,
     tabular data, 
     plots,
-    GUI widgets, 
-    mathematical diagrams, 
+    diagrams, 
     and other domain-specific data structures.
     This paper introduces \emph{live literals}, or \emph{livelits}, 
     which allow
@@ -23,19 +22,18 @@
     by directly manipulating a     
     user-defined GUI embedded persistently into code. 
     Uniquely, livelits are \emph{compositional}: a livelit GUI can itself embed 
-    spliced expressions, which are typed, lexically scoped, enjoy full editor support and can in turn embed 
+    spliced expressions, which are typed, lexically scoped, and can in turn embed 
     other livelits. 
     Livelits are also uniquely \emph{live}: 
     a livelit can provide {continuous feedback} about the run-time implications 
     of the client's choices 
     even when splices mention bound variables, 
     because the system continuously gathers closures associated with the 
-    hole that the livelit is tasked with filling.
+    hole that the livelit is filling.
     We integrate livelits into Hazel, 
-    a live programming environment able to 
-    typecheck and run programs with holes, 
-    and describe several case studies that exercise these novel capabilities. 
-    We then define a minimal typed livelit calculus, which precisely 
+    a live hole-driven programming environment, 
+    and describe case studies that exercise these novel capabilities. 
+    We then define a simply typed livelit calculus, which  
     specifies how livelits operate as 
     live graphical macros.     
     The metatheory of macro expansion has been mechanized in Agda.

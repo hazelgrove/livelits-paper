@@ -1,6 +1,7 @@
 \PassOptionsToPackage{svgnames,dvipsnames,svgnames}{xcolor}
-\documentclass[sigplan,10pt]{acmart}
-\settopmatter{printfolios=true,printccs=true,printacmref=true}
+\documentclass[sigplan,screen]{acmart}
+\settopmatter{}
+% \settopmatter{printfolios=true,printccs=true,printacmref=true}
 %% For double-blind review submission, w/ CCS and ACM Reference
 %\documentclass[acmsmall,review,anonymous]{acmart}\settopmatter{printfolios=true}
 %% For single-blind review submission, w/o CCS and ACM Reference (max submission space)
@@ -18,16 +19,12 @@
 % \acmISBN{} % \acmISBN{978-x-xxxx-xxxx-x/YY/MM}
 % \acmDOI{} % \acmDOI{10.1145/nnnnnnn.nnnnnnn}
 % \startPage{1}
-\setcopyright{rightsretained}
-\acmPrice{}
-\acmDOI{10.1145/3453483.3454059}
-\acmYear{2021}
 \copyrightyear{2021}
-\acmSubmissionID{pldi21main-p174-p}
+\acmYear{2021}
+\setcopyright{rightsretained}
+\acmConference[PLDI '21]{Proceedings of the 42nd ACM SIGPLAN International Conference on Programming Language Design and Implementation}{June 20--25, 2021}{Virtual Event, Canada}
+\acmBooktitle{Proceedings of the 42nd ACM SIGPLAN International Conference on Programming Language Design and Implementation (PLDI '21), June 20--25, 2021, Virtual Event, Canada}\acmDOI{10.1145/3453483.3454059}
 \acmISBN{978-1-4503-8391-2/21/06}
-\acmConference[PLDI '21]{Proceedings of the 42nd ACM SIGPLAN International Conference on Programming Language Design and Implementation}{June 20--25, 2021}{Virtual, Canada}
-\acmBooktitle{Proceedings of the 42nd ACM SIGPLAN International Conference on Programming Language Design and Implementation (PLDI '21), June 20--25, 2021, Virtual, Canada}
-
 %% Copyright information
 %% Supplied to authors (based on authors' rights management selection;
 %% see authors.acm.org) by publisher for camera-ready submission;
@@ -60,7 +57,7 @@
                         %% http://ctan.org/pkg/subcaption
 
 %% Cyrus packages
-% \usepackage{microtype}
+\usepackage{microtype}
 % \usepackage{mdframed}
 % \usepackage{colortab}
 \usepackage{mathpartir}
@@ -251,12 +248,12 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \affiliation{
   % \position{Position1}
   % \department{Department1}              %% \department is recommended
-  \institution{University of Michigan, USA}            %% \institution is required
+  \institution{University of Michigan}            %% \institution is required
   % \streetaddress{Street1 Address1}
-  % \city{City1}
-  % \state{State1}
+  \city{Ann Arbor}
+  \state{MI}
   % \postcode{Post-Code1}
-  % \country{Country1}
+  \country{USA}
 }
 \email{comar@umich.edu}          %% \email is recommended
 
@@ -267,12 +264,12 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \affiliation{
   % \position{Position1}
   % \department{Department1}              %% \department is recommended
-  \institution{University of Michigan, USA}            %% \institution is required
+  \institution{University of Michigan}            %% \institution is required
   % \streetaddress{Street1 Address1}
-  % \city{City1}
-  % \state{State1}
+  \city{Ann Arbor}
+  \state{MI}
   % \postcode{Post-Code1}
-  % \country{Country1}
+  \country{USA}
 }
 \email{dmoo@umich.edu}          %% \email is recommended
 
@@ -284,12 +281,12 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \affiliation{
   % \position{Position1}
   % \department{Department1}              %% \department is recommended
-  \institution{University of Michigan, USA}            %% \institution is required
+  \institution{University of Michigan}            %% \institution is required
   % \streetaddress{Street1 Address1}
-  % \city{City1}
-  % \state{State1}
+  \city{Ann Arbor}
+  \state{MI}
   % \postcode{Post-Code1}
-  % \country{Country1}
+  \country{USA}
 }
 \email{blinnand@umich.edu}          %% \email is recommended
 
@@ -300,12 +297,12 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \affiliation{
   % \position{Position1}
   % \department{Department1}              %% \department is recommended
-  \institution{Carnegie Mellon University, USA}            %% \institution is required
+  \institution{Carnegie Mellon University}            %% \institution is required
   % \streetaddress{Street1 Address1}
-  % \city{City1}
-  % \state{State1}
+  \city{Pittsburgh}
+  \state{PA}
   % \postcode{Post-Code1}
-  % \country{Country1}
+  \country{USA}
 }
 \email{iev@cs.cmu.edu}          %% \email is recommended
 
@@ -332,12 +329,12 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \affiliation{
   % \position{Position1}
   % \department{Department1}              %% \department is recommended
-  \institution{University of Chicago, USA}            %% \institution is required
+  \institution{University of Chicago}            %% \institution is required
   % \streetaddress{Street1 Address1}
-  % \city{City1}
-  % \state{State1}
+  \city{Chicago}
+  \state{IL}
   % \postcode{Post-Code1}
-  % \country{Country1}
+  \country{USA}
 }
 \email{nickmc@uchicago.edu}          %% \email is recommended
 
@@ -348,10 +345,11 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \affiliation{
   % \position{Position1}
   % \department{Department1}              %% \department is recommended
-  \institution{University of Chicago, USA}            %% \institution is required
+  \institution{University of Chicago}            %% \institution is required
   % \streetaddress{Street1 Address1}
-  % \city{City1}
-  % \state{State1}
+  \city{Chicago}
+  \state{IL}
+  \country{USA}
   % \postcode{Post-Code1}
   % \country{Country1}
 }
