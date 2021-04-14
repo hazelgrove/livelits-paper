@@ -231,7 +231,8 @@ is of the form $\hsplice{\hat e_i}{\tau_i}$, where $\hat e_i$ is the spliced exp
 itself (unexpanded, so it may contain other livelits) and $\tau_i$ is the type of that splice,
 as determined when the livelit definition first requested the splice (as discussed in Sec.~\ref{sec:model}).  
 Note that we do not formally model the edit actions that change the model or splice list here;
-we focus on a single snapshot of the editor state.
+we focus on a single snapshot of the editor state. We leave an action semantics for livelits, 
+following the Hazelnut action semantics \cite{Hazelnut}, as future work.
 
 Rule \rulename{ELivelit} performs livelit expansion. Its premises, in order, operate as follows:
 \begin{enumerate}[itemsep=3px,leftmargin=*]
@@ -243,7 +244,7 @@ Rule \rulename{ELivelit} performs livelit expansion. Its premises, in order, ope
     \item \textbf{Decoding.} The fourth premise decodes $\dtxt{encoded}$, producing the \emph{parameterized expansion}, $\etxt{pexpansion}$. The isomorphism between encodings and external expressions ensures that decoding cannot fail.
     \item \textbf{Expansion Validation.} The fifth premise checks that {parameterized expansion} is a function that returns a value of the expansion type, $\taut{expand}$, when applied (in curried fashion, though this is not critical)
     to the splices, whose types, $\splat{\tau_i}$, are given in the splice list.
-    Validation can fail, in which case expansion fails. (In Hazel, validation failure is instead marked by a non-empty hole.)
+    Validation can fail, in which case expansion fails. (In Hazel, validation failure is instead marked by a non-empty hole and an appropriate error message is shown.)
     
     We ensure that the parameterized expansion is \emph{context independent},
     i.e. that it cannot depend on the particular bindings available in the call site typing context, $\Gamma$, 
@@ -254,7 +255,7 @@ Rule \rulename{ELivelit} performs livelit expansion. Its premises, in order, ope
     via a splice. 
 
     In Sec.~\ref{sec:livelit-definitions}, we discussed how the use of an explicit definition site \li{context} eliminates this client burden.
-    The explicit context is formally just a value (tupled, typically) that can be passed as an additional argument to the parameterized expansion alongside the splices, 
+    The explicit context can formally be modeled as just a value (tupled, typically) that can be passed as an additional argument to the parameterized expansion alongside the splices, 
     so we omit it from the calculus, but see \cite{TLMs} for a full treatment.
     
     \item \textbf{Splice Expansion.} The sixth premise inductively expands each of the spliced expressions in the same context as the livelit
@@ -291,10 +292,18 @@ expression, which in turn evaluates in a type safe manner.
 
 \subsubsection{Agda Mechanization}
 \label{sec:agda}
-The supplement mechanically proves these theorems 
+We have mechanically proven these theorems 
 using the Agda proof assistant, building on the Agda mechanization 
-of Hazelnut Live \cite{HazelnutLive}.
+of Hazelnut Live \cite{HazelnutLive}. 
+This is the first mechanization of the literal macro expansion 
+process 
+(previous work on textual literal macros had only paper proofs \cite{TLMs}). 
+The mechanization is available
+in the artifact and online at the following URL: 
 
+\begin{center}
+\url{https://github.com/hazelgrove/hazelnut-livelits-agda/}
+\end{center}
 
 \subsection{Live Feedback via Closure Collection}\label{sec:calculus-closure-collection}
 In order to support live feedback, a livelit needs to be able to ask the system
