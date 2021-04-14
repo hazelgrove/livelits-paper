@@ -54,6 +54,7 @@
 % \usepackage{enumitem}
 % \usepackage{bbm}
 \usepackage{stmaryrd}
+% \SetSymbolFont{stmry}{bold}{U}{stmry}{m}{n}
 % \usepackage{mathtools}
 % \usepackage{leftidx}
 \usepackage{todonotes}
@@ -61,8 +62,6 @@
 % \usepackage{wrapfig}
 \usepackage{enumitem}
 \usepackage{framed}
-
-\newcommand{\cyrus}[1]{{\color{blue} #1}}
 
 \usepackage{listings}%
 \lstloadlanguages{ML}
@@ -150,18 +149,18 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 
 
 
-\makeatletter\if@ACM@journal\makeatother
-%% Journal information (used by PACMPL format)
-%% Supplied to authors by publisher for camera-ready submission
-% \acmJournal{PACMPL}
-% \acmVolume{1}
-% \acmNumber{1}
-% \acmArticle{1}
-% \acmYear{2018}
-% \acmMonth{3}
-% \acmDOI{10.1145/nnnnnnn.nnnnnnn}
-\startPage{1}
-\else\makeatother
+% \makeatletter\if@ACM@journal\makeatother
+% %% Journal information (used by PACMPL format)
+% %% Supplied to authors by publisher for camera-ready submission
+% % \acmJournal{PACMPL}
+% % \acmVolume{1}
+% % \acmNumber{1}
+% % \acmArticle{1}
+% % \acmYear{2018}
+% % \acmMonth{3}
+% % \acmDOI{10.1145/nnnnnnn.nnnnnnn}
+% \startPage{1}
+% \else\makeatother
 %% Conference information (used by SIGPLAN proceedings format)
 %% Supplied to authors by publisher for camera-ready submission
 % \acmConference[]{ACM SIGPLAN Conference on Programming Languages}{January 01--03, 2017}{New York, NY, USA}
@@ -170,7 +169,7 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 % \acmISBN{978-x-xxxx-xxxx-x/YY/MM}
 % \acmDOI{10.1145/nnnnnnn.nnnnnnn}
 % \startPage{1}
-\fi
+% \fi
 
 
 %% Copyright information
@@ -183,7 +182,7 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 %\copyrightyear{2017}           %% If different from \acmYear
 
 
-\fancyfoot{} % suppresses the footer (also need \thispagestyle{empty} after \maketitle below)
+% \fancyfoot{} % suppresses the footer (also need \thispagestyle{empty} after \maketitle below)
 
 
 %% Bibliography style
@@ -196,8 +195,8 @@ moredelim=**[is][\color{red}]{SSTR}{ESTR}
 \input{commands}
 \input{macros}
 
-\setlength{\abovecaptionskip}{4pt plus 6pt minus 6pt} % Chosen fairly arbitrarily
-\setlength{\belowcaptionskip}{-4pt plus 6pt minus 6pt} % Chosen fairly arbitrarily
+\setlength{\abovecaptionskip}{4pt plus 10pt minus 10pt} % Chosen fairly arbitrarily
+\setlength{\belowcaptionskip}{-4pt plus 10pt minus 10pt} % Chosen fairly arbitrarily
 
 
 \begin{document}
