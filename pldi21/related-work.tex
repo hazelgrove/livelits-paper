@@ -31,6 +31,13 @@ placed by the client and then parsed out of the text by a custom parser charged
 with retaining provenance information.
 This substantially complicates the design of splices in that work.
 
+
+This structural delimitation of splices is reminiscent of work on 
+\emph{language boxes} \cite{DBLP:conf/sle/RenggliDN09}, which focused on 
+combining different notations, primarily textual, using structural delimiters inserted 
+explicitly using a special-purpose editor. 
+
+
 Recent work on a interactive visual macro system in Dr. Racket 
 is quite similar in spirit to our work \cite{interactive-visual-syntax}.
 However, it supports only a limited form of splicing via a pop up text editor
@@ -45,13 +52,8 @@ environment, not the run-time environment of the program being written,
 so splice evaluation would not work correctly (except in trivial cases
 where the splice was, e.g., a closed expression, or used only standard 
 library constructs). That said, we conjecture that it is
-likely possible to implement many of the mechanisms we describe in this paper 
-perhaps in some form as a layer atop existing mechanisms in Dr. Racket.
-
-Our structural delimitation of splices is reminiscent of work on 
-\emph{language boxes} \cite{DBLP:conf/sle/RenggliDN09}, which focused on 
-combining different notations, primarily textual, using structural delimiters inserted 
-explicitly using a special-purpose editor. 
+possible to implement many of the mechanisms we describe in this paper 
+in some form as a layer atop these existing mechanisms in Dr. Racket.
 
 There has been a long line of research on \emph{projectional editing}, where
 the user edits graphical representations (projections) of code constructs 
@@ -60,19 +62,20 @@ Many of the oldest systems offer only a fixed set of projections and interaction
 More recently, language workbenches with support for projectional editing like Citrus \cite{DBLP:conf/uist/KoM05}
 and MPS \cite{voelter2011language} have made it easier to define new projectional editors.
 However, these systems generate entire editors, whereas livelit definitions 
-are decentralized in libraries. 
+are decentralized in libraries and lexically scoped. 
 Furthermore, livelit definitions are governed by a type and binding discipline.
 % In many ways, an unfamiliar livelit can be approached much like an unfamiliar function
 % can be approached: by inspecting its declarations and reasoning compositionally 
 % about arguments, i.e. splices and parameters.
-Finally, livelits are uniquely live, building on Hazelnut Live \cite{HazelnutLive}.
+Finally, livelits are uniquely live, building on hole closure tracking 
+from Hazelnut Live \cite{HazelnutLive}.
 
 A number of notebook systems, including Mathematica, Jupyter \cite{Guo13}, and others, do 
 support the insertion of simple widgets like sliders that respond live to changes.
 These systems inspired our approach but they are not compositional: only constant values can be constructed, as with Graphite.
 
 Related to projectional editors are 
-a variety of systems that generate visualizations from code \cite{DBLP:conf/chi/Lerner20,koschke2003software,urquiza2004survey}. Livelits differ 
+a variety of systems that generate visualizations from code \cite{DBLP:conf/chi/Lerner20,koschke2003software,urquiza2004survey,Goldberg84smalltalk-80-}. Livelits differ 
 from these systems in directionality: visualization systems are given code and generate
 a visualization, whereas livelits generate code where there would otherwise
 be a hole.
@@ -80,7 +83,7 @@ be a hole.
 Conal Elliott's work on tangible functional programming \cite{DBLP:conf/icfp/Elliott07} similarly explored a
 system allows editing a graphical representation of code in compositional ways, 
 but the editing representation itself is fixed as a series of connected windows.
-Only the visual representation is customizable.
+Only the visualizations are customizable.
 
 The Vital programming environment for Haskell \cite{hanna2002interactive} 
 supports type-specific stylesheets

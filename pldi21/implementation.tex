@@ -34,8 +34,8 @@ and non-empty holes as markers of errors. To maintain this invariant in the pres
 new non-empty holes are needed to mark each of the failure modes suggested by the premises of the \rulename{ELivelit} rule in Fig.~\ref{fig:expansion}. 
 In particular, non-empty holes mark (1) the invocation of an unbound livelit; (2) the invocation of a livelit 
 with a model value of the wrong type; 
-(3) a run-time error during evaluation of \li{init}, \li{update}, or \li{expand} functions (which manifests as a run-time hole); (4) 
-expansion validation failure (i.e. that the parameterized expansion is of the wrong type given the splice list).  
+(3) a run-time error during evaluation of \li{init}, \li{update}, or \li{expand} functions (which would manifest as run-time holes); (4) 
+expansion validation failure (i.e. that the parameterized expansion is of the wrong type given the splice list and expansion type).  
 Errors in view generation are not considered semantic errors (they display as error messages where the livelit GUI would have appeared.)
 
 % The examples in this paper were instead implemented in OCaml as modules satisfying the signature 
@@ -50,13 +50,13 @@ Errors in view generation are not considered semantic errors (they display as er
 \subsection{Text Editor Integration}
 Livelits do not require the use of a structure editor. 
 We have also developed a 
-proof-of-concept implementation of livelit interaction in a textual program editor, Sketch-n-Sketch \cite{sns-pldi,sns-uist}.
-Livelit interaction causes the serialized model in the text buffer to be changed, which updates the view.
-This proof-of-concept is focused on this interaction loop so it is not at feature parity with the 
- main implementation, but it demonstrates that a syntax-recognizing text editor \cite{DBLP:journals/tosem/BallanceGV92,DBLP:conf/sde/HorganM84,interactive-visual-syntax} 
-is sufficient to support livelits, albeit with some gaps in availability when 
+proof-of-concept implementation of livelit interaction in a textual program editor, Sketch-n-Sketch \cite{sns-deuce}.
+The livelit GUI appears in a pop up window when requested by the user. Interactions with this GUI cause the serialized model in the text buffer to be changed, which updates the view.
+This proof-of-concept is not at feature parity with the Hazel  
+ implementation, but it demonstrates that a syntax-recognizing text editor \cite{DBLP:journals/tosem/BallanceGV92,DBLP:conf/sde/HorganM84,interactive-visual-syntax} 
+is sufficient to support livelits, albeit with gaps in availability when 
 there are syntax errors.
-There are other systems that integrate visual syntax into an otherwise textual editor as well, notably Dr. Racket's recently introduced visual macro system \cite{interactive-visual-syntax}, discussed in the next section.
+There are other systems that integrate visual syntax into an otherwise textual editor as well, notably Dr. Racket's recent visual macro system \cite{interactive-visual-syntax}, discussed in the next section.
 
 \subsection{Layout}\label{sec:layout}
 Whether implemented in a structure editor or a text editor, livelits present 
@@ -121,15 +121,36 @@ functional program.
 \label{sec:imperative-langs}
 Our focus in this paper was on pure languages.
 Side effects pose a challenge on two fronts.
+
 If they occur in a livelit implementation,
+as is possible for livelits implemented using Hazel's support for Javascript-based 
+livelits, 
 then the state exists at edit-time. 
-The most viable approach would be to retain the model-view-update
-architecture and specify that any transient mutable state will be reset between updates.
+To ensure that the GUI's state persists and remains valid between reloads, 
+it may then be necessary to persist 
+the relevant portions of the edit-time state 
+alongside the program, as in Smalltalk systems \cite{Goldberg84smalltalk-80-}, or else provide for a state re-initialization protocol
+that is called when a program is re-loaded from persistent memory.
+It may also be necessary to more carefully control the access that a livelit 
+has to the editor itself: many participants in the Graphite survey indicated 
+that they did not want palettes, which were able to make network requests at edit-time, 
+to be able to access 
+proprietary or sensitive source code \cite{Graphite}. 
+In any case, the expansion should ideally be a pure function of the model even in an imperative language, 
+or run as an isolated process each time, 
+to ensure that program 
+behavior does not depend on expansion-time editor state. 
+
 If side effects occur in livelit expansions, 
 then the closure collection mechanism requires more 
 care to avoid unsoundness, as described in Sec.~\ref{sec:calculus-closure-collection}.
-% However, these problems are surmountable, and we look forward to 
-% efforts to integrate livelits into imperative languages. 
+In addition, continuous live evaluation as in Hazel is intrinsically problematic 
+in an imperative setting because running code on each keystroke can cause arbitrary side
+effects, e.g. network requests or I/O.
+
+These problems are surmountable with suitable compromises, e.g. limiting continuous 
+evaluation for code with external side effects, and we look forward to 
+efforts to integrate livelits into imperative languages.
 
 % The Elm architecture has proven practical for sophisticated user interfaces, 
 % e.g. the Sketch-n-Sketch system \cite{sns-uist}, 
